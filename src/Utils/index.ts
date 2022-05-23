@@ -13,17 +13,13 @@ export const byteToHexString = (uint8arr: null | Uint8Array) => {
   return hexStr.toUpperCase();
 };
 
-export const hexStringToByte = (str: string | undefined) => {
-  if (!str) {
-    return new Uint8Array();
-  }
+export const hexToBytes = (hex: string | undefined): Array<number> => {
+  if (!hex) return [];
 
-  const a = [];
-  for (let i = 0, len = str.length; i < len; i += 2) {
-    a.push(parseInt(str.substr(i, 2), 16));
-  }
+  const strArray = hex.split(/(..)/g).filter((s) => s);
+  const idBytes: Array<number> = strArray.map((val) => parseInt(val, 16));
 
-  return new Uint8Array(a);
+  return idBytes;
 };
 
 export const arraycopy = (

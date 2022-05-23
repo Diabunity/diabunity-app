@@ -1,5 +1,32 @@
-import { arraycopy, hexStringToByte } from "@/Utils";
-import NfcManager, { NfcTech, TagEvent } from "react-native-nfc-manager";
+import { arraycopy, hexToBytes } from "@/Utils";
+import { Alert, Platform } from "react-native";
+import NfcManager, {
+  NfcError,
+  NfcTech,
+  TagEvent,
+} from "react-native-nfc-manager";
+import { setShowNfcPrompt } from "@/Store/Theme";
+import { store } from "@/Store";
+
+const withAndroidPrompt = (fn: any, noClose?: any) => {
+  async function wrapper() {
+    try {
+      if (Platform.OS === "android") {
+        store.dispatch(setShowNfcPrompt({ showNfcPrompt: true }));
+      }
+
+      return await fn.apply(null, arguments);
+    } catch (ex) {
+      throw ex;
+    } finally {
+      if (Platform.OS === "android" && !noClose) {
+        store.dispatch(setShowNfcPrompt({ showNfcPrompt: false }));
+      }
+    }
+  }
+
+  return wrapper;
+};
 
 export class NFCReader {
   STATUS_CMD = [0x02, 0xa1 - 0x100, 0x07];
@@ -12,36 +39,53 @@ export class NFCReader {
     this.nfcTech = NfcTech.NfcV;
   }
 
-  readTag = async (): Promise<TagEvent | null> => {
-    try {
-      // register for the NFC tag with nfcTech in it
-      await NfcManager.requestTechnology(this.nfcTech);
-      // the resolved tag object will contain `ndefMessage` property
-      const tag = await NfcManager.getTag();
-      return tag;
-    } catch (err) {
-      const error = err as Error;
-      throw new Error(error.message);
-    } finally {
-      // stop the nfc scanning
-      NfcManager.cancelTechnologyRequest();
+  init = async () => {
+    const supported = await NfcManager.isSupported();
+    if (supported) {
+      await NfcManager.start();
     }
+    return supported;
   };
 
-  getMemoryData = (tag: TagEvent | null) => {
+  _cleanUp = () => {
+    NfcManager.cancelTechnologyRequest().catch(() => 0);
+  };
+
+  getGlucoseData = withAndroidPrompt(
+    async (): Promise<Array<number> | null | void> => {
+      try {
+        // register for the NFC tag with nfcTech in it
+        await NfcManager.requestTechnology([this.nfcTech]);
+        // the resolved tag object will contain `ndefMessage` property
+        const tag = await NfcManager.getTag();
+        return this.getMemory(tag);
+      } catch (ex) {
+        this.handleException(ex);
+      } finally {
+        // stop the nfc scanning
+        this._cleanUp();
+      }
+    }
+  );
+
+  private getMemory = async (
+    tag: TagEvent | null
+  ): Promise<Array<number> | void> => {
     if (!tag) return;
-    const uid = hexStringToByte(tag.id);
-    let resp;
+    const uid = hexToBytes(tag.id);
+    let resp: Array<number>;
     try {
-      resp = this.nfcHandler.transceive(this.STATUS_CMD);
+      resp = await this.nfcHandler.transceive(this.STATUS_CMD);
       return this.readout(uid, resp);
-    } catch (err) {
-      const error = err as Error;
-      throw new Error(error.message);
+    } catch (ex) {
+      this.handleException(ex);
     }
   };
 
-  private readout = (uid: Uint8Array, resp: any): Array<number> => {
+  private readout = async (
+    uid: Array<number>,
+    resp: Array<number>
+  ): Promise<Array<number>> => {
     let data: Array<number> = [];
     // Get bytes [i*8:(i+1)*8] from sensor memory and stores in data
     for (let i = 0; i <= 40; i++) {
@@ -50,21 +94,32 @@ export class NFCReader {
       const time = new Date().getTime();
       while (true) {
         try {
-          resp = this.nfcHandler.transceive(cmd);
-          resp = resp.slice(2, resp.size);
-          arraycopy(resp, 0, data, i * 8, resp.size);
+          resp = await this.nfcHandler.transceive(cmd);
+          resp = resp.slice(2, resp.length);
+          arraycopy(resp, 0, data, i * 8, resp.length);
           break;
-        } catch (err) {
-          const error = err as Error;
+        } catch (ex) {
           if (new Date().getTime() > time + 1000 * 5) {
-            throw new Error(
-              "Timeout: took more than 5 seconds to read nfctag: " +
-                error.message
-            );
+            this.handleException(ex);
           }
         }
       }
     }
     return data;
+  };
+
+  handleException = (ex: any) => {
+    if (ex instanceof NfcError.UserCancel) {
+      // bypass
+    } else if (ex instanceof NfcError.Timeout) {
+      Alert.alert("NFC Session Timeout");
+    } else {
+      console.warn(ex);
+      if (Platform.OS === "ios") {
+        NfcManager.invalidateSessionWithErrorIOS(`${ex}`);
+      } else {
+        Alert.alert("NFC Error", `${ex}`);
+      }
+    }
   };
 }

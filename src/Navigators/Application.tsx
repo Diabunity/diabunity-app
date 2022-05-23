@@ -6,6 +6,8 @@ import { StartupContainer } from '@/Containers'
 import { useTheme } from '@/Hooks'
 import MainNavigator from './Main'
 import { navigationRef } from './utils'
+import { NfcPromptAndroid } from '@/Components'
+
 
 const Stack = createStackNavigator()
 
@@ -28,6 +30,7 @@ const ApplicationNavigator = () => {
             }}
           />
         </Stack.Navigator>
+        <NfcPromptAndroid />
       </NavigationContainer>
     </SafeAreaView>
   )
