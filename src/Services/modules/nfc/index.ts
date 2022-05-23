@@ -32,11 +32,11 @@ export class NFCReader {
   STATUS_CMD = [0x02, 0xa1 - 0x100, 0x07];
   nfcHandler: typeof NfcManager.nfcVHandler;
 
-  nfcTech: NfcTech.NfcV;
+  nfcTech: Array<NfcTech>;
 
   constructor() {
     this.nfcHandler = NfcManager.nfcVHandler;
-    this.nfcTech = NfcTech.NfcV;
+    this.nfcTech = [NfcTech.NfcV, NfcTech.NdefFormatable];
   }
 
   init = async () => {
@@ -55,7 +55,7 @@ export class NFCReader {
     async (): Promise<Array<number> | null | void> => {
       try {
         // register for the NFC tag with nfcTech in it
-        await NfcManager.requestTechnology([this.nfcTech]);
+        await NfcManager.requestTechnology(this.nfcTech);
         // the resolved tag object will contain `ndefMessage` property
         const tag = await NfcManager.getTag();
         return this.getMemory(tag);
@@ -78,7 +78,7 @@ export class NFCReader {
       resp = await this.nfcHandler.transceive(this.STATUS_CMD);
       return this.readout(uid, resp);
     } catch (ex) {
-      this.handleException(ex);
+      throw ex;
     }
   };
 
@@ -100,7 +100,7 @@ export class NFCReader {
           break;
         } catch (ex) {
           if (new Date().getTime() > time + 1000 * 5) {
-            this.handleException(ex);
+            throw ex;
           }
         }
       }

@@ -26,13 +26,20 @@ const ExampleContainer = () => {
   };
 
   useEffect(() => {
-    const nfcInstance = new NFCReader()
-    setNFCInstance(nfcInstance)
+    const init = async () => {
+      const nfcInstance = new NFCReader()
+      const supported = await nfcInstance.init()
+      if (!supported) {
+        Alert.alert("NFC is not supported");
+      } else {
+        setNFCInstance(nfcInstance)
+      }
+    }
+    init()
   }, [])
 
   const onTag = async () => {
     if (!nfcInstance || isScanning) return
-    await nfcInstance.init()
     setIsScanning(true)
     const glucoseData = await nfcInstance.getGlucoseData()
     setIsScanning(false)
