@@ -1,17 +1,5 @@
-export const byteToHexString = (uint8arr: null | Uint8Array) => {
-  if (!uint8arr) {
-    return "";
-  }
-
-  let hexStr = "";
-  for (var i = 0; i < uint8arr.length; i++) {
-    let hex = (uint8arr[i] & 0xff).toString(16);
-    hex = hex.length === 1 ? "0" + hex : hex;
-    hexStr += hex;
-  }
-
-  return hexStr.toUpperCase();
-};
+export const decimalToHex = (d: number) =>
+  Number(d).toString(16).padStart(2, "0");
 
 export const hexToBytes = (hex: string | undefined): Array<number> => {
   if (!hex) return [];

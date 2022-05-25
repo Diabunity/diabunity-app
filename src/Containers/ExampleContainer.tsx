@@ -8,7 +8,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/Hooks';
-import { changeTheme, ThemeState, setDefaultTheme } from '@/Store/Theme';
+import { changeTheme, ThemeState } from '@/Store/Theme';
 
 import { NFCReader } from '@/Services/modules/nfc';
 import Clipboard from '@react-native-community/clipboard';
@@ -61,14 +61,14 @@ const ExampleContainer = () => {
       ]}
     >
       <TouchableOpacity
-        style={[Common.button.rounded, Gutters.regularBMargin]}
+        style={[Common.button.rounded, Gutters.regularBMargin, { height: 50 }]}
         onPress={onTag}
         disabled={isScanning}
         activeOpacity={!isScanning ? 0.5 : 1}
       >
         <Text style={Fonts.textRegular}>Medir Glucosa</Text>
       </TouchableOpacity>
-    </ScrollView>
+    </ScrollView >
   );
 };
 
