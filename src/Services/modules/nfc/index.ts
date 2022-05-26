@@ -16,7 +16,7 @@ export class NFCReader {
 
   constructor() {
     this.nfcHandler = NfcManager.nfcVHandler;
-    this.nfcTech = [NfcTech.NfcV, NfcTech.NdefFormatable, NfcTech.Ndef];
+    this.nfcTech = [NfcTech.NfcV, NfcTech.NdefFormatable];
   }
 
   init = async () => {
@@ -40,7 +40,7 @@ export class NFCReader {
       await NfcManager.requestTechnology(this.nfcTech);
       // the resolved tag object will contain `ndefMessage` property
       const tag = await NfcManager.getTag();
-      return this.getMemory(tag);
+      return await this.getMemory(tag);
     } catch (ex) {
       this.handleException(ex);
       return null;
