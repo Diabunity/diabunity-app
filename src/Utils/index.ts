@@ -26,3 +26,11 @@ export const arraycopy = (
 ) => {
   src.slice(srcPos, srcPos + length).forEach((e, i) => (dst[dstPos + i] = e));
 };
+
+export const uncomplement = (val: number, bitwidth: number) => {
+  var isnegative = val & (1 << (bitwidth - 1));
+  var boundary = 1 << bitwidth;
+  var minval = -boundary;
+  var mask = boundary - 1;
+  return isnegative ? minval + (val & mask) : val;
+}
