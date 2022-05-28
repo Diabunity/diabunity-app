@@ -33,4 +33,4 @@ export const uncomplement = (val: number, bitwidth: number) => {
   var minval = -boundary;
   var mask = boundary - 1;
   return isnegative ? minval + (val & mask) : val;
-}
+};
