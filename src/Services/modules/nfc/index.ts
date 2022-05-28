@@ -1,4 +1,4 @@
-import { arraycopy, hexToBytes } from "@/Utils";
+import { arraycopy, hexToBytes, uncomplement } from "@/Utils";
 import { Alert, Platform } from "react-native";
 import NfcManager, {
   NfcError,
@@ -76,6 +76,7 @@ export class NFCReader {
       while (true) {
         try {
           resp = await this.nfcHandler.transceive(cmd);
+          resp = resp.map((value) => uncomplement(value, 8));
           resp = resp.slice(2, resp.length);
           arraycopy(resp, 0, data, i * 8, resp.length);
           break;
@@ -90,8 +91,15 @@ export class NFCReader {
         }
       }
     }
+
+    for (let i = data.length; i < 360; i++) {
+      data.push(0);
+    }
+
     return data;
   };
+
+  // [-42, 97, 16, 25, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -94, -87, 0, 10, 48, 6, -56, -104, -101, 0, 37, 6, -56, -108, -101, 0, 25, 6, -56, -112, -101, 0, 15, 6, -56, -116, -101, 0, 8, 6, -56, -116, -101, 0, 0, 6, -56, -116, -37, 0, -13, 5, -120, 126, -37, 0, -34, 5, -120, -14, -38, 0, -28, 5, -56, 56, -37, 0, -27, 5, -56, 64, -37, 0, -31, 5, -56, 92, -37, 0, -42, 5, -56, 96, -37, 0, +260 more]
 
   handleException = (ex: any) => {
     if (ex instanceof NfcError.UserCancel) {

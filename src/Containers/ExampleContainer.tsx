@@ -44,6 +44,7 @@ const ExampleContainer = () => {
     const glucoseData = await nfcInstance.getGlucoseData()
     setIsScanning(false)
     if (glucoseData) {
+      console.log('data:', glucoseData);
       Clipboard.setString(glucoseData.toString());
       Alert.alert(
         "Glucose data copied to Clipboard!"
