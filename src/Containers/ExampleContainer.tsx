@@ -1,33 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
-import { useDispatch } from 'react-redux';
-import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/Hooks';
-import { changeTheme, ThemeState } from '@/Store/Theme';
 
 import { NFCReader } from '@/Services/modules/nfc';
 import Clipboard from '@react-native-community/clipboard';
 
 const ExampleContainer = () => {
-  const { t } = useTranslation();
   const { Common, Fonts, Gutters, Layout } = useTheme();
-  const dispatch = useDispatch();
-
   const [nfcInstance, setNFCInstance] = useState<NFCReader>();
   const [isScanning, setIsScanning] = useState(false);
 
-  const onChangeTheme = ({ theme, darkMode }: Partial<ThemeState>) => {
-    dispatch(changeTheme({ theme, darkMode }));
-  };
-
   useEffect(() => {
     const init = async () => {
-      const nfcInstance = new NFCReader();
-      const supported = await nfcInstance.init();
+      const NFCObj = new NFCReader();
+      const supported = await NFCObj.init();
       if (!supported) {
         Alert.alert('NFC is not supported');
       } else {
-        setNFCInstance(nfcInstance);
+        setNFCInstance(NFCObj);
       }
     };
     init();
