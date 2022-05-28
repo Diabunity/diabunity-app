@@ -1,5 +1,5 @@
-import { StyleSheet } from 'react-native'
-import { ThemeCommonParams } from '@/Theme/theme.type'
+import { StyleSheet } from 'react-native';
+import { ThemeCommonParams } from '@/Theme/theme.type';
 
 export default function ({ Colors, Gutters, Layout }: ThemeCommonParams) {
   const base = {
@@ -7,11 +7,11 @@ export default function ({ Colors, Gutters, Layout }: ThemeCommonParams) {
     ...Gutters.largeHPadding,
     height: 40,
     backgroundColor: Colors.primary,
-  }
+  };
   const rounded = {
     ...base,
     borderRadius: 20,
-  }
+  };
 
   return StyleSheet.create({
     base,
@@ -28,5 +28,5 @@ export default function ({ Colors, Gutters, Layout }: ThemeCommonParams) {
       borderWidth: 2,
       borderColor: Colors.primary,
     },
-  })
+  });
 }

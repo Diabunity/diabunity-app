@@ -1,6 +1,6 @@
-import { useColorScheme } from "react-native";
-import { useSelector } from "react-redux";
-import { DarkTheme, DefaultTheme } from "@react-navigation/native";
+import { useColorScheme } from 'react-native';
+import { useSelector } from 'react-redux';
+import { DarkTheme, DefaultTheme } from '@react-navigation/native';
 import {
   Common,
   Fonts,
@@ -9,15 +9,15 @@ import {
   Layout,
   themes,
   DefaultVariables,
-} from "@/Theme";
-import { ThemeState } from "@/Store/Theme";
+} from '@/Theme';
+import { ThemeState } from '@/Store/Theme';
 import {
   Theme,
   ThemeCommon,
   ThemeNavigationColors,
   ThemeNavigationTheme,
   ThemeVariables,
-} from "@/Theme/theme.type";
+} from '@/Theme/theme.type';
 
 export default function () {
   // Get the scheme device
@@ -25,7 +25,7 @@ export default function () {
 
   // Get current theme from the store
   const currentTheme = useSelector(
-    (state: { theme: ThemeState }) => state.theme.theme || "default"
+    (state: { theme: ThemeState }) => state.theme.theme || 'default'
   );
   const isDark = useSelector(
     (state: { theme: ThemeState }) => state.theme.darkMode
@@ -35,7 +35,7 @@ export default function () {
     (state: { theme: ThemeState }) => state.theme.showNfcPrompt || false
   );
 
-  const darkMode = isDark === null ? colorScheme === "dark" : isDark;
+  const darkMode = isDark === null ? colorScheme === 'dark' : isDark;
   //Select the right theme light theme ({} if not exist)
   const {
     Variables: themeConfigVars = {} as Partial<ThemeVariables>,

@@ -1,13 +1,13 @@
-import { arraycopy, hexToBytes, uncomplement } from "@/Utils";
-import { Alert, Platform } from "react-native";
-import LibreManagerTool from "react-native-libre-manager/src";
+import { arraycopy, hexToBytes, uncomplement } from '@/Utils';
+import { Alert, Platform } from 'react-native';
+import LibreManagerTool from 'react-native-libre-manager/src';
 import NfcManager, {
   NfcError,
   NfcTech,
   TagEvent,
-} from "react-native-nfc-manager";
-import { setShowNfcPrompt } from "@/Store/Theme";
-import { store } from "@/Store";
+} from 'react-native-nfc-manager';
+import { setShowNfcPrompt } from '@/Store/Theme';
+import { store } from '@/Store';
 
 export class NFCReader {
   STATUS_CMD = [0x02, 0xa1 - 0x100, 0x07];
@@ -33,7 +33,7 @@ export class NFCReader {
   };
 
   getGlucoseData = async (): Promise<Array<number> | null | any> => {
-    if (Platform.OS === "ios") {
+    if (Platform.OS === 'ios') {
       //If iOS we get the data from the react-native-libre-manager library
       return await new Promise((resolve) =>
         LibreManagerTool.getGlucoseHistory((resp) => resolve(resp))
@@ -60,7 +60,9 @@ export class NFCReader {
   private getMemory = async (
     tag: TagEvent | null
   ): Promise<Array<number> | null> => {
-    if (!tag) return null;
+    if (!tag) {
+      return null;
+    }
     const uid = hexToBytes(tag.id);
     let resp: Array<number>;
     resp = await this.nfcHandler.transceive(this.STATUS_CMD);
@@ -107,13 +109,13 @@ export class NFCReader {
     if (ex instanceof NfcError.UserCancel) {
       // bypass
     } else if (ex instanceof NfcError.Timeout) {
-      Alert.alert("NFC Session Timeout");
+      Alert.alert('NFC Session Timeout');
     } else {
       console.warn(ex);
-      if (Platform.OS === "ios") {
+      if (Platform.OS === 'ios') {
         NfcManager.invalidateSessionWithErrorIOS(`${ex}`);
       } else {
-        Alert.alert("NFC Error", `${ex}`);
+        Alert.alert('NFC Error', `${ex}`);
       }
     }
   };
