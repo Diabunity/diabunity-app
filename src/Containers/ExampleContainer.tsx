@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  Alert
-} from 'react-native';
+import { Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/Hooks';
@@ -18,8 +13,8 @@ const ExampleContainer = () => {
   const { Common, Fonts, Gutters, Layout } = useTheme();
   const dispatch = useDispatch();
 
-  const [nfcInstance, setNFCInstance] = useState<NFCReader>()
-  const [isScanning, setIsScanning] = useState(false)
+  const [nfcInstance, setNFCInstance] = useState<NFCReader>();
+  const [isScanning, setIsScanning] = useState(false);
 
   const onChangeTheme = ({ theme, darkMode }: Partial<ThemeState>) => {
     dispatch(changeTheme({ theme, darkMode }));
@@ -27,30 +22,29 @@ const ExampleContainer = () => {
 
   useEffect(() => {
     const init = async () => {
-      const nfcInstance = new NFCReader()
-      const supported = await nfcInstance.init()
+      const nfcInstance = new NFCReader();
+      const supported = await nfcInstance.init();
       if (!supported) {
-        Alert.alert("NFC is not supported");
+        Alert.alert('NFC is not supported');
       } else {
-        setNFCInstance(nfcInstance)
+        setNFCInstance(nfcInstance);
       }
-    }
-    init()
-  }, [])
+    };
+    init();
+  }, []);
 
   const onTag = async () => {
-    if (!nfcInstance || isScanning) return
-    setIsScanning(true)
-    const glucoseData = await nfcInstance.getGlucoseData()
-    setIsScanning(false)
-    if (glucoseData) {
-      console.log('data:', glucoseData);
-      Clipboard.setString(glucoseData.toString());
-      Alert.alert(
-        "Glucose data copied to Clipboard!"
-      );
+    if (!nfcInstance || isScanning) {
+      return;
     }
-  }
+    setIsScanning(true);
+    const glucoseData = await nfcInstance.getGlucoseData();
+    setIsScanning(false);
+    if (glucoseData) {
+      Clipboard.setString(glucoseData.toString());
+      Alert.alert('Glucose data copied to Clipboard!');
+    }
+  };
 
   return (
     <ScrollView
@@ -69,7 +63,7 @@ const ExampleContainer = () => {
       >
         <Text style={Fonts.textRegular}>Medir Glucosa</Text>
       </TouchableOpacity>
-    </ScrollView >
+    </ScrollView>
   );
 };
 

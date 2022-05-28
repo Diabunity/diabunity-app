@@ -1,20 +1,19 @@
-import React from 'react'
-import { SafeAreaView, StatusBar } from 'react-native'
-import { createStackNavigator } from '@react-navigation/stack'
-import { NavigationContainer } from '@react-navigation/native'
-import { StartupContainer } from '@/Containers'
-import { useTheme } from '@/Hooks'
-import MainNavigator from './Main'
-import { navigationRef } from './utils'
-import { NfcPromptAndroid } from '@/Components'
+import React from 'react';
+import { SafeAreaView, StatusBar } from 'react-native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
+import { StartupContainer } from '@/Containers';
+import { useTheme } from '@/Hooks';
+import MainNavigator from './Main';
+import { navigationRef } from './utils';
+import { NfcPromptAndroid } from '@/Components';
 
-
-const Stack = createStackNavigator()
+const Stack = createStackNavigator();
 
 // @refresh reset
 const ApplicationNavigator = () => {
-  const { Layout, darkMode, NavigationTheme } = useTheme()
-  const { colors } = NavigationTheme
+  const { Layout, darkMode, NavigationTheme } = useTheme();
+  const { colors } = NavigationTheme;
 
   return (
     <SafeAreaView style={[Layout.fill, { backgroundColor: colors.card }]}>
@@ -33,7 +32,7 @@ const ApplicationNavigator = () => {
         <NfcPromptAndroid />
       </NavigationContainer>
     </SafeAreaView>
-  )
-}
+  );
+};
 
-export default ApplicationNavigator
+export default ApplicationNavigator;
