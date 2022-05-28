@@ -42,6 +42,7 @@ const ExampleContainer = () => {
     if (!nfcInstance || isScanning) return
     setIsScanning(true)
     const glucoseData = await nfcInstance.getGlucoseData()
+    console.log('Glucositaaa', glucoseData)
     setIsScanning(false)
     if (glucoseData) {
       console.log('data:', glucoseData);

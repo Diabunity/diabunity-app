@@ -1,5 +1,6 @@
 import { arraycopy, hexToBytes, uncomplement } from "@/Utils";
 import { Alert, Platform } from "react-native";
+import LibreManagerTool from "react-native-libre-manager/src";
 import NfcManager, {
   NfcError,
   NfcTech,
@@ -31,25 +32,28 @@ export class NFCReader {
     NfcManager.cancelTechnologyRequest().catch(() => 0);
   };
 
-  getGlucoseData = async (): Promise<Array<number> | null> => {
-    try {
-      if (Platform.OS === "android") {
+  getGlucoseData = async (): Promise<Array<number> | null | any> => {
+    if (Platform.OS === "ios") {
+      //If iOS we get the data from the react-native-libre-manager library
+      return await new Promise((resolve) =>
+        LibreManagerTool.getGlucoseHistory((resp) => resolve(resp))
+      );
+    } else {
+      try {
         store.dispatch(setShowNfcPrompt({ showNfcPrompt: true }));
-      }
-      // register for the NFC tag with nfcTech in it
-      await NfcManager.requestTechnology(this.nfcTech);
-      // the resolved tag object will contain `ndefMessage` property
-      const tag = await NfcManager.getTag();
-      return await this.getMemory(tag);
-    } catch (ex) {
-      this.handleException(ex);
-      return null;
-    } finally {
-      if (Platform.OS === "android") {
+        // register for the NFC tag with nfcTech in it
+        await NfcManager.requestTechnology(this.nfcTech);
+        // the resolved tag object will contain `ndefMessage` property
+        const tag = await NfcManager.getTag();
+        return await this.getMemory(tag);
+      } catch (ex) {
+        this.handleException(ex);
+        return null;
+      } finally {
         store.dispatch(setShowNfcPrompt({ showNfcPrompt: false }));
+        // stop the nfc scanning
+        this._cleanUp();
       }
-      // stop the nfc scanning
-      this._cleanUp();
     }
   };
 
@@ -98,8 +102,6 @@ export class NFCReader {
 
     return data;
   };
-
-  // [-42, 97, 16, 25, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -94, -87, 0, 10, 48, 6, -56, -104, -101, 0, 37, 6, -56, -108, -101, 0, 25, 6, -56, -112, -101, 0, 15, 6, -56, -116, -101, 0, 8, 6, -56, -116, -101, 0, 0, 6, -56, -116, -37, 0, -13, 5, -120, 126, -37, 0, -34, 5, -120, -14, -38, 0, -28, 5, -56, 56, -37, 0, -27, 5, -56, 64, -37, 0, -31, 5, -56, 92, -37, 0, -42, 5, -56, 96, -37, 0, +260 more]
 
   handleException = (ex: any) => {
     if (ex instanceof NfcError.UserCancel) {

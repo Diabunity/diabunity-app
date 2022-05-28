@@ -25,6 +25,7 @@
     "react-native": "0.67.4",
     "react-native-flipper": "^0.143.0",
     "react-native-gesture-handler": "^2.4.1",
+    "react-native-libre-manager": "git+ssh://git@github.com:diabunity/react-native-libre-manager.git",
     "react-native-nfc-manager": "^3.13.3",
     "react-native-paper": "^4.12.1",
     "react-native-reanimated": "^2.8.0",
