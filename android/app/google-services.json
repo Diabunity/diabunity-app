@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "870631938967",
+    "project_id": "diabunity-dev",
+    "storage_bucket": "diabunity-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:870631938967:android:b51a1c5a8daf4d0e80c2d2",
+        "android_client_info": {
+          "package_name": "com.diabunity"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "870631938967-ler96fhltv9apm41vj4d8de3im8h06c0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBH4ZgpOgVUVt84q_1lohxJP-fVwkekZF8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "870631938967-ler96fhltv9apm41vj4d8de3im8h06c0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
