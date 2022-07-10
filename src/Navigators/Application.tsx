@@ -41,21 +41,9 @@ const ApplicationNavigator = () => {
         <StatusBar barStyle={darkMode ? 'light-content' : 'dark-content'} />
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {user ? (
-            <Stack.Screen
-              name="Main"
-              component={MainNavigator}
-              options={{
-                animationEnabled: false,
-              }}
-            />
+            <Stack.Screen name="Main" component={MainNavigator} />
           ) : (
-            <Stack.Screen
-              name="Auth"
-              component={AuthContainer}
-              options={{
-                animationEnabled: false,
-              }}
-            />
+            <Stack.Screen name="Auth" component={AuthContainer} />
           )}
         </Stack.Navigator>
         <NfcPromptAndroid />

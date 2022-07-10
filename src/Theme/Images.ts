@@ -1,4 +1,4 @@
-import { ThemeImages, ThemeVariables } from "@/Theme/theme.type";
+import { ThemeImages, ThemeVariables } from '@/Theme/theme.type';
 
 /**
  *
@@ -7,7 +7,7 @@ import { ThemeImages, ThemeVariables } from "@/Theme/theme.type";
  */
 export default function ({}: ThemeVariables): ThemeImages {
   return {
-    logo: require("@/Assets/Images/TOM.png"),
-    nfcAndroid: require("@/Assets/Images/nfc-512.png"),
+    logo: require('@/Assets/Images/Splash-icon.png'),
+    nfcAndroid: require('@/Assets/Images/nfc-512.png'),
   };
 }
