@@ -5,7 +5,7 @@ import { useTheme } from '@/Hooks';
 import { NFCReader } from '@/Services/modules/nfc';
 import Clipboard from '@react-native-community/clipboard';
 
-const ExampleContainer = () => {
+const HomeContainer = () => {
   const { Common, Fonts, Gutters, Layout } = useTheme();
   const [nfcInstance, setNFCInstance] = useState<NFCReader>();
   const [isScanning, setIsScanning] = useState(false);
@@ -57,4 +57,4 @@ const ExampleContainer = () => {
   );
 };
 
-export default ExampleContainer;
+export default HomeContainer;
