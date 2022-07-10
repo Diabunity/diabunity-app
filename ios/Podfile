@@ -12,6 +12,8 @@ target 'Diabunity' do
     :hermes_enabled => true
   )
 
+  pod 'react-native-blur', :path => '../node_modules/@react-native-community/blur'
+
   target 'DiabunityTests' do
     inherit! :complete
     # Pods for testing
