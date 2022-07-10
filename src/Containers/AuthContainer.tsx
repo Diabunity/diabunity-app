@@ -1,30 +1,31 @@
 import React, { useState } from 'react';
-import auth from '@react-native-firebase/auth';
 import { View } from 'react-native';
 import { useTheme } from '@/Hooks';
-import { navigate } from '@/Navigators/utils';
 import { Button, Incubator } from 'react-native-ui-lib';
+import AuthService from '@/Services/modules/auth';
 
 const { Toast, TextField } = Incubator;
 
-const LoginContainer = () => {
+const AuthContainer = () => {
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
   const [error, setError] = useState<boolean>(false);
   const { Layout } = useTheme();
+
+  const handleGoogleLogIn = async () => {
+    try {
+      await AuthService.signInWithGoogle();
+    } catch {
+      setError(true);
+    }
+  };
 
   const handleLogin = async (): Promise<void> => {
     if (!email || !password) {
       return;
     }
     try {
-      const loggedInUser = await auth().signInWithEmailAndPassword(
-        email,
-        password
-      );
-      if (loggedInUser) {
-        navigate('Main', { screen: 'Home' });
-      }
+      await AuthService.signInWithEmailAndPassword(email, password);
     } catch (e) {
       setError(true);
     }
@@ -34,8 +35,8 @@ const LoginContainer = () => {
     <View style={[Layout.fill, Layout.colCenter]}>
       <Toast
         visible={error}
-        position={'top'}
-        autoDismiss={5000}
+        position="top"
+        autoDismiss={3000}
         message="There was an error logging in"
         preset={Incubator.ToastPresets.FAILURE}
         onDismiss={() => setError(false)}
@@ -70,8 +71,13 @@ const LoginContainer = () => {
         disabled={error || !email || !password}
         onPress={handleLogin}
       />
+      <Button
+        label="Google Sign-In"
+        onPress={handleGoogleLogIn}
+        backgroundColor="red"
+      />
     </View>
   );
 };
 
-export default LoginContainer;
+export default AuthContainer;
