@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View } from 'react-native';
+import { View, Image } from 'react-native';
 import { useTheme } from '@/Hooks';
 import { Button, Incubator } from 'react-native-ui-lib';
 import AuthService from '@/Services/modules/auth';
@@ -10,7 +10,7 @@ const AuthContainer = () => {
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
   const [error, setError] = useState<boolean>(false);
-  const { Layout } = useTheme();
+  const { Layout, Images } = useTheme();
 
   const handleGoogleLogIn = async () => {
     try {
@@ -33,6 +33,7 @@ const AuthContainer = () => {
 
   return (
     <View style={[Layout.fill, Layout.colCenter]}>
+      <Image style={Layout.size} source={Images.logo} />
       <Toast
         visible={error}
         position="top"
