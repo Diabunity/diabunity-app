@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, Image } from 'react-native';
+import { View, Image, StyleSheet } from 'react-native';
 import { useTheme } from '@/Hooks';
-import { Button, Incubator } from 'react-native-ui-lib';
+import { Button, Incubator, Text } from 'react-native-ui-lib';
 import AuthService from '@/Services/modules/auth';
 
 const { Toast, TextField } = Incubator;
@@ -43,8 +43,8 @@ const AuthContainer = () => {
         onDismiss={() => setError(false)}
       />
       <TextField
+        style={styles.textField}
         placeholder="Email"
-        floatingPlaceholder
         onChangeText={(value: string) => setEmail(value)}
         enableErrors
         validate={['required', 'email', (value: string) => value.length > 6]}
@@ -53,32 +53,69 @@ const AuthContainer = () => {
           'Email is invalid',
           'Password is too short',
         ]}
-        showCharCounter
         maxLength={30}
       />
       <TextField
+        style={styles.textField}
         placeholder="Password"
-        floatingPlaceholder
         onChangeText={(value: string) => setPassword(value)}
         enableErrors
         validate={['required', (value: string) => value.length > 6]}
         validationMessage={['Field is required', 'Password is too short']}
-        showCharCounter
         maxLength={30}
         secureTextEntry
       />
+      <Text style={styles.text}>¿Olvidaste tu contraseña?</Text>
       <Button
-        label="Login"
+        label={'Iniciar sesión'.toUpperCase()}
         disabled={error || !email || !password}
         onPress={handleLogin}
+        backgroundColor="#000000"
+        color="#fff"
+        borderRadius={4}
+        labelStyle={styles.button}
       />
       <Button
-        label="Google Sign-In"
+        label={'Iniciar sesión con Google'.toUpperCase()}
         onPress={handleGoogleLogIn}
-        backgroundColor="red"
+        backgroundColor="#C1272D"
+        color="#fff"
+        borderRadius={4}
+        labelStyle={styles.button}
       />
+      <Text
+        style={styles.text}
+        highlightString="Registrate"
+        highlightStyle={styles.highlight}
+      >
+        ¿No tenes cuenta? Registrate
+      </Text>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  textField: {
+    width: 277,
+    height: 52,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: 'rgba(0, 0, 0, 0.06)',
+    borderTopRightRadius: 4,
+    borderTopLeftRadius: 4,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0, 0, 0, 0.42)',
+  },
+  text: {
+    color: 'rgba(0, 0, 0, 0.5)',
+  },
+  button: {
+    letterSpacing: 1.25,
+  },
+  highlight: {
+    color: '#C1272D',
+    fontWeight: '700',
+  },
+});
 
 export default AuthContainer;
