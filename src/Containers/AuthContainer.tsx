@@ -74,7 +74,10 @@ const AuthContainer = () => {
         color="#fff"
         borderRadius={4}
         labelStyle={styles.button}
+        marginT-20
+        marginB-20
       />
+      <Text>Divider</Text>
       <Button
         label={'Iniciar sesión con Google'.toUpperCase()}
         onPress={handleGoogleLogIn}
@@ -82,9 +85,10 @@ const AuthContainer = () => {
         color="#fff"
         borderRadius={4}
         labelStyle={styles.button}
+        marginT-20
       />
       <Text
-        style={styles.text}
+        style={styles.textBottom}
         highlightString="Registrate"
         highlightStyle={styles.highlight}
       >
@@ -108,6 +112,12 @@ const styles = StyleSheet.create({
   },
   text: {
     color: 'rgba(0, 0, 0, 0.5)',
+  },
+  textBottom: {
+    color: 'rgba(0, 0, 0, 0.5)',
+    position: 'absolute',
+    bottom: 0,
+    marginBottom: 20,
   },
   button: {
     letterSpacing: 1.25,
