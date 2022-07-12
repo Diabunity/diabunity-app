@@ -6,6 +6,27 @@ import AuthService from '@/Services/modules/auth';
 
 const { Toast, TextField } = Incubator;
 
+interface FormButtonProps {
+  label: string;
+  disabledCondition?: boolean;
+  onPress: () => void;
+  backgroundColor: string;
+};
+
+const FormButton = ({ label, disabledCondition, onPress, backgroundColor }: FormButtonProps) => (
+  <Button
+    label={label.toUpperCase()}
+    disabled={disabledCondition ?? false}
+    onPress={onPress}
+    backgroundColor={backgroundColor}
+    color="#fff"
+    borderRadius={4}
+    labelStyle={styles.button}
+    marginT-20
+    marginB-20
+  />
+);
+
 const AuthContainer = () => {
   const [isLoginFlow, setIsLoginFlow] = useState(true); // TODO: Use this to switch between login and signup
   const [email, setEmail] = useState<string>();
@@ -67,30 +88,21 @@ const AuthContainer = () => {
         secureTextEntry
       />
       <Text style={styles.text}>¿Olvidaste tu contraseña?</Text>
-      <Button
-        label={'Iniciar sesión'.toUpperCase()}
-        disabled={error || !email || !password}
+      <FormButton
+        label='Iniciar sesión'
+        disabledCondition={error || !email || !password}
         onPress={handleLogin}
-        backgroundColor="#000000"
-        color="#fff"
-        borderRadius={4}
-        labelStyle={styles.button}
-        marginT-20
-        marginB-20
+        backgroundColor="#000"
       />
       <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
         <Text style={styles.divider} />
         <Text>O</Text>
         <Text style={styles.divider} />
       </View>
-      <Button
-        label={'Iniciar sesión con Google'.toUpperCase()}
+      <FormButton
+        label='Iniciar sesión con Google'
         onPress={handleGoogleLogIn}
         backgroundColor="#C1272D"
-        color="#fff"
-        borderRadius={4}
-        labelStyle={styles.button}
-        marginT-20
       />
       <Text
         style={styles.textBottom}
