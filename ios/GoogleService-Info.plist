@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>870631938967-2o3euj7onui0g0bh0nmnlgrmo8545pgv.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.870631938967-2o3euj7onui0g0bh0nmnlgrmo8545pgv</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>870631938967-i16djqhuo74oq3umr0tjiieo86o6gbdb.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyA9wwS10y5ViUMLIPaBuoMAaFtWOD-hQ8w</string>
+	<key>GCM_SENDER_ID</key>
+	<string>870631938967</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>diabunity</string>
+	<key>PROJECT_ID</key>
+	<string>diabunity-dev</string>
+	<key>STORAGE_BUCKET</key>
+	<string>diabunity-dev.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:870631938967:ios:1d9cdd6abe62ebb580c2d2</string>
+</dict>
+</plist>
