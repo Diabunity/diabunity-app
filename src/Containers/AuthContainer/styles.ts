@@ -2,7 +2,12 @@ import { StyleSheet } from 'react-native';
 
 const grayText = 'rgba(0, 0, 0, 0.5)';
 
-export default StyleSheet.create({
+export const colors = {
+  black: '#000', // TODO: This should be moved into an upper scope as it is used in the app.
+  red: '#C1272D',
+};
+
+export const styles =  StyleSheet.create({
   textField: {
     width: 277,
     height: 52,
@@ -31,7 +36,7 @@ export default StyleSheet.create({
     marginHorizontal: 22,
   },
   highlight: {
-    color: '#C1272D',
+    color: colors.red,
     fontWeight: '700',
   },
 });

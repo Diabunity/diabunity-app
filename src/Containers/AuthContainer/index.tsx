@@ -4,7 +4,7 @@ import { useTheme } from '@/Hooks';
 import { Incubator, Text } from 'react-native-ui-lib';
 import { FormButton } from '@/Components';
 import AuthService from '@/Services/modules/auth';
-import styles from './styles';
+import { styles, colors } from './styles';
 
 const { Toast, TextField } = Incubator;
 
@@ -73,7 +73,7 @@ const AuthContainer = () => {
         label='Iniciar sesión'
         disabledCondition={error || !email || !password}
         onPress={handleLogin}
-        backgroundColor="#000"
+        backgroundColor={colors.black}
       />
       <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
         <Text style={styles.divider} />
@@ -83,7 +83,7 @@ const AuthContainer = () => {
       <FormButton
         label='Iniciar sesión con Google'
         onPress={handleGoogleLogIn}
-        backgroundColor="#C1272D"
+        backgroundColor={colors.red}
       />
       <Text
         style={styles.textBottom}
