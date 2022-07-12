@@ -7,6 +7,7 @@ import AuthService from '@/Services/modules/auth';
 const { Toast, TextField } = Incubator;
 
 const AuthContainer = () => {
+  const [isLoginFlow, setIsLoginFlow] = useState(true);
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
   const [error, setError] = useState<boolean>(false);
@@ -77,7 +78,11 @@ const AuthContainer = () => {
         marginT-20
         marginB-20
       />
-      <Text>Divider</Text>
+      <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+        <Text style={styles.divider} />
+        <Text>O</Text>
+        <Text style={styles.divider} />
+      </View>
       <Button
         label={'Iniciar sesión con Google'.toUpperCase()}
         onPress={handleGoogleLogIn}
@@ -121,6 +126,13 @@ const styles = StyleSheet.create({
   },
   button: {
     letterSpacing: 1.25,
+  },
+  divider: {
+    width: 137,
+    height: 10,
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'rgba(0, 0, 0, 0.5)',
+    marginHorizontal: 22,
   },
   highlight: {
     color: '#C1272D',
