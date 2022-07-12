@@ -1,31 +1,12 @@
 import React, { useState } from 'react';
 import { View, Image, StyleSheet } from 'react-native';
 import { useTheme } from '@/Hooks';
-import { Button, Incubator, Text } from 'react-native-ui-lib';
+import { Incubator, Text } from 'react-native-ui-lib';
+import { FormButton } from '@/Components';
 import AuthService from '@/Services/modules/auth';
+import styles from './styles';
 
 const { Toast, TextField } = Incubator;
-
-interface FormButtonProps {
-  label: string;
-  disabledCondition?: boolean;
-  onPress: () => void;
-  backgroundColor: string;
-};
-
-const FormButton = ({ label, disabledCondition, onPress, backgroundColor }: FormButtonProps) => (
-  <Button
-    label={label.toUpperCase()}
-    disabled={disabledCondition ?? false}
-    onPress={onPress}
-    backgroundColor={backgroundColor}
-    color="#fff"
-    borderRadius={4}
-    labelStyle={styles.button}
-    marginT-20
-    marginB-20
-  />
-);
 
 const AuthContainer = () => {
   const [isLoginFlow, setIsLoginFlow] = useState(true); // TODO: Use this to switch between login and signup
@@ -114,42 +95,5 @@ const AuthContainer = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  textField: {
-    width: 277,
-    height: 52,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    backgroundColor: 'rgba(0, 0, 0, 0.06)',
-    borderTopRightRadius: 4,
-    borderTopLeftRadius: 4,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.42)',
-  },
-  text: {
-    color: 'rgba(0, 0, 0, 0.5)',
-  },
-  textBottom: {
-    color: 'rgba(0, 0, 0, 0.5)',
-    position: 'absolute',
-    bottom: 0,
-    marginBottom: 20,
-  },
-  button: {
-    letterSpacing: 1.25,
-  },
-  divider: {
-    width: 137,
-    height: 10,
-    borderBottomWidth: 0.5,
-    borderBottomColor: 'rgba(0, 0, 0, 0.5)',
-    marginHorizontal: 22,
-  },
-  highlight: {
-    color: '#C1272D',
-    fontWeight: '700',
-  },
-});
 
 export default AuthContainer;
