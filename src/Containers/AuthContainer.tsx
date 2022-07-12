@@ -7,7 +7,7 @@ import AuthService from '@/Services/modules/auth';
 const { Toast, TextField } = Incubator;
 
 const AuthContainer = () => {
-  const [isLoginFlow, setIsLoginFlow] = useState(true);
+  const [isLoginFlow, setIsLoginFlow] = useState(true); // TODO: Use this to switch between login and signup
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
   const [error, setError] = useState<boolean>(false);
