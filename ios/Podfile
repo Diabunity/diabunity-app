@@ -5,14 +5,11 @@ platform :ios, '15.0'
 
 target 'Diabunity' do
   config = use_native_modules!
-
   use_react_native!(
     :path => config[:reactNativePath],
     # to enable hermes on iOS, change `false` to `true` and then install pods
     :hermes_enabled => true
   )
-
-  pod 'react-native-blur', :path => '../node_modules/@react-native-community/blur'
 
   target 'DiabunityTests' do
     inherit! :complete
@@ -23,10 +20,12 @@ target 'Diabunity' do
   #
   # Note that if you have use_frameworks! enabled, Flipper will not work and
   # you should disable the next line.
-  use_flipper!()
+  # use_flipper!({'Flipper' => '0.87.0' , 'Flipper-Folly' => '2.5.3' , 'Flipper-RSocket' => '1.3.1' })
+  # use_flipper!({ 'Flipper-Folly' => '2.6' })
+  use_flipper!({ 'Flipper' => '0.95.0', 'Flipper-Folly' => '2.6.7', 'Flipper-DoubleConversion' => '3.1.7' })
 
-  post_install do |installer|
-    react_native_post_install(installer)
-    __apply_Xcode_12_5_M1_post_install_workaround(installer)
-  end
+  #post_install do |installer|
+   # react_native_post_install(installer)
+    #__apply_Xcode_12_5_M1_post_install_workaround(installer)
+  #end
 end
