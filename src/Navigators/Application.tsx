@@ -3,7 +3,11 @@ import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { SafeAreaView, StatusBar } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
-import { StartupContainer, AuthContainer } from '@/Containers';
+import {
+  StartupContainer,
+  SignInContainer,
+  SignUpContainer,
+} from '@/Containers';
 import { useTheme } from '@/Hooks';
 import MainNavigator from './Main';
 import { navigationRef } from './utils';
@@ -43,7 +47,10 @@ const ApplicationNavigator = () => {
           {user ? (
             <Stack.Screen name="Main" component={MainNavigator} />
           ) : (
-            <Stack.Screen name="Auth" component={AuthContainer} />
+            <>
+              <Stack.Screen name="SignIn" component={SignInContainer} />
+              <Stack.Screen name="SignUp" component={SignUpContainer} />
+            </>
           )}
         </Stack.Navigator>
         <NfcPromptAndroid />
