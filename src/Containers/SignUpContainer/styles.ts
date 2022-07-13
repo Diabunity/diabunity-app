@@ -26,4 +26,8 @@ export const styles = StyleSheet.create({
     borderBottomColor: grayText,
     marginHorizontal: 22,
   },
+  googleButton: {
+    width: 277,
+    margin: 0,
+  },
 });

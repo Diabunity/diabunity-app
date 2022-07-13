@@ -131,11 +131,13 @@ const SignUpContainer = () => {
         <Text>O</Text>
         <Text style={styles.divider} />
       </View>
-      <FormButton
-        label="Registrarse con Google"
-        onPress={handleGoogleSignUp}
-        backgroundColor={colors.red}
-      />
+      <View style={styles.googleButton}>
+        <FormButton
+          label="Registrarse con Google"
+          onPress={handleGoogleSignUp}
+          backgroundColor={colors.red}
+        />
+      </View>
     </View>
   );
 };
