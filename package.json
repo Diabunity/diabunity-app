@@ -44,8 +44,7 @@
     "react-native-ui-lib": "^6.18.0",
     "react-redux": "^8.0.1",
     "redux-flipper": "^2.0.1",
-    "redux-persist": "^6.0.0",
-    "styled-components": "^5.3.5"
+    "redux-persist": "^6.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
