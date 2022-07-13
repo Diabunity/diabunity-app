@@ -7,7 +7,7 @@ export const colors = {
   red: '#C1272D',
 };
 
-export const styles =  StyleSheet.create({
+export const styles = StyleSheet.create({
   textField: {
     width: 277,
     height: 52,
@@ -30,13 +30,23 @@ export const styles =  StyleSheet.create({
   },
   divider: {
     width: 137,
-    height: 10,
-    borderBottomWidth: 0.5,
+    height: 0.1,
+    borderWidth: 0.16,
+    borderBottomWidth: 0.2,
+    position: 'relative',
+    top: 8,
     borderBottomColor: grayText,
     marginHorizontal: 22,
+  },
+  dividerLetter: {
+    color: grayText,
   },
   highlight: {
     color: colors.red,
     fontWeight: '700',
+  },
+  googleButton: {
+    width: 277,
+    margin: 0,
   },
 });

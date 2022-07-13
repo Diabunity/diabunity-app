@@ -6,10 +6,15 @@ interface FormButtonProps {
   label: string;
   disabledCondition?: boolean;
   onPress: () => void;
-  backgroundColor: string;
-};
-  
-const FormButton = ({ label, disabledCondition, onPress, backgroundColor }: FormButtonProps) => (
+  backgroundColor?: string;
+}
+
+const FormButton = ({
+  label,
+  disabledCondition,
+  onPress,
+  backgroundColor,
+}: FormButtonProps) => (
   <Button
     label={label.toUpperCase()}
     disabled={disabledCondition ?? false}
@@ -26,6 +31,8 @@ const FormButton = ({ label, disabledCondition, onPress, backgroundColor }: Form
 const styles = StyleSheet.create({
   label: {
     letterSpacing: 1.25,
+    fontSize: 14,
+    fontWeight: "500",
   },
 });
 
