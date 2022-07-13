@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, Image, StyleSheet } from 'react-native';
-import { useTheme } from '@/Hooks';
+import { View, Image } from 'react-native';
 import { Incubator, Text } from 'react-native-ui-lib';
+import { useTheme } from '@/Hooks';
 import { FormButton } from '@/Components';
 import AuthService from '@/Services/modules/auth';
 import { styles, colors } from './styles';
@@ -60,7 +60,7 @@ const AuthContainer = () => {
       />
       <TextField
         style={styles.textField}
-        placeholder="Password"
+        placeholder="Contraseña"
         onChangeText={(value: string) => setPassword(value)}
         enableErrors
         validate={['required', (value: string) => value.length > 6]}
@@ -70,27 +70,29 @@ const AuthContainer = () => {
       />
       <Text style={styles.text}>¿Olvidaste tu contraseña?</Text>
       <FormButton
-        label='Iniciar sesión'
+        label="Iniciar sesión"
         disabledCondition={error || !email || !password}
         onPress={handleLogin}
         backgroundColor={colors.black}
       />
       <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
         <Text style={styles.divider} />
-        <Text>O</Text>
+        <Text style={styles.dividerLetter}>O</Text>
         <Text style={styles.divider} />
       </View>
-      <FormButton
-        label='Iniciar sesión con Google'
-        onPress={handleGoogleLogIn}
-        backgroundColor={colors.red}
-      />
+      <View style={styles.googleButton}>
+        <FormButton
+          label="Iniciar sesión con Google"
+          onPress={handleGoogleLogIn}
+          backgroundColor={colors.red}
+        />
+      </View>
       <Text
         style={styles.textBottom}
         highlightString="Registrate"
         highlightStyle={styles.highlight}
       >
-        ¿No tenes cuenta? Registrate
+        ¿No tenés cuenta? Registrate
       </Text>
     </View>
   );
