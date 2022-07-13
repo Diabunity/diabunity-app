@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Image, StyleSheet } from 'react-native';
+import { View, Image } from 'react-native';
 import { useTheme } from '@/Hooks';
 import { Incubator, Text } from 'react-native-ui-lib';
 import { FormButton } from '@/Components';
@@ -8,14 +8,13 @@ import { styles, colors } from './styles';
 
 const { Toast, TextField } = Incubator;
 
-const AuthContainer = () => {
-  const [isLoginFlow, setIsLoginFlow] = useState(true); // TODO: Use this to switch between login and signup
-  const [email, setEmail] = useState<string>();
-  const [password, setPassword] = useState<string>();
+const SignInContainer = ({ navigation: { navigate } }: any) => {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<boolean>(false);
   const { Layout, Images } = useTheme();
 
-  const handleGoogleLogIn = async () => {
+  const handleGoogleLogIn = async (): Promise<void> => {
     try {
       await AuthService.signInWithGoogle();
     } catch {
@@ -41,7 +40,7 @@ const AuthContainer = () => {
         visible={error}
         position="top"
         autoDismiss={3000}
-        message="There was an error logging in"
+        message="Ups, hubo un problema al iniciar sesión"
         preset={Incubator.ToastPresets.FAILURE}
         onDismiss={() => setError(false)}
       />
@@ -50,27 +49,27 @@ const AuthContainer = () => {
         placeholder="Email"
         onChangeText={(value: string) => setEmail(value)}
         enableErrors
-        validate={['required', 'email', (value: string) => value.length > 6]}
-        validationMessage={[
-          'Field is required',
-          'Email is invalid',
-          'Password is too short',
-        ]}
+        validate={['required', 'email']}
+        validationMessage={['Este campo es requerido', 'El email es inválido']}
         maxLength={30}
       />
       <TextField
         style={styles.textField}
-        placeholder="Password"
+        placeholder="Contraseña"
         onChangeText={(value: string) => setPassword(value)}
         enableErrors
         validate={['required', (value: string) => value.length > 6]}
-        validationMessage={['Field is required', 'Password is too short']}
+        validationMessage={[
+          'Este campo es requerido',
+          'La contraseña es muy corta',
+        ]}
         maxLength={30}
         secureTextEntry
+        validateOnChange
       />
       <Text style={styles.text}>¿Olvidaste tu contraseña?</Text>
       <FormButton
-        label='Iniciar sesión'
+        label="Iniciar sesión"
         disabledCondition={error || !email || !password}
         onPress={handleLogin}
         backgroundColor={colors.black}
@@ -81,7 +80,7 @@ const AuthContainer = () => {
         <Text style={styles.divider} />
       </View>
       <FormButton
-        label='Iniciar sesión con Google'
+        label="Iniciar sesión con Google"
         onPress={handleGoogleLogIn}
         backgroundColor={colors.red}
       />
@@ -89,6 +88,7 @@ const AuthContainer = () => {
         style={styles.textBottom}
         highlightString="Registrate"
         highlightStyle={styles.highlight}
+        onPress={() => navigate('SignUp')}
       >
         ¿No tenes cuenta? Registrate
       </Text>
@@ -96,4 +96,4 @@ const AuthContainer = () => {
   );
 };
 
-export default AuthContainer;
+export default SignInContainer;
