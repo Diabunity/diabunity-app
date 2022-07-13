@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Image } from 'react-native';
-import { useTheme } from '@/Hooks';
 import { Incubator, Text } from 'react-native-ui-lib';
+import { useTheme } from '@/Hooks';
 import { FormButton } from '@/Components';
 import AuthService from '@/Services/modules/auth';
 import { styles, colors } from './styles';
@@ -76,21 +76,23 @@ const SignInContainer = ({ navigation: { navigate } }: any) => {
       />
       <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
         <Text style={styles.divider} />
-        <Text>O</Text>
+        <Text style={styles.dividerLetter}>O</Text>
         <Text style={styles.divider} />
       </View>
-      <FormButton
-        label="Iniciar sesión con Google"
-        onPress={handleGoogleLogIn}
-        backgroundColor={colors.red}
-      />
+      <View style={styles.googleButton}>
+        <FormButton
+          label="Iniciar sesión con Google"
+          onPress={handleGoogleLogIn}
+          backgroundColor={colors.red}
+        />
+      </View>
       <Text
         style={styles.textBottom}
         highlightString="Registrate"
         highlightStyle={styles.highlight}
         onPress={() => navigate('SignUp')}
       >
-        ¿No tenes cuenta? Registrate
+        ¿No tenés cuenta? Registrate
       </Text>
     </View>
   );
