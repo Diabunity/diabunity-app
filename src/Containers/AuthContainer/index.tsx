@@ -141,7 +141,11 @@ const AuthContainer = ({ route, navigation: { navigate } }: Props) => {
           validateOnChange
         />
       )}
-      {!isSignUp && <Text style={styles.text}>¿Olvidaste tu contraseña?</Text>}
+      {!isSignUp && (
+        <Text style={styles.text} onPress={() => navigate('ForgotPassword')}>
+          ¿Olvidaste tu contraseña?
+        </Text>
+      )}
       <FormButton
         label={isSignUp ? 'Registrarse' : 'Iniciar sesión'}
         disabledCondition={
@@ -151,7 +155,6 @@ const AuthContainer = ({ route, navigation: { navigate } }: Props) => {
           (isSignUp ? !name || !repeatedPassword : false)
         }
         onPress={isSignUp ? handleSignUp : handleSignIn}
-        backgroundColor={colors.black}
       />
       <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
         <Text style={styles.divider} />
