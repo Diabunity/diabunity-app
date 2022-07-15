@@ -6,9 +6,14 @@ import { FormButton } from '@/Components';
 import AuthService from '@/Services/modules/auth';
 import { styles, colors } from './styles';
 
+import type { NavigatorParams } from '../../Navigators/Application';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+
 const { Toast, TextField } = Incubator;
 
-const AuthContainer = ({ route, navigation: { navigate } }: any) => {
+type Props = NativeStackScreenProps<NavigatorParams, 'SignIn' | 'SignUp'>;
+
+const AuthContainer = ({ route, navigation: { navigate } }: Props) => {
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');

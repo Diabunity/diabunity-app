@@ -9,7 +9,13 @@ import MainNavigator from './Main';
 import { navigationRef } from './utils';
 import { NfcPromptAndroid } from '@/Components';
 
-const Stack = createStackNavigator();
+export type NavigatorParams = {
+  Main: undefined;
+  SignIn: undefined;
+  SignUp: undefined;
+};
+
+const Stack = createStackNavigator<NavigatorParams>();
 
 // @refresh reset
 const ApplicationNavigator = () => {
