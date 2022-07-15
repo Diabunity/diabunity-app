@@ -3,8 +3,7 @@ import { StyleSheet } from 'react-native';
 const grayText = 'rgba(0, 0, 0, 0.5)';
 
 export const colors = {
-  black: '#000', // TODO: This should be moved into an upper scope as it is used in the app.
-  red: '#C1272D',
+  red: '#C1272D', // TODO: This should be moved into an upper scope as it is used in the app.
 };
 
 export const styles = StyleSheet.create({
