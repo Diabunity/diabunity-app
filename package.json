@@ -25,6 +25,7 @@
     "@react-native-picker/picker": "^2.4.2",
     "@react-navigation/bottom-tabs": "^6.3.1",
     "@react-navigation/native": "^6.0.10",
+    "@react-navigation/native-stack": "^6.7.0",
     "@react-navigation/stack": "^6.2.1",
     "@reduxjs/toolkit": "^1.8.1",
     "i18next": "^21.6.16",
