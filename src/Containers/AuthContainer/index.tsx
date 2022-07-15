@@ -66,7 +66,9 @@ const AuthContainer = ({ route, navigation: { navigate } }: any) => {
         visible={error}
         position="top"
         autoDismiss={3000}
-        message="Ups, hubo un problema al iniciar sesión"
+        message={`Ups, hubo un problema al ${
+          isSignUp ? 'registrarse' : 'iniciar sesión'
+        }`}
         preset={Incubator.ToastPresets.FAILURE}
         onDismiss={() => setError(false)}
       />
