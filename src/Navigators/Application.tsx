@@ -9,7 +9,13 @@ import MainNavigator from './Main';
 import { navigationRef } from './utils';
 import { NfcPromptAndroid } from '@/Components';
 
-const Stack = createStackNavigator();
+export type NavigatorParams = {
+  Main: undefined;
+  SignIn: undefined;
+  SignUp: undefined;
+};
+
+const Stack = createStackNavigator<NavigatorParams>();
 
 // @refresh reset
 const ApplicationNavigator = () => {
@@ -43,7 +49,10 @@ const ApplicationNavigator = () => {
           {user ? (
             <Stack.Screen name="Main" component={MainNavigator} />
           ) : (
-            <Stack.Screen name="Auth" component={AuthContainer} />
+            <>
+              <Stack.Screen name="SignIn" component={AuthContainer} />
+              <Stack.Screen name="SignUp" component={AuthContainer} />
+            </>
           )}
         </Stack.Navigator>
         <NfcPromptAndroid />

@@ -6,16 +6,37 @@ import { FormButton } from '@/Components';
 import AuthService from '@/Services/modules/auth';
 import { styles, colors } from './styles';
 
+import type { NavigatorParams } from '../../Navigators/Application';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+
 const { Toast, TextField } = Incubator;
 
-const AuthContainer = () => {
-  const [isLoginFlow, setIsLoginFlow] = useState(true); // TODO: Use this to switch between login and signup
-  const [email, setEmail] = useState<string>();
-  const [password, setPassword] = useState<string>();
+type Props = NativeStackScreenProps<NavigatorParams, 'SignIn' | 'SignUp'>;
+
+const AuthContainer = ({ route, navigation: { navigate } }: Props) => {
+  const [name, setName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [repeatedPassword, setRepeatedPassword] = useState<string>('');
   const [error, setError] = useState<boolean>(false);
   const { Layout, Images } = useTheme();
 
-  const handleGoogleLogIn = async () => {
+  const refs: any = [];
+
+  const isSignUp = route.name === 'SignUp';
+
+  const isFormValid = (): boolean => {
+    for (let i = 0; i < refs.length; i++) {
+      if (!refs[i].isValid()) {
+        refs[i].focus();
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  const handleGoogleButton = async (): Promise<void> => {
     try {
       await AuthService.signInWithGoogle();
     } catch {
@@ -23,14 +44,23 @@ const AuthContainer = () => {
     }
   };
 
-  const handleLogin = async (): Promise<void> => {
-    if (!email || !password) {
-      return;
+  const handleSignIn = async (): Promise<void> => {
+    if (isFormValid()) {
+      try {
+        await AuthService.signInWithEmailAndPassword(email, password);
+      } catch (e) {
+        setError(true);
+      }
     }
-    try {
-      await AuthService.signInWithEmailAndPassword(email, password);
-    } catch (e) {
-      setError(true);
+  };
+
+  const handleSignUp = async (): Promise<void> => {
+    if (isFormValid()) {
+      try {
+        await AuthService.signUpWithEmailAndPassword(name, email, password);
+      } catch (e) {
+        setError(true);
+      }
     }
   };
 
@@ -41,38 +71,86 @@ const AuthContainer = () => {
         visible={error}
         position="top"
         autoDismiss={3000}
-        message="There was an error logging in"
+        message={`Ups, hubo un problema al ${
+          isSignUp ? 'registrarse' : 'iniciar sesión'
+        }`}
         preset={Incubator.ToastPresets.FAILURE}
         onDismiss={() => setError(false)}
       />
+      {isSignUp && (
+        <TextField
+          style={styles.textField}
+          ref={(ref: any) => refs.push(ref)}
+          placeholder="Nombre"
+          onChangeText={(value: string) => setName(value)}
+          enableErrors
+          validate={['required', (value: string) => value.length > 3]}
+          validationMessage={[
+            'Este campo es requerido',
+            'El texto debe ser mayor a 3 caracteres',
+          ]}
+          validateOnChange
+          maxLength={30}
+        />
+      )}
       <TextField
         style={styles.textField}
+        ref={(ref: any) => refs.push(ref)}
         placeholder="Email"
         onChangeText={(value: string) => setEmail(value)}
         enableErrors
-        validate={['required', 'email', (value: string) => value.length > 6]}
-        validationMessage={[
-          'Field is required',
-          'Email is invalid',
-          'Password is too short',
-        ]}
+        validate={['required', 'email']}
+        validateOnChange
+        validationMessage={['Este campo es requerido', 'El email es inválido']}
         maxLength={30}
       />
       <TextField
         style={styles.textField}
+        ref={(ref: any) => refs.push(ref)}
         placeholder="Contraseña"
         onChangeText={(value: string) => setPassword(value)}
         enableErrors
         validate={['required', (value: string) => value.length > 6]}
-        validationMessage={['Field is required', 'Password is too short']}
+        validationMessage={[
+          'Este campo es requerido',
+          'La contraseña es muy corta',
+        ]}
         maxLength={30}
         secureTextEntry
+        validateOnChange
       />
-      <Text style={styles.text}>¿Olvidaste tu contraseña?</Text>
+      {isSignUp && (
+        <TextField
+          style={styles.textField}
+          ref={(ref: any) => refs.push(ref)}
+          placeholder="Repetir contraseña"
+          onChangeText={(value: string) => setRepeatedPassword(value)}
+          enableErrors
+          validate={[
+            'required',
+            (value: string) => value.length > 6,
+            (value: string) => value === password,
+          ]}
+          validationMessage={[
+            'Este campo es requerido',
+            'La contraseña es muy corta',
+            'Las contraseñas no coinciden',
+          ]}
+          maxLength={30}
+          secureTextEntry
+          validateOnChange
+        />
+      )}
+      {!isSignUp && <Text style={styles.text}>¿Olvidaste tu contraseña?</Text>}
       <FormButton
-        label="Iniciar sesión"
-        disabledCondition={error || !email || !password}
-        onPress={handleLogin}
+        label={isSignUp ? 'Registrarse' : 'Iniciar sesión'}
+        disabledCondition={
+          error ||
+          !email ||
+          !password ||
+          (isSignUp ? !name || !repeatedPassword : false)
+        }
+        onPress={isSignUp ? handleSignUp : handleSignIn}
         backgroundColor={colors.black}
       />
       <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
@@ -82,18 +160,23 @@ const AuthContainer = () => {
       </View>
       <View style={styles.googleButton}>
         <FormButton
-          label="Iniciar sesión con Google"
-          onPress={handleGoogleLogIn}
+          label={
+            isSignUp ? 'Registrarse con Google' : 'Iniciar sesión con Google'
+          }
+          onPress={handleGoogleButton}
           backgroundColor={colors.red}
         />
       </View>
-      <Text
-        style={styles.textBottom}
-        highlightString="Registrate"
-        highlightStyle={styles.highlight}
-      >
-        ¿No tenés cuenta? Registrate
-      </Text>
+      {!isSignUp && (
+        <Text
+          style={styles.textBottom}
+          highlightString="Registrate"
+          highlightStyle={styles.highlight}
+          onPress={() => navigate('SignUp')}
+        >
+          ¿No tenés cuenta? Registrate
+        </Text>
+      )}
     </View>
   );
 };
