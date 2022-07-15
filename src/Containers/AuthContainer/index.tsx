@@ -39,7 +39,7 @@ const AuthContainer = ({ route, navigation: { navigate } }: any) => {
     }
   };
 
-  const handSignIn = async (): Promise<void> => {
+  const handleSignIn = async (): Promise<void> => {
     if (isFormValid()) {
       try {
         await AuthService.signInWithEmailAndPassword(email, password);
@@ -145,7 +145,7 @@ const AuthContainer = ({ route, navigation: { navigate } }: any) => {
           !password ||
           (isSignUp ? !name || !repeatedPassword : false)
         }
-        onPress={isSignUp ? handleSignUp : handSignIn}
+        onPress={isSignUp ? handleSignUp : handleSignIn}
         backgroundColor={colors.black}
       />
       <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
