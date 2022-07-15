@@ -13,7 +13,7 @@ const FormButton = ({
   label,
   disabledCondition,
   onPress,
-  backgroundColor,
+  backgroundColor = '#000', // TODO: This default color must be extracted from the theme or an upper scope
 }: FormButtonProps) => (
   <Button
     label={label.toUpperCase()}
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
   label: {
     letterSpacing: 1.25,
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: '500',
   },
 });
 
