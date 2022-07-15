@@ -3,7 +3,11 @@ import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { SafeAreaView, StatusBar } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
-import { StartupContainer, AuthContainer } from '@/Containers';
+import {
+  StartupContainer,
+  AuthContainer,
+  ForgotPasswordContainer,
+} from '@/Containers';
 import { useTheme } from '@/Hooks';
 import MainNavigator from './Main';
 import { navigationRef } from './utils';
@@ -13,6 +17,7 @@ export type NavigatorParams = {
   Main: undefined;
   SignIn: undefined;
   SignUp: undefined;
+  ForgotPassword: undefined;
 };
 
 const Stack = createStackNavigator<NavigatorParams>();
@@ -52,6 +57,10 @@ const ApplicationNavigator = () => {
             <>
               <Stack.Screen name="SignIn" component={AuthContainer} />
               <Stack.Screen name="SignUp" component={AuthContainer} />
+              <Stack.Screen
+                name="ForgotPassword"
+                component={ForgotPasswordContainer}
+              />
             </>
           )}
         </Stack.Navigator>
