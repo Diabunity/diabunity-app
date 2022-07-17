@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import {
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+  Dimensions,
+} from 'react-native';
 import { useTheme } from '@/Hooks';
+import { LineChart } from 'react-native-chart-kit';
 
 import { NFCReader } from '@/Services/modules/nfc';
 import Clipboard from '@react-native-community/clipboard';
@@ -9,6 +16,14 @@ const HomeContainer = () => {
   const { Common, Fonts, Gutters, Layout } = useTheme();
   const [nfcInstance, setNFCInstance] = useState<NFCReader>();
   const [isScanning, setIsScanning] = useState(false);
+  const [currentDot, setCurrentDot] = useState<number | null>(null);
+
+  const onDataPointClick = (data: any) => {
+    setCurrentDot(data.value);
+    setTimeout(() => {
+      setCurrentDot(null);
+    }, 1500);
+  };
 
   useEffect(() => {
     const init = async () => {
@@ -45,6 +60,43 @@ const HomeContainer = () => {
         Gutters.smallHPadding,
       ]}
     >
+      <LineChart
+        data={{
+          labels: ['15:00', '15:37', '16:04', '16:21', '17:40', '18:04'],
+          datasets: [
+            {
+              data: [93, 110, 124, 140, 121, 89],
+            },
+          ],
+        }}
+        width={Dimensions.get('window').width - 10} // from react-native
+        height={260}
+        yAxisSuffix="mg/dL"
+        yAxisInterval={1} // optional, defaults to 1
+        chartConfig={{
+          backgroundColor: '#e26a00',
+          backgroundGradientFrom: '#fb8c00',
+          backgroundGradientTo: '#ffa726',
+          decimalPlaces: 0, // optional, defaults to 2dp
+          color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+          labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+          style: {
+            borderRadius: 16,
+          },
+          propsForDots: {
+            r: '6',
+            strokeWidth: '2',
+            stroke: '#ffa726',
+          },
+        }}
+        bezier
+        onDataPointClick={(data) => onDataPointClick(data)}
+        style={{
+          marginVertical: 8,
+          borderRadius: 16,
+        }}
+      />
+      <Text style={{ color: 'black', fontSize: 20 }}>{currentDot}</Text>
       <TouchableOpacity
         style={[Common.button.rounded, Gutters.regularBMargin, { height: 50 }]}
         onPress={onTag}
