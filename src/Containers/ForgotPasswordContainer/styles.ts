@@ -2,11 +2,15 @@ import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   text: {
-    width: 283,
+    width: 267,
     paddingBottom: 22,
+    textAlign: 'center',
+    fontWeight: '400',
+    fontSize: 14,
+    lineHeight: 19,
   },
   textField: {
-    width: 277,
+    width: 257,
     height: 52,
     paddingVertical: 8,
     paddingHorizontal: 12,
