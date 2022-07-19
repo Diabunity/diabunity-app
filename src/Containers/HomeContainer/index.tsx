@@ -8,9 +8,10 @@ import {
 } from 'react-native';
 import { useTheme } from '@/Hooks';
 import { LineChart } from 'react-native-chart-kit';
-
 import { NFCReader } from '@/Services/modules/nfc';
 import Clipboard from '@react-native-community/clipboard';
+
+import Table, { TableBuilder, TENDENCY } from './Table';
 
 const HomeContainer = () => {
   const { Common, Fonts, Gutters, Layout } = useTheme();
@@ -30,7 +31,7 @@ const HomeContainer = () => {
       const NFCObj = new NFCReader();
       const supported = await NFCObj.init();
       if (!supported) {
-        Alert.alert('NFC is not supported');
+        // Alert.alert('NFC is not supported');
       } else {
         setNFCInstance(NFCObj);
       }
@@ -54,12 +55,27 @@ const HomeContainer = () => {
   return (
     <ScrollView
       style={Layout.fill}
-      contentContainerStyle={[
-        Layout.fill,
-        Layout.colCenter,
-        Gutters.smallHPadding,
-      ]}
+      contentContainerStyle={{
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 15,
+        marginLeft: 20,
+        marginRight: 20,
+      }}
     >
+      <Text
+        style={{
+          fontSize: 16,
+          lineHeight: 24,
+          width: '100%',
+          textAlign: 'center',
+          borderBottomColor: 'rgba(0, 0, 0, 0.12)',
+          borderBottomWidth: 1,
+        }}
+      >
+        Últimas 24 horas
+      </Text>
       <LineChart
         data={{
           labels: ['15:00', '15:37', '16:04', '16:21', '17:40', '18:04'],
@@ -70,7 +86,7 @@ const HomeContainer = () => {
           ],
         }}
         width={Dimensions.get('window').width - 10} // from react-native
-        height={260}
+        height={202}
         yAxisSuffix="mg/dL"
         yAxisInterval={1} // optional, defaults to 1
         chartConfig={{
@@ -93,8 +109,16 @@ const HomeContainer = () => {
         onDataPointClick={(data) => onDataPointClick(data)}
         style={{
           marginVertical: 8,
-          borderRadius: 16,
         }}
+      />
+      <Table
+        tendency={TENDENCY.UP}
+        data={new TableBuilder()
+          .periodInTarget(45)
+          .lastScanMeasure(76)
+          .average(134)
+          .sensorLife(4)
+          .build()}
       />
       <Text style={{ color: 'black', fontSize: 20 }}>{currentDot}</Text>
       <TouchableOpacity
