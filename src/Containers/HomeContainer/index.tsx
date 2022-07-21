@@ -113,6 +113,7 @@ const HomeContainer = () => {
       />
       <Table
         tendency={TENDENCY.UP}
+        // TODO : All these values should be fetched from the API/LocalStorage
         data={new TableBuilder()
           .periodInTarget(45)
           .lastScanMeasure(76)

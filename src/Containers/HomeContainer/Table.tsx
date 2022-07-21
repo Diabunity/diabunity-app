@@ -28,17 +28,23 @@ interface Row {
   value: string;
 }
 
+const COLORS: { [key in TENDENCY]: string } = {
+  [TENDENCY.UP]: '#C1272D',
+  [TENDENCY.DOWN]: 'green',
+  [TENDENCY.EQUAL]: '#C1272D', // TODO: Which color should be?
+};
+
 const Header = ({ tendency }: HeaderProps) => {
   return (
     <View style={{ display: 'flex', flexDirection: 'row', marginTop: 14 }}>
       <Text
         style={{
+          color: COLORS[tendency],
           fontSize: 16,
           lineHeight: 24,
           width: '50%',
           paddingLeft: 12,
           textTransform: 'uppercase',
-          color: '#C1272D', // TODO: Choose color depending on tendency
           fontWeight: '700',
         }}
       >
@@ -46,8 +52,8 @@ const Header = ({ tendency }: HeaderProps) => {
       </Text>
       <Text
         style={{
+          color: COLORS[tendency],
           width: '50%',
-          color: '#C1272D', // TODO: Choose color depending on tendency
           fontWeight: '700',
           fontSize: 28,
           lineHeight: 24,
@@ -65,7 +71,6 @@ const Header = ({ tendency }: HeaderProps) => {
 };
 
 export default ({ tendency, data }: TableProps) => {
-  // TODO: Choose colors dependending on tendency
   return (
     <>
       <Header tendency={tendency} />
@@ -130,21 +135,29 @@ export class TableBuilder {
   }
 
   periodInTarget(percentage: number): TableBuilder {
+    // TODO: If percentage is greater than XX%, then color the value red
+    // TODO: If not, color it green
     this._data[0].value = percentage + '%';
     return this;
   }
 
   lastScanMeasure(value: number): TableBuilder {
+    // TODO: If value is greater than the CAP set by the user, then color the value red
+    // TODO: If not, color it green
     this._data[1].value = value + ' ml/dL';
     return this;
   }
 
   average(value: number): TableBuilder {
+    // TODO: If value is greater than the CAP set by the user, then color the value red
+    // TODO: If not, color it green
     this._data[2].value = value + ' ml/dL';
     return this;
   }
 
   sensorLife(days: number): TableBuilder {
+    // TODO: If amount of days is less than X days, then color the value red
+    // TODO: If not, color it green
     this._data[3].value = days + ' días';
     return this;
   }
