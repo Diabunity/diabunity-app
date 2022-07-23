@@ -5,7 +5,9 @@ import {
   ScrollView,
   Alert,
   Dimensions,
+  View,
 } from 'react-native';
+import { Rect, Text as TextSVG, Svg } from 'react-native-svg';
 import { useTheme } from '@/Hooks';
 import { LineChart } from 'react-native-chart-kit';
 import { NFCReader } from '@/Services/modules/nfc';
@@ -18,6 +20,12 @@ const HomeContainer = () => {
   const [nfcInstance, setNFCInstance] = useState<NFCReader>();
   const [isScanning, setIsScanning] = useState(false);
   const [currentDot, setCurrentDot] = useState<number | null>(null);
+  const [tooltipPos, setTooltipPos] = useState({
+    x: 0,
+    y: 0,
+    visible: false,
+    value: 0,
+  });
 
   const onDataPointClick = (data: any) => {
     setCurrentDot(data.value);
@@ -106,9 +114,56 @@ const HomeContainer = () => {
           },
         }}
         bezier
-        onDataPointClick={(data) => onDataPointClick(data)}
         style={{
           marginVertical: 8,
+        }}
+        decorator={() => {
+          return tooltipPos.visible ? (
+            <View>
+              <Svg>
+                <Rect
+                  x={tooltipPos.x - 15}
+                  y={tooltipPos.y + 10}
+                  width="40"
+                  height="30"
+                  fill="black"
+                />
+                <TextSVG
+                  x={tooltipPos.x + 5}
+                  y={tooltipPos.y + 30}
+                  fill="white"
+                  fontSize="16"
+                  fontWeight="bold"
+                  textAnchor="middle"
+                >
+                  {tooltipPos.value}
+                </TextSVG>
+              </Svg>
+            </View>
+          ) : null;
+        }}
+        onDataPointClick={(data) => {
+          let isSamePoint = tooltipPos.x === data.x && tooltipPos.y === data.y;
+
+          if (isSamePoint) {
+            return;
+          } else {
+            setTooltipPos({
+              x: data.x,
+              value: data.value,
+              y: data.y,
+              visible: true,
+            });
+            setTimeout(() => {
+              setTooltipPos((previousState) => {
+                return {
+                  ...previousState,
+                  value: data.value,
+                  visible: !previousState.visible,
+                };
+              });
+            }, 1000);
+          }
         }}
       />
       <Table
