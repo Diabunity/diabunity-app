@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, StyleSheet } from 'react-native';
 import { View } from 'react-native-ui-lib';
 
 export enum TENDENCY {
@@ -36,16 +36,11 @@ const COLORS: { [key in TENDENCY]: string } = {
 
 const Header = ({ tendency }: HeaderProps) => {
   return (
-    <View style={{ display: 'flex', flexDirection: 'row', marginTop: 14 }}>
+    <View style={headerStyles.container}>
       <Text
         style={{
           color: COLORS[tendency],
-          fontSize: 16,
-          lineHeight: 24,
-          width: '50%',
-          paddingLeft: 12,
-          textTransform: 'uppercase',
-          fontWeight: '700',
+          ...headerStyles.text,
         }}
       >
         Tendencia
@@ -53,11 +48,7 @@ const Header = ({ tendency }: HeaderProps) => {
       <Text
         style={{
           color: COLORS[tendency],
-          width: '50%',
-          fontWeight: '700',
-          fontSize: 28,
-          lineHeight: 24,
-          paddingLeft: 15,
+          ...headerStyles.arrow,
         }}
       >
         {tendency === TENDENCY.UP
@@ -74,53 +65,70 @@ export default ({ tendency, data }: TableProps) => {
   return (
     <>
       <Header tendency={tendency} />
-      <View
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          borderRadius: 3,
-          borderWidth: 0.5,
-          borderColor: 'rgba(0, 0, 0, 0.12)',
-          marginTop: 15,
-        }}
-      >
+      <View style={tableStyles.container}>
         {data.map((row, index) => (
-          <View
-            key={index}
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              borderBottomWidth: 0.5,
-              borderColor: 'rgba(0, 0, 0, 0.12)',
-            }}
-          >
-            <Text
-              style={{
-                width: '50%',
-                fontWeight: '600',
-                color: 'rgba(0, 0, 0, 0.87)',
-                paddingHorizontal: 12,
-                paddingVertical: 10,
-              }}
-            >
-              {row.label}
-            </Text>
-            <Text
-              style={{
-                width: '50%',
-                fontWeight: '600',
-                paddingHorizontal: 12,
-                paddingVertical: 10,
-              }}
-            >
-              {row.value}
-            </Text>
+          <View key={index} style={tableStyles.row}>
+            <Text style={tableStyles.label}>{row.label}</Text>
+            <Text style={tableStyles.value}>{row.value}</Text>
           </View>
         ))}
       </View>
     </>
   );
 };
+
+const headerStyles = StyleSheet.create({
+  container: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginTop: 14,
+  },
+  text: {
+    fontSize: 16,
+    lineHeight: 24,
+    width: '50%',
+    paddingLeft: 12,
+    textTransform: 'uppercase',
+    fontWeight: '700',
+  },
+  arrow: {
+    width: '50%',
+    fontWeight: '700',
+    fontSize: 28,
+    lineHeight: 24,
+    paddingLeft: 15,
+  },
+});
+
+const tableStyles = StyleSheet.create({
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    borderRadius: 3,
+    borderWidth: 0.5,
+    borderColor: 'rgba(0, 0, 0, 0.12)',
+    marginTop: 15,
+  },
+  row: {
+    display: 'flex',
+    flexDirection: 'row',
+    borderBottomWidth: 0.5,
+    borderColor: 'rgba(0, 0, 0, 0.12)',
+  },
+  label: {
+    width: '50%',
+    fontWeight: '600',
+    color: 'rgba(0, 0, 0, 0.87)',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  value: {
+    width: '50%',
+    fontWeight: '600',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+});
 
 export class TableBuilder {
   private readonly _data: Row[];
