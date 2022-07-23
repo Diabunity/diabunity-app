@@ -2,6 +2,8 @@ import React from 'react';
 import { Text, StyleSheet } from 'react-native';
 import { View } from 'react-native-ui-lib';
 
+import { COLORS as COLORS_THEME } from './index';
+
 export enum TENDENCY {
   UP,
   DOWN,
@@ -106,19 +108,19 @@ const tableStyles = StyleSheet.create({
     flexDirection: 'column',
     borderRadius: 3,
     borderWidth: 0.5,
-    borderColor: 'rgba(0, 0, 0, 0.12)',
+    borderColor: COLORS_THEME.gray,
     marginTop: 15,
   },
   row: {
     display: 'flex',
     flexDirection: 'row',
     borderBottomWidth: 0.5,
-    borderColor: 'rgba(0, 0, 0, 0.12)',
+    borderColor: COLORS_THEME.gray,
   },
   label: {
     width: '50%',
     fontWeight: '600',
-    color: 'rgba(0, 0, 0, 0.87)',
+    color: COLORS_THEME.darkGray,
     paddingHorizontal: 12,
     paddingVertical: 10,
   },
