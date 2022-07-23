@@ -15,24 +15,21 @@ import Clipboard from '@react-native-community/clipboard';
 
 import Table, { TableBuilder, TENDENCY } from './Table';
 
+export const COLORS = {
+  gray: 'rgba(0, 0, 0, 0.12)',
+  darkGray: 'rgba(0, 0, 0, 0.87)',
+};
+
 const HomeContainer = () => {
   const { Common, Fonts, Gutters, Layout } = useTheme();
   const [nfcInstance, setNFCInstance] = useState<NFCReader>();
   const [isScanning, setIsScanning] = useState(false);
-  const [currentDot, setCurrentDot] = useState<number | null>(null);
   const [tooltipPos, setTooltipPos] = useState({
     x: 0,
     y: 0,
     visible: false,
     value: 0,
   });
-
-  const onDataPointClick = (data: any) => {
-    setCurrentDot(data.value);
-    setTimeout(() => {
-      setCurrentDot(null);
-    }, 1500);
-  };
 
   useEffect(() => {
     const init = async () => {
@@ -78,7 +75,7 @@ const HomeContainer = () => {
           lineHeight: 24,
           width: '100%',
           textAlign: 'center',
-          borderBottomColor: 'rgba(0, 0, 0, 0.12)',
+          borderBottomColor: COLORS.gray,
           borderBottomWidth: 1,
         }}
       >
@@ -176,7 +173,6 @@ const HomeContainer = () => {
           .sensorLife(4)
           .build()}
       />
-      <Text style={{ color: 'black', fontSize: 20 }}>{currentDot}</Text>
       <TouchableOpacity
         style={[Common.button.rounded, Gutters.regularBMargin, { height: 50 }]}
         onPress={onTag}
