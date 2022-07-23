@@ -85,7 +85,7 @@ const HomeContainer = () => {
             },
           ],
         }}
-        width={Dimensions.get('window').width - 10} // from react-native
+        width={Dimensions.get('window').width - 40} // from react-native
         height={202}
         yAxisSuffix="mg/dL"
         yAxisInterval={1} // optional, defaults to 1
