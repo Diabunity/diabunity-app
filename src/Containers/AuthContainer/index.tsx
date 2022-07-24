@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { View, Image } from 'react-native';
 import { Incubator, Text } from 'react-native-ui-lib';
+import Icon from 'react-native-vector-icons/Feather';
 import { useTheme } from '@/Hooks';
-import { FormButton } from '@/Components';
+import { BackButton, FormButton } from '@/Components';
 import AuthService from '@/Services/modules/auth';
 import { styles, colors } from './styles';
 
@@ -13,7 +14,10 @@ const { Toast, TextField } = Incubator;
 
 type Props = NativeStackScreenProps<NavigatorParams, 'SignIn' | 'SignUp'>;
 
-const AuthContainer = ({ route, navigation: { navigate } }: Props) => {
+const AuthContainer = ({
+  route,
+  navigation: { navigate, goBack, canGoBack },
+}: Props) => {
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -65,122 +69,126 @@ const AuthContainer = ({ route, navigation: { navigate } }: Props) => {
   };
 
   return (
-    <View style={[Layout.fill, Layout.colCenter]}>
-      <Image style={Layout.size} source={Images.logo} />
-      <Toast
-        visible={error}
-        position="top"
-        autoDismiss={3000}
-        message={`Ups, hubo un problema al ${
-          isSignUp ? 'registrarse' : 'iniciar sesión'
-        }`}
-        preset={Incubator.ToastPresets.FAILURE}
-        onDismiss={() => setError(false)}
-      />
-      {isSignUp && (
+    <>
+      <BackButton goBack={goBack} canGoBack={canGoBack} />
+      <View style={[Layout.fill, Layout.colCenter]}>
+        <Image style={Layout.size} source={Images.logo} />
+        <Toast
+          visible={error}
+          position="top"
+          autoDismiss={3000}
+          message={`Ups, hubo un problema al ${
+            isSignUp ? 'registrarse' : 'iniciar sesión'
+          }`}
+          preset={Incubator.ToastPresets.FAILURE}
+          onDismiss={() => setError(false)}
+        />
+        {isSignUp && (
+          <TextField
+            style={styles.textField}
+            ref={(ref: any) => refs.push(ref)}
+            placeholder="Nombre"
+            onChangeText={(value: string) => setName(value)}
+            enableErrors
+            validate={['required', (value: string) => value.length > 3]}
+            validationMessage={[
+              'Este campo es requerido',
+              'El texto debe ser mayor a 3 caracteres',
+            ]}
+            validateOnChange
+            maxLength={30}
+          />
+        )}
         <TextField
           style={styles.textField}
           ref={(ref: any) => refs.push(ref)}
-          placeholder="Nombre"
-          onChangeText={(value: string) => setName(value)}
+          placeholder="Email"
+          onChangeText={(value: string) => setEmail(value)}
           enableErrors
-          validate={['required', (value: string) => value.length > 3]}
+          validate={['required', 'email']}
+          validateOnChange
           validationMessage={[
             'Este campo es requerido',
-            'El texto debe ser mayor a 3 caracteres',
+            'El email es inválido',
           ]}
-          validateOnChange
           maxLength={30}
         />
-      )}
-      <TextField
-        style={styles.textField}
-        ref={(ref: any) => refs.push(ref)}
-        placeholder="Email"
-        onChangeText={(value: string) => setEmail(value)}
-        enableErrors
-        validate={['required', 'email']}
-        validateOnChange
-        validationMessage={['Este campo es requerido', 'El email es inválido']}
-        maxLength={30}
-      />
-      <TextField
-        style={styles.textField}
-        ref={(ref: any) => refs.push(ref)}
-        placeholder="Contraseña"
-        onChangeText={(value: string) => setPassword(value)}
-        enableErrors
-        validate={['required', (value: string) => value.length > 6]}
-        validationMessage={[
-          'Este campo es requerido',
-          'La contraseña es muy corta',
-        ]}
-        maxLength={30}
-        secureTextEntry
-        validateOnChange
-      />
-      {isSignUp && (
         <TextField
           style={styles.textField}
           ref={(ref: any) => refs.push(ref)}
-          placeholder="Repetir contraseña"
-          onChangeText={(value: string) => setRepeatedPassword(value)}
+          placeholder="Contraseña"
+          onChangeText={(value: string) => setPassword(value)}
           enableErrors
-          validate={[
-            'required',
-            (value: string) => value.length > 6,
-            (value: string) => value === password,
-          ]}
+          validate={['required', (value: string) => value.length > 6]}
           validationMessage={[
             'Este campo es requerido',
             'La contraseña es muy corta',
-            'Las contraseñas no coinciden',
           ]}
           maxLength={30}
           secureTextEntry
           validateOnChange
         />
-      )}
-      {!isSignUp && (
-        <Text style={styles.text} onPress={() => navigate('ForgotPassword')}>
-          ¿Olvidaste tu contraseña?
-        </Text>
-      )}
-      <FormButton
-        label={isSignUp ? 'Registrarse' : 'Iniciar sesión'}
-        disabledCondition={
-          error ||
-          !email ||
-          !password ||
-          (isSignUp ? !name || !repeatedPassword : false)
-        }
-        onPress={isSignUp ? handleSignUp : handleSignIn}
-      />
-      <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-        <Text style={styles.divider} />
-        <Text style={styles.dividerLetter}>O</Text>
-        <Text style={styles.divider} />
-      </View>
-      <View style={styles.googleButton}>
+        {isSignUp && (
+          <TextField
+            style={styles.textField}
+            ref={(ref: any) => refs.push(ref)}
+            placeholder="Repetir contraseña"
+            onChangeText={(value: string) => setRepeatedPassword(value)}
+            enableErrors
+            validate={[
+              'required',
+              (value: string) => value.length > 6,
+              (value: string) => value === password,
+            ]}
+            validationMessage={[
+              'Este campo es requerido',
+              'La contraseña es muy corta',
+              'Las contraseñas no coinciden',
+            ]}
+            maxLength={30}
+            secureTextEntry
+            validateOnChange
+          />
+        )}
+        {!isSignUp && (
+          <Text style={styles.text}>¿Olvidaste tu contraseña?</Text>
+        )}
         <FormButton
-          label={
-            isSignUp ? 'Registrarse con Google' : 'Iniciar sesión con Google'
+          label={isSignUp ? 'Registrarse' : 'Iniciar sesión'}
+          disabledCondition={
+            error ||
+            !email ||
+            !password ||
+            (isSignUp ? !name || !repeatedPassword : false)
           }
-          onPress={handleGoogleButton}
-          backgroundColor={colors.red}
+          onPress={isSignUp ? handleSignUp : handleSignIn}
         />
+        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+          <Text style={styles.divider} />
+          <Text style={styles.dividerLetter}>O</Text>
+          <Text style={styles.divider} />
+        </View>
+        <View style={styles.googleButton}>
+          <FormButton
+            label={
+              isSignUp ? 'Registrarse con Google' : 'Iniciar sesión con Google'
+            }
+            onPress={handleGoogleButton}
+            backgroundColor={colors.red}
+          />
+        </View>
+        {!isSignUp && (
+          <Text
+            style={styles.textBottom}
+            highlightString="Registrate"
+            highlightStyle={styles.highlight}
+            onPress={() => navigate('SignUp')}
+          >
+            ¿No tenés cuenta? Registrate
+          </Text>
+        )}
       </View>
-      {!isSignUp && (
-        <Text
-          style={styles.textBottom}
-          highlightString="Registrate"
-          highlightStyle={styles.highlight}
-          onPress={() => navigate('SignUp')}
-        >
-          ¿No tenés cuenta? Registrate
-        </Text>
-      )}
-    </View>
+    </>
   );
 };
 
