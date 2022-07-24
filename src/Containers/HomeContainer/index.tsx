@@ -14,11 +14,7 @@ import { NFCReader } from '@/Services/modules/nfc';
 import Clipboard from '@react-native-community/clipboard';
 
 import Table, { TableBuilder, TENDENCY } from './Table';
-
-export const COLORS = {
-  gray: 'rgba(0, 0, 0, 0.12)',
-  darkGray: 'rgba(0, 0, 0, 0.87)',
-};
+import { COLORS } from './styles';
 
 const HomeContainer = () => {
   const { Common, Fonts, Gutters, Layout } = useTheme();

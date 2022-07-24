@@ -189,5 +189,6 @@ const mergeNavigationTheme = (
   colors: {
     ...reactNavigationTheme.colors,
     ...overrideColors,
+    background: 'white',
   },
 });
