@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, StyleSheet } from 'react-native';
 import { View } from 'react-native-ui-lib';
 
-import { COLORS as COLORS_THEME } from './index';
+import { COLORS as COLORS_THEME } from './styles';
 
 export enum TENDENCY {
   UP,
