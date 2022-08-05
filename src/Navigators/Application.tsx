@@ -7,7 +7,9 @@ import {
   StartupContainer,
   AuthContainer,
   ForgotPasswordContainer,
+  OnboardingContainer,
 } from '@/Containers';
+import { userApi } from '@/Services/modules/users';
 import { useTheme } from '@/Hooks';
 import MainNavigator from './Main';
 import { navigationRef } from './utils';
@@ -17,6 +19,7 @@ export type NavigatorParams = {
   Main: undefined;
   SignIn: undefined;
   SignUp: undefined;
+  Onboarding: undefined;
   ForgotPassword: undefined;
 };
 
@@ -25,22 +28,36 @@ const Stack = createStackNavigator<NavigatorParams>();
 // @refresh reset
 const ApplicationNavigator = () => {
   const { Layout, darkMode, NavigationTheme } = useTheme();
+  const [skip, setSkip] = useState<boolean>(true);
+
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
+  const [isOnboarded, setIsOnboarded] = useState<boolean>(false);
+  const { data, isFetching } = userApi.useFetchUserQuery(user?.uid, { skip });
   const [isLoading, setIsLoading] = useState(true);
   const { colors } = NavigationTheme;
 
   const onAuthStateChanged = (sUser: FirebaseAuthTypes.User | null) => {
-    console.log('onAuthStateChanged', sUser);
     setUser(sUser);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
+    if (sUser) {
+      setSkip(false);
+    } else {
+      setIsOnboarded(false);
+    }
   };
+
+  useEffect(() => {
+    setIsLoading(true);
+    if (!isFetching) {
+      setIsOnboarded(!!data?.on_boarding);
+      setSkip(true);
+      setIsLoading(false);
+    }
+  }, [isFetching]);
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber; // unsubscribe on unmount
-  });
+  }, []);
 
   if (isLoading) {
     return <StartupContainer />;
@@ -52,7 +69,15 @@ const ApplicationNavigator = () => {
         <StatusBar barStyle={darkMode ? 'light-content' : 'dark-content'} />
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {user ? (
-            <Stack.Screen name="Main" component={MainNavigator} />
+            <>
+              {!isOnboarded && (
+                <Stack.Screen
+                  name="Onboarding"
+                  component={OnboardingContainer}
+                />
+              )}
+              <Stack.Screen name="Main" component={MainNavigator} />
+            </>
           ) : (
             <>
               <Stack.Screen name="SignIn" component={AuthContainer} />

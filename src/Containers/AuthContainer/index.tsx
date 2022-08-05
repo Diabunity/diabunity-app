@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Image } from 'react-native';
 import { Incubator, Text } from 'react-native-ui-lib';
-import Icon from 'react-native-vector-icons/Feather';
 import { useTheme } from '@/Hooks';
 import { BackButton, FormButton } from '@/Components';
 import AuthService from '@/Services/modules/auth';
@@ -25,20 +24,7 @@ const AuthContainer = ({
   const [error, setError] = useState<boolean>(false);
   const { Layout, Images } = useTheme();
 
-  const refs: any = [];
-
   const isSignUp = route.name === 'SignUp';
-
-  const isFormValid = (): boolean => {
-    for (let i = 0; i < refs.length; i++) {
-      if (!refs[i].isValid()) {
-        refs[i].focus();
-        return false;
-      }
-    }
-
-    return true;
-  };
 
   const handleGoogleButton = async (): Promise<void> => {
     try {
@@ -49,22 +35,18 @@ const AuthContainer = ({
   };
 
   const handleSignIn = async (): Promise<void> => {
-    if (isFormValid()) {
-      try {
-        await AuthService.signInWithEmailAndPassword(email, password);
-      } catch (e) {
-        setError(true);
-      }
+    try {
+      await AuthService.signInWithEmailAndPassword(email, password);
+    } catch (e) {
+      setError(true);
     }
   };
 
   const handleSignUp = async (): Promise<void> => {
-    if (isFormValid()) {
-      try {
-        await AuthService.signUpWithEmailAndPassword(name, email, password);
-      } catch (e) {
-        setError(true);
-      }
+    try {
+      await AuthService.signUpWithEmailAndPassword(name, email, password);
+    } catch (e) {
+      setError(true);
     }
   };
 
@@ -86,7 +68,6 @@ const AuthContainer = ({
         {isSignUp && (
           <TextField
             style={styles.textField}
-            ref={(ref: any) => refs.push(ref)}
             placeholder="Nombre"
             onChangeText={(value: string) => setName(value)}
             enableErrors
@@ -101,7 +82,6 @@ const AuthContainer = ({
         )}
         <TextField
           style={styles.textField}
-          ref={(ref: any) => refs.push(ref)}
           placeholder="Email"
           onChangeText={(value: string) => setEmail(value)}
           enableErrors
@@ -115,7 +95,6 @@ const AuthContainer = ({
         />
         <TextField
           style={styles.textField}
-          ref={(ref: any) => refs.push(ref)}
           placeholder="Contraseña"
           onChangeText={(value: string) => setPassword(value)}
           enableErrors
@@ -131,7 +110,6 @@ const AuthContainer = ({
         {isSignUp && (
           <TextField
             style={styles.textField}
-            ref={(ref: any) => refs.push(ref)}
             placeholder="Repetir contraseña"
             onChangeText={(value: string) => setRepeatedPassword(value)}
             enableErrors

@@ -1,35 +1,24 @@
 import { api } from '../../api';
-import fetchOne from './fetchOne';
+import fetchUser from './fetchUser';
+import saveUser from './saveUser';
 
 export const userApi = api.injectEndpoints({
   endpoints: (build) => ({
-    fetchOne: fetchOne(build),
+    fetchUser: fetchUser(build),
+    saveUser: saveUser(build),
   }),
   overrideExisting: false,
 });
 
-export const { useLazyFetchOneQuery } = userApi;
+export const { useLazyFetchUserQuery } = userApi;
 
 export type User = {
-  id: number;
-  name: string;
-  username: string;
-  email: string;
-  address: {
-    street: string;
-    suite: string;
-    city: string;
-    zipcode: string;
-    geo: {
-      lat: string;
-      lng: string;
-    };
-  };
-  phone: string;
-  website: string;
-  company: {
-    name: string;
-    catchPhrase: string;
-    bs: string;
-  };
+  id?: string;
+  diabetes_type: number;
+  birth_date: Date;
+  on_boarding: boolean;
+  weight: number;
+  height: number;
+  glucose_min: number;
+  glucose_max: number;
 };
