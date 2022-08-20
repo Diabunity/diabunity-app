@@ -1,20 +1,22 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, ViewStyle } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 
 type Props = {
-  canGoBack: () => boolean;
+  canGoBack?: () => boolean;
   goBack: () => void;
+  customBack?: () => void;
+  customStyles?: ViewStyle;
 };
 
-const BackButton = ({ canGoBack, goBack }: Props) => {
-  const hasGoBackPage = canGoBack();
+const BackButton = ({ canGoBack, goBack, customBack, customStyles }: Props) => {
+  const hasGoBackPage = customBack || canGoBack?.();
   return (
     <>
       {hasGoBackPage && (
-        <View style={styles.container}>
+        <View style={{ ...styles.container, ...customStyles }}>
           <Icon
-            onPress={goBack}
+            onPress={customBack || goBack}
             name="chevron-left"
             size={35}
             color={styles.icon.color}

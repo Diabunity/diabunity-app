@@ -1,27 +1,45 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { ExampleContainer, UserContainer } from '@/Containers';
+import Icon from 'react-native-vector-icons/Feather';
+import { HomeContainer, UserContainer, AddContainer } from '@/Containers';
 
 const Tab = createBottomTabNavigator();
 
 // @refresh reset
 const MainNavigator = () => {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      screenOptions={{
+        tabBarLabelPosition: 'below-icon',
+        tabBarLabelStyle: { fontSize: 12 },
+        headerShown: false,
+      }}
+    >
       <Tab.Screen
-        name="Home"
-        component={ExampleContainer}
+        name="Inicio"
+        component={HomeContainer}
         options={{
-          tabBarIconStyle: { display: 'none' },
-          tabBarLabelPosition: 'beside-icon',
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="home" size={size} color={color} />
+          ),
         }}
       />
       <Tab.Screen
-        name="Me"
+        name="Agregar"
+        component={AddContainer}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="droplet" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Perfil"
         component={UserContainer}
         options={{
-          tabBarIconStyle: { display: 'none' },
-          tabBarLabelPosition: 'beside-icon',
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="user" size={size} color={color} />
+          ),
         }}
       />
     </Tab.Navigator>
