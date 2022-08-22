@@ -13,30 +13,35 @@ const MainNavigator = () => {
         tabBarLabelPosition: 'below-icon',
         tabBarLabelStyle: { fontSize: 12 },
         headerShown: false,
+        tabBarHideOnKeyboard: true,
+        tabBarStyle: { paddingBottom: 3, height: 55 },
       }}
     >
       <Tab.Screen
-        name="Inicio"
+        name="Home"
         component={HomeContainer}
         options={{
+          title: 'Inicio',
           tabBarIcon: ({ color, size }) => (
             <Icon name="home" size={size} color={color} />
           ),
         }}
       />
       <Tab.Screen
-        name="Agregar"
+        name="Add"
         component={AddContainer}
         options={{
+          title: 'Agregar',
           tabBarIcon: ({ color, size }) => (
             <Icon name="droplet" size={size} color={color} />
           ),
         }}
       />
       <Tab.Screen
-        name="Perfil"
+        name="Profile"
         component={UserContainer}
         options={{
+          title: 'Perfil',
           tabBarIcon: ({ color, size }) => (
             <Icon name="user" size={size} color={color} />
           ),

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, StyleSheet } from 'react-native';
 import { View } from 'react-native-ui-lib';
+import { styles } from '../OnboardingContainer/styles';
 
 import { COLORS as COLORS_THEME } from './styles';
 
@@ -15,19 +16,14 @@ enum ARROW {
   EQUAL = '\u2192',
   DOWN = '\u2193',
 }
-
-interface HeaderProps {
-  tendency: TENDENCY;
-}
-
 interface TableProps {
-  tendency: TENDENCY;
   data: Row[];
 }
 
 interface Row {
   label: string;
   value: string;
+  styles?: any;
 }
 
 const COLORS: { [key in TENDENCY]: string } = {
@@ -36,71 +32,22 @@ const COLORS: { [key in TENDENCY]: string } = {
   [TENDENCY.EQUAL]: '#C1272D', // TODO: Which color should be?
 };
 
-const Header = ({ tendency }: HeaderProps) => {
-  return (
-    <View style={headerStyles.container}>
-      <Text
-        style={{
-          color: COLORS[tendency],
-          ...headerStyles.text,
-        }}
-      >
-        Tendencia
-      </Text>
-      <Text
-        style={{
-          color: COLORS[tendency],
-          ...headerStyles.arrow,
-        }}
-      >
-        {tendency === TENDENCY.UP
-          ? ARROW.UP
-          : tendency === TENDENCY.DOWN
-          ? ARROW.DOWN
-          : ARROW.EQUAL}
-      </Text>
-    </View>
-  );
-};
-
-export default ({ tendency, data }: TableProps) => {
+export default ({ data }: TableProps) => {
   return (
     <>
-      <Header tendency={tendency} />
       <View style={tableStyles.container}>
         {data.map((row, index) => (
           <View key={index} style={tableStyles.row}>
             <Text style={tableStyles.label}>{row.label}</Text>
-            <Text style={tableStyles.value}>{row.value}</Text>
+            <Text style={{ ...tableStyles.value, ...row.styles }}>
+              {row.value}
+            </Text>
           </View>
         ))}
       </View>
     </>
   );
 };
-
-const headerStyles = StyleSheet.create({
-  container: {
-    display: 'flex',
-    flexDirection: 'row',
-    marginTop: 14,
-  },
-  text: {
-    fontSize: 16,
-    lineHeight: 24,
-    width: '50%',
-    paddingLeft: 12,
-    textTransform: 'uppercase',
-    fontWeight: '700',
-  },
-  arrow: {
-    width: '50%',
-    fontWeight: '700',
-    fontSize: 28,
-    lineHeight: 24,
-    paddingLeft: 15,
-  },
-});
 
 const tableStyles = StyleSheet.create({
   container: {
@@ -111,9 +58,14 @@ const tableStyles = StyleSheet.create({
     borderColor: COLORS_THEME.gray,
     marginTop: 15,
   },
+  arrow: {
+    fontSize: 28,
+  },
   row: {
     display: 'flex',
     flexDirection: 'row',
+    alignItems: 'center',
+    padding: 5,
     borderBottomWidth: 0.5,
     borderColor: COLORS_THEME.gray,
   },
@@ -137,6 +89,7 @@ export class TableBuilder {
 
   constructor() {
     this._data = [
+      { label: 'TENDENCIA', value: '' },
       { label: 'Periodo en objetivo', value: '' },
       { label: 'Último escaneo', value: '' },
       { label: 'Promedio', value: '' },
@@ -144,31 +97,43 @@ export class TableBuilder {
     ];
   }
 
+  tendency(tendency: TENDENCY): TableBuilder {
+    this._data[0].value =
+      tendency === TENDENCY.UP
+        ? ARROW.UP
+        : tendency === TENDENCY.DOWN
+        ? ARROW.DOWN
+        : ARROW.EQUAL;
+    this._data[0].styles = { color: COLORS[tendency], ...tableStyles.arrow };
+
+    return this;
+  }
+
   periodInTarget(percentage: number): TableBuilder {
     // TODO: If percentage is greater than XX%, then color the value red
     // TODO: If not, color it green
-    this._data[0].value = percentage + '%';
+    this._data[1].value = percentage + '%';
     return this;
   }
 
   lastScanMeasure(value: number): TableBuilder {
     // TODO: If value is greater than the CAP set by the user, then color the value red
     // TODO: If not, color it green
-    this._data[1].value = value + ' ml/dL';
+    this._data[2].value = value + ' mg/dL';
     return this;
   }
 
   average(value: number): TableBuilder {
     // TODO: If value is greater than the CAP set by the user, then color the value red
     // TODO: If not, color it green
-    this._data[2].value = value + ' ml/dL';
+    this._data[3].value = value + ' mg/dL';
     return this;
   }
 
   sensorLife(days: number): TableBuilder {
     // TODO: If amount of days is less than X days, then color the value red
     // TODO: If not, color it green
-    this._data[3].value = days + ' días';
+    this._data[4].value = days + ' días';
     return this;
   }
 

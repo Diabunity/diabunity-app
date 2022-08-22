@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import Onboarding from 'react-native-onboarding-swiper';
-import Icon from 'react-native-vector-icons/Feather';
 import {
   DateTimePicker,
   Text,
@@ -16,14 +15,26 @@ import {
   MaskedInput,
   Picker,
   PickerModes,
+  ThemeManager,
+  Colors,
 } from 'react-native-ui-lib';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useTheme } from '@/Hooks';
 import { userApi, User } from '@/Services/modules/users';
 import AuthService from '@/Services/modules/auth';
 
-import { styles } from './styles';
+import { styles, COLORS } from './styles';
 import { NavigatorParams } from '@/Navigators/Application';
+
+ThemeManager.setComponentTheme('Incubator.WheelPicker', () => {
+  return {
+    activeTextColor: COLORS.red,
+  };
+});
+
+Colors.loadColors({
+  primary: COLORS.red,
+});
 
 const Dot = ({
   isLight,
@@ -219,6 +230,9 @@ const OnboardingContainer = ({ navigation: { navigate } }: Props) => {
               <Picker
                 value={type}
                 useWheelPicker
+                labelStyle={{
+                  color: Colors.primary,
+                }}
                 migrateTextField
                 underlineColor="transparent"
                 underlineColorAndroid="transparent"
@@ -229,6 +243,7 @@ const OnboardingContainer = ({ navigation: { navigate } }: Props) => {
                   handleOnChange(e as string, setType)
                 }
                 topBarProps={{
+                  color: 'red',
                   doneLabel: 'Done  ',
                 }}
               >
@@ -245,8 +260,8 @@ const OnboardingContainer = ({ navigation: { navigate } }: Props) => {
           image: <Image source={Images.onboarding6} />,
           title: 'Rango de glucosa',
           subtitle: (
-            <View style={{ marginTop: 26, flex: 1, flexDirection: 'row' }}>
-              <Text style={{ position: 'absolute', top: 50 }} bodySmall>
+            <View style={styles.sliderView}>
+              <Text style={styles.sliderText} bodySmall>
                 {glucoseRange.min} mg/dL
               </Text>
               <Slider
@@ -259,10 +274,7 @@ const OnboardingContainer = ({ navigation: { navigate } }: Props) => {
                 maximumValue={200}
                 step={1}
               />
-              <Text
-                style={{ position: 'absolute', top: 50, right: 0 }}
-                bodySmall
-              >
+              <Text style={{ ...styles.sliderText, right: 0 }} bodySmall>
                 {glucoseRange.max} mg/dL
               </Text>
             </View>

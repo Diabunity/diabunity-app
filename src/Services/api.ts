@@ -14,7 +14,6 @@ const baseQuery = fetchBaseQuery({
   prepareHeaders: async (headers) => {
     const user = AuthService.getCurrentUser();
     const token = await user?.getIdToken();
-
     if (token) {
       headers.set('auth-token', token);
     }

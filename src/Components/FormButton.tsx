@@ -9,6 +9,7 @@ interface FormButtonProps {
   onPress: () => void;
   backgroundColor?: string;
   labelStyle?: TextStyle;
+  activeOpacity?: number;
 }
 
 const FormButton = ({
@@ -23,6 +24,7 @@ const FormButton = ({
     label={label.toUpperCase()}
     disabled={disabledCondition ?? false}
     onPress={onPress}
+    activeOpacity={rest.activeOpacity ?? 0.5}
     backgroundColor={backgroundColor}
     color="#fff"
     borderRadius={4}

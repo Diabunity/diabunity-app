@@ -45,7 +45,11 @@ export class NFCReader {
         await NfcManager.requestTechnology(this.nfcTech);
         // the resolved tag object will contain `ndefMessage` property
         const tag = await NfcManager.getTag();
-        return await this.getMemory(tag);
+        const memoryData = await this.getMemory(tag);
+        return await LibreManagerTool.getGlucoseHistoryAndroid(
+          tag?.id,
+          memoryData
+        );
       } catch (ex) {
         this.handleException(ex);
         return null;

@@ -17,6 +17,7 @@ import { NfcPromptAndroid } from '@/Components';
 
 export type NavigatorParams = {
   Main: undefined;
+  Home: { refetch: boolean };
   SignIn: undefined;
   SignUp: undefined;
   Onboarding: undefined;
@@ -30,36 +31,58 @@ const ApplicationNavigator = () => {
   const { Layout, darkMode, NavigationTheme } = useTheme();
   const [skip, setSkip] = useState<boolean>(true);
 
-  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
-  const [isOnboarded, setIsOnboarded] = useState<boolean>(false);
-  const { data, isFetching } = userApi.useFetchUserQuery(user?.uid, { skip });
+  const [user, setUser] = useState<FirebaseAuthTypes.User | null | undefined>();
+  const [isOnboarded, setIsOnboarded] = useState<boolean | undefined>();
+  const {
+    data = null,
+    error,
+    refetch,
+  } = userApi.useFetchUserQuery(user?.uid, {
+    skip,
+    refetchOnMountOrArgChange: true,
+  });
   const [isLoading, setIsLoading] = useState(true);
   const { colors } = NavigationTheme;
 
-  const onAuthStateChanged = (sUser: FirebaseAuthTypes.User | null) => {
+  const onAuthStateChanged = (sUser: FirebaseAuthTypes.User | null) =>
     setUser(sUser);
-    if (sUser) {
+
+  useEffect(() => {
+    if (user) {
       setSkip(false);
     } else {
-      setIsOnboarded(false);
+      if (user === null) {
+        setIsLoading(false);
+      }
     }
-  };
+    setIsOnboarded(undefined);
+    refetch();
+  }, [user]);
 
   useEffect(() => {
     setIsLoading(true);
-    if (!isFetching) {
+    if (data && !error) {
       setIsOnboarded(!!data?.on_boarding);
       setSkip(true);
       setIsLoading(false);
+    } else {
+      if (error) {
+        setIsLoading(false);
+        setIsOnboarded(false);
+      }
     }
-  }, [isFetching]);
+  }, [data, error]);
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber; // unsubscribe on unmount
   }, []);
 
-  if (isLoading) {
+  if (
+    isLoading ||
+    (isOnboarded === undefined && user !== null) || //We use null and undefined to differentiate between initial state and api response
+    user === undefined
+  ) {
     return <StartupContainer />;
   }
 
@@ -70,7 +93,7 @@ const ApplicationNavigator = () => {
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {user ? (
             <>
-              {!isOnboarded && (
+              {isOnboarded === false && (
                 <Stack.Screen
                   name="Onboarding"
                   component={OnboardingContainer}
