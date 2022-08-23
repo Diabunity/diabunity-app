@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ActivityIndicator, Alert, ScrollView, View } from 'react-native';
+import { ActivityIndicator, Platform, ScrollView, View } from 'react-native';
 import {
   DateTimePicker,
   Image,
@@ -15,6 +15,7 @@ import { FormButton, BackButton } from '@/Components';
 import { NavigatorParams } from '@/Navigators/Application';
 import { NFCReader } from '@/Services/modules/nfc';
 import { userApi, MeasurementMode } from '@/Services/modules/users';
+import { addMinutes } from '@/Utils';
 
 import { styles, colors } from './styles';
 
@@ -65,6 +66,7 @@ const AddContainer = ({ navigation: { goBack, navigate } }: Props) => {
   }, [isSuccess, isError]);
 
   const handleNFCMeasure = async () => {
+    const isIOS = Platform.OS === 'ios';
     if (!nfcInstance || isScanning) {
       return;
     }
@@ -72,15 +74,22 @@ const AddContainer = ({ navigation: { goBack, navigate } }: Props) => {
     const glucoseData = await nfcInstance.getGlucoseData();
     setIsScanning(false);
     if (glucoseData) {
-      setMeasurement(glucoseData.current_glucose.toString());
-      const measurements = [
-        {
-          measurement: Number(measurement),
-          timestamp: new Date(),
+      const history = glucoseData.history;
+      const measurements = [];
+      const timestamp = addMinutes(new Date(), 15);
+      for (const measurement of history) {
+        const m = {
+          measurement: isIOS ? measurement : measurement.value,
+          timestamp: isIOS
+            ? addMinutes(timestamp, -15)
+            : measurement.utcTimeStamp,
           source: MeasurementMode.SENSOR,
-        },
-      ];
-      await saveMeasurement(measurements);
+        };
+        measurements.push(m);
+      }
+      if (measurements.length > 0) {
+        await saveMeasurement(measurements);
+      }
     }
   };
 

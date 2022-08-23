@@ -79,6 +79,10 @@ export const formatDatePeriod = (
   return { from: formatDate(start), to: formatDate(end) };
 };
 
+export const addMinutes = (date: Date, minutes: number): Date => {
+  return new Date(date.getTime() + minutes * 60000);
+};
+
 export const getChartDataset = (
   measurements: Measurements | undefined
 ): LineChartData => {
