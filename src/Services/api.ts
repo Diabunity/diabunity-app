@@ -1,4 +1,3 @@
-import { Config } from '@/Config';
 import {
   BaseQueryFn,
   FetchArgs,
@@ -6,8 +5,23 @@ import {
   fetchBaseQuery,
   FetchBaseQueryError,
 } from '@reduxjs/toolkit/query/react';
+import AuthService from '@/Services/modules/auth';
 
-const baseQuery = fetchBaseQuery({ baseUrl: Config.API_URL });
+import { Config } from '@/Config';
+
+const baseQuery = fetchBaseQuery({
+  baseUrl: Config.API_URL,
+  prepareHeaders: async (headers) => {
+    const user = AuthService.getCurrentUser();
+    const token = await user?.getIdToken();
+
+    if (token) {
+      headers.set('auth-token', token);
+    }
+
+    return headers;
+  },
+});
 
 const baseQueryWithInterceptor: BaseQueryFn<
   string | FetchArgs,
@@ -21,6 +35,7 @@ const baseQueryWithInterceptor: BaseQueryFn<
 };
 
 export const api = createApi({
+  reducerPath: 'diabunityApi',
   baseQuery: baseQueryWithInterceptor,
   endpoints: () => ({}),
 });

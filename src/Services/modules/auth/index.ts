@@ -19,7 +19,6 @@ const AuthService = class AuthService {
     email: string,
     password: string
   ): Promise<FirebaseAuthTypes.UserCredential | void> {
-    // TODO: We need to call our diabunity API to create a new user
     return auth()
       .createUserWithEmailAndPassword(email, password)
       .catch((error) => {
