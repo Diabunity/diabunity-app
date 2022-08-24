@@ -31,7 +31,8 @@ const ApplicationNavigator = () => {
   const [skip, setSkip] = useState<boolean>(true);
 
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
-  const [isOnboarded, setIsOnboarded] = useState<boolean>(false);
+  const [hasCompletedOnboarding, setHasCompletedOnboarding] =
+    useState<boolean>(false);
   const { data, isFetching } = userApi.useFetchUserQuery(user?.uid, { skip });
   const [isLoading, setIsLoading] = useState(true);
   const { colors } = NavigationTheme;
@@ -41,14 +42,14 @@ const ApplicationNavigator = () => {
     if (sUser) {
       setSkip(false);
     } else {
-      setIsOnboarded(false);
+      setHasCompletedOnboarding(false);
     }
   };
 
   useEffect(() => {
     setIsLoading(true);
     if (!isFetching) {
-      setIsOnboarded(!!data?.on_boarding);
+      setHasCompletedOnboarding(!!data?.on_boarding);
       setSkip(true);
       setIsLoading(false);
     }
@@ -70,7 +71,7 @@ const ApplicationNavigator = () => {
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {user ? (
             <>
-              {!isOnboarded && (
+              {!hasCompletedOnboarding && (
                 <Stack.Screen
                   name="Onboarding"
                   component={OnboardingContainer}
