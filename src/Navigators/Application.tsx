@@ -31,7 +31,9 @@ const ApplicationNavigator = () => {
   const { Layout, darkMode, NavigationTheme } = useTheme();
   const [skip, setSkip] = useState<boolean>(true);
   const [user, setUser] = useState<FirebaseAuthTypes.User | null | undefined>();
-  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState<boolean | undefined>();
+  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState<
+    boolean | undefined
+  >();
   const {
     data = null,
     error,
@@ -71,15 +73,6 @@ const ApplicationNavigator = () => {
       }
     }
   }, [data, error]);
-
-  useEffect(() => {
-    setIsLoading(true);
-    if (!isFetching) {
-      setHasCompletedOnboarding(!!data?.on_boarding);
-      setSkip(true);
-      setIsLoading(false);
-    }
-  }, [isFetching]);
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
