@@ -30,9 +30,8 @@ const Stack = createStackNavigator<NavigatorParams>();
 const ApplicationNavigator = () => {
   const { Layout, darkMode, NavigationTheme } = useTheme();
   const [skip, setSkip] = useState<boolean>(true);
-
   const [user, setUser] = useState<FirebaseAuthTypes.User | null | undefined>();
-  const [isOnboarded, setIsOnboarded] = useState<boolean | undefined>();
+  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState<boolean | undefined>();
   const {
     data = null,
     error,
@@ -55,23 +54,32 @@ const ApplicationNavigator = () => {
         setIsLoading(false);
       }
     }
-    setIsOnboarded(undefined);
+    setHasCompletedOnboarding(undefined);
     refetch();
   }, [user]);
 
   useEffect(() => {
     setIsLoading(true);
     if (data && !error) {
-      setIsOnboarded(!!data?.on_boarding);
+      setHasCompletedOnboarding(!!data?.on_boarding);
       setSkip(true);
       setIsLoading(false);
     } else {
       if (error) {
         setIsLoading(false);
-        setIsOnboarded(false);
+        setHasCompletedOnboarding(false);
       }
     }
   }, [data, error]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    if (!isFetching) {
+      setHasCompletedOnboarding(!!data?.on_boarding);
+      setSkip(true);
+      setIsLoading(false);
+    }
+  }, [isFetching]);
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
@@ -80,7 +88,7 @@ const ApplicationNavigator = () => {
 
   if (
     isLoading ||
-    (isOnboarded === undefined && user !== null) || //We use null and undefined to differentiate between initial state and api response
+    (hasCompletedOnboarding === undefined && user !== null) || //We use null and undefined to differentiate between initial state and api response
     user === undefined
   ) {
     return <StartupContainer />;
@@ -93,7 +101,7 @@ const ApplicationNavigator = () => {
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {user ? (
             <>
-              {isOnboarded === false && (
+              {hasCompletedOnboarding === false && (
                 <Stack.Screen
                   name="Onboarding"
                   component={OnboardingContainer}

@@ -82,8 +82,8 @@ const OnboardingContainer = ({ navigation: { navigate } }: Props) => {
     max: number;
     min: number;
   }>({
-    max: 200,
-    min: 0,
+    max: 130,
+    min: 80,
   });
   const [date, setDate] = useState<Date>(new Date());
   const [weight, setWeight] = useState<string>();
@@ -243,7 +243,6 @@ const OnboardingContainer = ({ navigation: { navigate } }: Props) => {
                   handleOnChange(e as string, setType)
                 }
                 topBarProps={{
-                  color: 'red',
                   doneLabel: 'Done  ',
                 }}
               >
