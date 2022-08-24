@@ -1,4 +1,4 @@
-import { Measurements } from '@/Services/modules/users';
+import { Measurement } from '@/Services/modules/users';
 import { LineChartData } from 'react-native-chart-kit/dist/line-chart/LineChart';
 
 const hexToInt = (hex: string): number => {
@@ -84,7 +84,7 @@ export const addMinutes = (date: Date, minutes: number): Date => {
 };
 
 export const getChartDataset = (
-  measurements: Measurements | undefined
+  measurements: Array<Measurement> | undefined
 ): LineChartData => {
   if (!measurements) return { datasets: [{ data: [] }], labels: [] };
   const labels = measurements.map((m) => formatHour(new Date(m.timestamp)));

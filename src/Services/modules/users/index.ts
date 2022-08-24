@@ -16,15 +16,29 @@ export const userApi = api.injectEndpoints({
   overrideExisting: false,
 });
 
+type MeasurementEntry = {
+  value: number;
+  status: MeasurementStatus;
+};
+
 export enum MeasurementMode {
   MANUAL = 0,
   SENSOR = 1,
 }
-type Measurement = {
+
+export enum MeasurementStatus {
+  LOW = 0,
+  OK = 1,
+  HIGH = 2,
+  SUPER_HIGH = 3,
+}
+
+export type Measurement = {
   measurement: number;
   timestamp: Date;
   source: MeasurementMode;
   comments?: string;
+  status?: MeasurementStatus;
 };
 
 
@@ -41,4 +55,8 @@ export type User = {
   glucose_max: number;
 };
 
-export type Measurements = Array<Measurement>;
+export type Measurements = {
+  avg: MeasurementEntry;
+  measurements: Array<Measurement>;
+  periodInTarget: MeasurementEntry;
+};

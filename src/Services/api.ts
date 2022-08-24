@@ -13,11 +13,17 @@ const baseQuery = fetchBaseQuery({
   baseUrl: Config.API_URL,
   prepareHeaders: async (headers) => {
     const user = AuthService.getCurrentUser();
-    const token = await user?.getIdToken();
-    if (token) {
+    if (user) {
+      let { token, expirationTime } = await user.getIdTokenResult();
+      const expiresMS = new Date(expirationTime).getTime();
+      console.log(expiresMS, expiresMS - Date.now());
+      if (expiresMS - Date.now() < 300000) {
+        // if the token will expire in the next 5 minutes, forcefully grab a fresh token
+        token = await user.getIdToken(true);
+      }
+      console.log(user.uid, token);
       headers.set('auth-token', token);
     }
-
     return headers;
   },
 });

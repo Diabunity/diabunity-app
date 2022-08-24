@@ -88,7 +88,7 @@ const AddContainer = ({ navigation: { goBack, navigate } }: Props) => {
         measurements.push(m);
       }
       if (measurements.length > 0) {
-        await saveMeasurement(measurements);
+        await saveMeasurement({ measurements });
       }
     }
   };
@@ -111,7 +111,8 @@ const AddContainer = ({ navigation: { goBack, navigate } }: Props) => {
         },
       ];
 
-      await saveMeasurement(measurements);
+      const e = await saveMeasurement({ measurements });
+      console.log(e);
     } else {
       setManualEnabled(true);
     }

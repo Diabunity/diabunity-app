@@ -12,7 +12,7 @@ import Table, { TableBuilder, TENDENCY } from './Table';
 import { styles, COLORS } from './styles';
 
 import AuthService from '@/Services/modules/auth';
-import { userApi } from '@/Services/modules/users';
+import { MeasurementStatus, userApi } from '@/Services/modules/users';
 import { formatDatePeriod, DatePeriod, getChartDataset } from '@/Utils';
 
 const HomeContainer = ({
@@ -25,9 +25,8 @@ const HomeContainer = ({
   const { refetch } = route?.params || { refetch: false };
   const today = new Date();
   const {
-    data: measurements,
+    data,
     isFetching,
-    error,
     refetch: refetchFn,
   } = userApi.useFetchMeasurementQuery(
     {
@@ -36,7 +35,17 @@ const HomeContainer = ({
     },
     { refetchOnMountOrArgChange: true }
   );
-  const [currentGlucose] = measurements?.slice(-1) || [{ measurement: 0 }];
+
+  const measurements = data?.measurements;
+  const average = data?.avg || { value: 0, status: MeasurementStatus.OK };
+  const periodInTarget = data?.periodInTarget || {
+    value: 0,
+    status: MeasurementStatus.OK,
+  };
+
+  console.log(data);
+  const [currentGlucose = { measurement: 0, status: MeasurementStatus.OK }] =
+    measurements?.slice(-1) || [];
   const [tooltipPos, setTooltipPos] = useState({
     x: 0,
     y: 0,
@@ -52,7 +61,7 @@ const HomeContainer = ({
 
   return (
     <>
-      {!isFetching && !measurements ? (
+      {!isFetching && !measurements?.length ? (
         <View style={[Layout.fill, Layout.colCenter]}>
           <Icon name="inbox" size={35} color={COLORS.darkGray} />
           <Card.Title
@@ -84,6 +93,7 @@ const HomeContainer = ({
                   yAxisSuffix="mg/dL"
                   yLabelsOffset={4}
                   xLabelsOffset={4}
+                  hidePointsAtIndex={[0, 2, 4]}
                   chartConfig={{
                     propsForBackgroundLines: {
                       stroke: COLORS.darkGray,
@@ -164,9 +174,15 @@ const HomeContainer = ({
               <Table
                 data={new TableBuilder()
                   .tendency(TENDENCY.UP)
-                  .periodInTarget(45)
-                  .lastScanMeasure(currentGlucose.measurement)
-                  .average(134)
+                  .periodInTarget(periodInTarget.value, periodInTarget.status)
+                  .lastScanMeasure(
+                    currentGlucose.measurement,
+                    currentGlucose.status || MeasurementStatus.OK
+                  )
+                  .average(
+                    Math.round(parseFloat(average.value.toString())),
+                    average.status
+                  )
                   .sensorLife(4)
                   .build()}
               />

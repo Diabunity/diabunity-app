@@ -1,3 +1,4 @@
+import { MeasurementStatus } from '@/Services/modules/users';
 import React from 'react';
 import { Text, StyleSheet } from 'react-native';
 import { View } from 'react-native-ui-lib';
@@ -26,10 +27,17 @@ interface Row {
   styles?: any;
 }
 
-const COLORS: { [key in TENDENCY]: string } = {
+const TENDENCY_COLORS: { [key in TENDENCY]: string } = {
   [TENDENCY.UP]: '#C1272D',
   [TENDENCY.DOWN]: 'green',
   [TENDENCY.EQUAL]: '#C1272D', // TODO: Which color should be?
+};
+
+const STATUS_COLORS: { [key in MeasurementStatus]: string } = {
+  [MeasurementStatus.LOW]: '#0EB500',
+  [MeasurementStatus.OK]: '#DB7600',
+  [MeasurementStatus.HIGH]: '#C1272D',
+  [MeasurementStatus.SUPER_HIGH]: '#C1272D',
 };
 
 export default ({ data }: TableProps) => {
@@ -71,7 +79,7 @@ const tableStyles = StyleSheet.create({
   },
   label: {
     width: '50%',
-    fontWeight: '600',
+    fontWeight: '700',
     color: COLORS_THEME.darkGray,
     paddingHorizontal: 12,
     paddingVertical: 10,
@@ -104,29 +112,29 @@ export class TableBuilder {
         : tendency === TENDENCY.DOWN
         ? ARROW.DOWN
         : ARROW.EQUAL;
-    this._data[0].styles = { color: COLORS[tendency], ...tableStyles.arrow };
+    this._data[0].styles = {
+      color: TENDENCY_COLORS[tendency],
+      ...tableStyles.arrow,
+    };
 
     return this;
   }
 
-  periodInTarget(percentage: number): TableBuilder {
-    // TODO: If percentage is greater than XX%, then color the value red
-    // TODO: If not, color it green
+  periodInTarget(percentage: number, status: MeasurementStatus): TableBuilder {
     this._data[1].value = percentage + '%';
+    this._data[1].styles = { color: STATUS_COLORS[status] };
     return this;
   }
 
-  lastScanMeasure(value: number): TableBuilder {
-    // TODO: If value is greater than the CAP set by the user, then color the value red
-    // TODO: If not, color it green
+  lastScanMeasure(value: number, status: MeasurementStatus): TableBuilder {
     this._data[2].value = value + ' mg/dL';
+    this._data[2].styles = { color: STATUS_COLORS[status] };
     return this;
   }
 
-  average(value: number): TableBuilder {
-    // TODO: If value is greater than the CAP set by the user, then color the value red
-    // TODO: If not, color it green
+  average(value: number, status: MeasurementStatus): TableBuilder {
     this._data[3].value = value + ' mg/dL';
+    this._data[3].styles = { color: STATUS_COLORS[status] };
     return this;
   }
 
