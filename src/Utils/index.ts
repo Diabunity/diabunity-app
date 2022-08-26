@@ -1,3 +1,4 @@
+import { SensorLifeStatus } from '@/Services/modules/nfc';
 import { Measurement } from '@/Services/modules/users';
 import { LineChartData } from 'react-native-chart-kit/dist/line-chart/LineChart';
 
@@ -60,11 +61,6 @@ const getDatePeriod = (date: Date, format: string): Date => {
   }
 };
 
-const formatDate = (date: Date): string =>
-  `${date.getFullYear()}${(date.getMonth() + 1)
-    .toString()
-    .padStart(2, '0')}${date.getDate().toString().padStart(2, '0')}`;
-
 const formatHour = (date: Date): string =>
   `${date.getHours().toString().padStart(2, '0')}:${date
     .getMinutes()
@@ -74,9 +70,9 @@ const formatHour = (date: Date): string =>
 export const formatDatePeriod = (
   end: Date,
   format: string
-): { from: string; to: string } => {
+): { from: Date; to: Date } => {
   const start = getDatePeriod(end, format);
-  return { from: formatDate(start), to: formatDate(end) };
+  return { from: start, to: end };
 };
 
 export const addMinutes = (date: Date, minutes: number): Date => {
@@ -92,5 +88,32 @@ export const getChartDataset = (
   return {
     labels,
     datasets: [{ data }],
+  };
+};
+
+export const handleHiddenPoints = (
+  originalLength: number | undefined,
+  maxPoints: number = 8
+): Array<number> => {
+  if (!originalLength || originalLength <= maxPoints) return [];
+
+  return Array.from(Array(originalLength).keys()).filter(
+    (num) => num % 3 !== 0
+  );
+};
+
+export const getSensorLifeTime = (
+  sensorLife?: number
+): { age: string; status?: number } => {
+  if (sensorLife === undefined)
+    return { age: 'Desconocido', status: SensorLifeStatus.UNKNOWN };
+  const days = sensorLife;
+  if (days === 0) return { age: 'Expirado', status: SensorLifeStatus.EXPIRED };
+
+  if (days > 0 && days < 1)
+    return { age: 'Menos de 1 dia', status: SensorLifeStatus.ABOUT_TO_EXPIRE };
+  return {
+    age: `${Math.floor(days)} ${Math.floor(days) === 1 ? 'dia' : 'dias'}`,
+    status: days <= 5 ? SensorLifeStatus.GOOD : SensorLifeStatus.ALMOST_NEW,
   };
 };

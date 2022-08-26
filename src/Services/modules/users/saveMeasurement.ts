@@ -5,10 +5,7 @@ import { Measurement } from '.';
 
 export default (build: EndpointBuilder<any, any, any>) => {
   const user = AuthService.getCurrentUser();
-  return build.mutation<
-    { measurements: Array<Measurement> },
-    { measurements: Array<Measurement> }
-  >({
+  return build.mutation<Array<Measurement>, Array<Measurement>>({
     query: (data) => {
       return {
         url: `/users/${user?.uid}/measurements`,

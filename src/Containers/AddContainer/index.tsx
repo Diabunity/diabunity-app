@@ -33,6 +33,8 @@ const AddContainer = ({ navigation: { goBack, navigate } }: Props) => {
   const [isScanning, setIsScanning] = useState(false);
   const [manualEnabled, setManualEnabled] = useState<boolean>(false);
   const [measurement, setMeasurement] = useState<string>();
+  const [sensorLife, setSensorLife] = useState<number | undefined>();
+
   const [date, setDate] = useState<Date>(new Date());
   const [time, setTime] = useState<Date>(new Date());
   const [comments, setComments] = useState<string>();
@@ -52,7 +54,7 @@ const AddContainer = ({ navigation: { goBack, navigate } }: Props) => {
     let timer: NodeJS.Timeout | undefined;
     if (isSuccess) {
       timer = setTimeout(() => {
-        navigate('Home', { refetch: true });
+        navigate('Home', { refetch: true, sensorLife });
         setManualEnabled(false);
         reset();
       }, TOAST_TIMEOUT);
@@ -74,7 +76,8 @@ const AddContainer = ({ navigation: { goBack, navigate } }: Props) => {
     const glucoseData = await nfcInstance.getGlucoseData();
     setIsScanning(false);
     if (glucoseData) {
-      const history = glucoseData.history;
+      const { history, sensorLife: sensorAge } = glucoseData;
+      setSensorLife(sensorAge);
       const measurements = [];
       const timestamp = addMinutes(new Date(), 15);
       for (const measurement of history) {
@@ -88,7 +91,7 @@ const AddContainer = ({ navigation: { goBack, navigate } }: Props) => {
         measurements.push(m);
       }
       if (measurements.length > 0) {
-        await saveMeasurement({ measurements });
+        await saveMeasurement(measurements);
       }
     }
   };
@@ -111,8 +114,7 @@ const AddContainer = ({ navigation: { goBack, navigate } }: Props) => {
         },
       ];
 
-      const e = await saveMeasurement({ measurements });
-      console.log(e);
+      await saveMeasurement(measurements);
     } else {
       setManualEnabled(true);
     }

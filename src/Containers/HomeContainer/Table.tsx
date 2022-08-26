@@ -1,8 +1,8 @@
+import { SensorLifeStatus } from '@/Services/modules/nfc';
 import { MeasurementStatus } from '@/Services/modules/users';
 import React from 'react';
 import { Text, StyleSheet } from 'react-native';
 import { View } from 'react-native-ui-lib';
-import { styles } from '../OnboardingContainer/styles';
 
 import { COLORS as COLORS_THEME } from './styles';
 
@@ -29,14 +29,22 @@ interface Row {
 
 const TENDENCY_COLORS: { [key in TENDENCY]: string } = {
   [TENDENCY.UP]: '#C1272D',
-  [TENDENCY.DOWN]: 'green',
-  [TENDENCY.EQUAL]: '#C1272D', // TODO: Which color should be?
+  [TENDENCY.DOWN]: '#0060B9',
+  [TENDENCY.EQUAL]: '#0EB500',
+};
+
+const SENSOR_LIFE_COLORS: { [key in SensorLifeStatus]: string } = {
+  [SensorLifeStatus.UNKNOWN]: '#666666',
+  [SensorLifeStatus.EXPIRED]: '#C1272D',
+  [SensorLifeStatus.ABOUT_TO_EXPIRE]: '#DB7600',
+  [SensorLifeStatus.GOOD]: '#0060B9',
+  [SensorLifeStatus.ALMOST_NEW]: '#0EB500',
 };
 
 const STATUS_COLORS: { [key in MeasurementStatus]: string } = {
-  [MeasurementStatus.LOW]: '#0EB500',
-  [MeasurementStatus.OK]: '#DB7600',
-  [MeasurementStatus.HIGH]: '#C1272D',
+  [MeasurementStatus.LOW]: '#0060B9',
+  [MeasurementStatus.OK]: '#0EB500',
+  [MeasurementStatus.HIGH]: '#DB7600',
   [MeasurementStatus.SUPER_HIGH]: '#C1272D',
 };
 
@@ -138,10 +146,9 @@ export class TableBuilder {
     return this;
   }
 
-  sensorLife(days: number): TableBuilder {
-    // TODO: If amount of days is less than X days, then color the value red
-    // TODO: If not, color it green
-    this._data[4].value = days + ' días';
+  sensorLife(days: string, status: SensorLifeStatus): TableBuilder {
+    this._data[4].value = days;
+    this._data[4].styles = { color: SENSOR_LIFE_COLORS[status] };
     return this;
   }
 

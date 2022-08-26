@@ -17,7 +17,7 @@ import { NfcPromptAndroid } from '@/Components';
 
 export type NavigatorParams = {
   Main: undefined;
-  Home: { refetch: boolean };
+  Home: { refetch: boolean; sensorLife?: number };
   SignIn: undefined;
   SignUp: undefined;
   Onboarding: undefined;

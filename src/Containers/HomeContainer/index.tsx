@@ -13,17 +13,25 @@ import { styles, COLORS } from './styles';
 
 import AuthService from '@/Services/modules/auth';
 import { MeasurementStatus, userApi } from '@/Services/modules/users';
-import { formatDatePeriod, DatePeriod, getChartDataset } from '@/Utils';
+import { SensorLifeStatus } from '@/Services/modules/nfc';
+import {
+  DatePeriod,
+  getChartDataset,
+  getSensorLifeTime,
+  handleHiddenPoints,
+} from '@/Utils';
 
 const HomeContainer = ({
   route,
 }: {
-  route: RouteProp<{ params?: { refetch: boolean } }, 'params'>;
+  route: RouteProp<
+    { params?: { refetch: boolean; sensorLife?: number } },
+    'params'
+  >;
 }) => {
   const { Layout, Colors } = useTheme();
   const user = AuthService.getCurrentUser();
-  const { refetch } = route?.params || { refetch: false };
-  const today = new Date();
+  const { refetch, sensorLife } = route?.params || { refetch: false };
   const {
     data,
     isFetching,
@@ -31,9 +39,9 @@ const HomeContainer = ({
   } = userApi.useFetchMeasurementQuery(
     {
       id: user?.uid,
-      ...formatDatePeriod(today, DatePeriod.LAST_DAY),
+      dateFilter: DatePeriod.LAST_DAY,
     },
-    { refetchOnMountOrArgChange: true }
+    { refetchOnMountOrArgChange: refetch }
   );
 
   const measurements = data?.measurements;
@@ -43,7 +51,8 @@ const HomeContainer = ({
     status: MeasurementStatus.OK,
   };
 
-  console.log(data);
+  const { age, status = SensorLifeStatus.UNKNOWN } =
+    getSensorLifeTime(sensorLife);
   const [currentGlucose = { measurement: 0, status: MeasurementStatus.OK }] =
     measurements?.slice(-1) || [];
   const [tooltipPos, setTooltipPos] = useState({
@@ -93,7 +102,8 @@ const HomeContainer = ({
                   yAxisSuffix="mg/dL"
                   yLabelsOffset={4}
                   xLabelsOffset={4}
-                  hidePointsAtIndex={[0, 2, 4]}
+                  yAxisInterval={2}
+                  hidePointsAtIndex={handleHiddenPoints(measurements?.length)}
                   chartConfig={{
                     propsForBackgroundLines: {
                       stroke: COLORS.darkGray,
@@ -183,7 +193,7 @@ const HomeContainer = ({
                     Math.round(parseFloat(average.value.toString())),
                     average.status
                   )
-                  .sensorLife(4)
+                  .sensorLife(age, status)
                   .build()}
               />
             )}
