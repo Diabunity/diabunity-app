@@ -62,6 +62,7 @@ export class NFCReader {
           memoryData
         );
         const sensorLife = LibreManagerTool.getSensorInfoAndroid(memoryData);
+        console.log('sensorLife', sensorLife);
         return { ...glucoseInfo, sensorLife };
       } catch (ex) {
         this.handleException(ex);

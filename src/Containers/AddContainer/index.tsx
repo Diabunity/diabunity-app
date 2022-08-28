@@ -75,9 +75,14 @@ const AddContainer = ({ navigation: { goBack, navigate } }: Props) => {
     }
     setIsScanning(true);
     const glucoseData = await nfcInstance.getGlucoseData();
+    console.log(glucoseData);
     setIsScanning(false);
     if (glucoseData) {
-      const { history, sensorLife: sensorAge } = glucoseData;
+      const {
+        history,
+        current_glucose: currentGlucose,
+        sensorLife: sensorAge,
+      } = glucoseData;
       setSensorLife(sensorAge);
       const measurements = [];
       const timestamp = addMinutes(new Date(), 15);
@@ -86,13 +91,19 @@ const AddContainer = ({ navigation: { goBack, navigate } }: Props) => {
           measurement: isIOS ? measurement : measurement.value,
           timestamp: isIOS
             ? addMinutes(timestamp, -15)
-            : measurement.utcTimeStamp,
+            : new Date(Number(measurement.utcTimeStamp)).toISOString(),
           source: MeasurementMode.SENSOR,
         };
         measurements.push(m);
       }
+      measurements.push({
+        measurement: currentGlucose,
+        timestamp: new Date(Date.now()).toISOString(),
+        source: MeasurementMode.SENSOR,
+      });
       if (measurements.length > 0) {
-        await saveMeasurement(measurements);
+        const e = await saveMeasurement(measurements);
+        console.log(e);
       }
     }
   };

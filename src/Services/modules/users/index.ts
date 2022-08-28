@@ -4,14 +4,12 @@ import saveUser from './saveUser';
 import fetchMeasurement from './fetchMeasurement';
 import saveMeasurement from './saveMeasurement';
 
-
 export const userApi = api.injectEndpoints({
   endpoints: (build) => ({
     fetchUser: fetchUser(build),
     saveUser: saveUser(build),
     fetchMeasurement: fetchMeasurement(build),
     saveMeasurement: saveMeasurement(build),
-
   }),
   overrideExisting: false,
 });
@@ -35,12 +33,11 @@ export enum MeasurementStatus {
 
 export type Measurement = {
   measurement: number;
-  timestamp: Date;
+  timestamp: Date | string;
   source: MeasurementMode;
   comments?: string;
   status?: MeasurementStatus;
 };
-
 
 export const { useLazyFetchUserQuery } = userApi;
 
