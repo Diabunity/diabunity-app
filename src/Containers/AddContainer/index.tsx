@@ -42,8 +42,9 @@ const AddContainer = ({ navigation: { goBack, navigate } }: Props) => {
   useEffect(() => {
     const init = async () => {
       const NFCObj = new NFCReader();
-      setSupported(await NFCObj.init());
-      if (supported) {
+      const hasNFCSupport = await NFCObj.init();
+      setSupported(hasNFCSupport);
+      if (hasNFCSupport) {
         setNFCInstance(NFCObj);
       }
     };
