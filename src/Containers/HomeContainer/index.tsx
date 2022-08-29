@@ -58,8 +58,9 @@ const HomeContainer = ({
 
   const { age, status = SensorLifeStatus.UNKNOWN } =
     getSensorLifeTime(sensorLife);
-  const [currentGlucose = { measurement: 0, status: MeasurementStatus.OK }] =
-    measurements?.slice(-1) || [];
+  const [currentGlucose = { measurement: 0, status: MeasurementStatus.OK }] = [
+    measurements?.[0],
+  ];
   const [tooltipPos, setTooltipPos] = useState({
     x: 0,
     y: 0,

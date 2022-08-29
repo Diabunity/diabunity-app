@@ -1,5 +1,5 @@
 export { default as HomeContainer } from './HomeContainer';
-export { default as AddContainer } from './AddContainer';
+export { default as AddMeasureContainer } from './AddMeasureContainer';
 export { default as StartupContainer } from './SplashContainer';
 export { default as AuthContainer } from './AuthContainer';
 export { default as UserContainer } from './UserContainer';

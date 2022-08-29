@@ -21,9 +21,9 @@ import { styles, colors } from './styles';
 
 type Props = NativeStackScreenProps<NavigatorParams>;
 
-const TOAST_TIMEOUT = 1000;
+const TOAST_TIMEOUT = 2000;
 
-const AddContainer = ({ navigation: { goBack, navigate } }: Props) => {
+const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
   const { Layout, Images, Colors } = useTheme();
   const [saveMeasurement, { isLoading, isSuccess, isError, reset }] =
     userApi.useSaveMeasurementMutation();
@@ -75,7 +75,6 @@ const AddContainer = ({ navigation: { goBack, navigate } }: Props) => {
     }
     setIsScanning(true);
     const glucoseData = await nfcInstance.getGlucoseData();
-    console.log(glucoseData);
     setIsScanning(false);
     if (glucoseData) {
       const {
@@ -102,8 +101,7 @@ const AddContainer = ({ navigation: { goBack, navigate } }: Props) => {
         source: MeasurementMode.SENSOR,
       });
       if (measurements.length > 0) {
-        const e = await saveMeasurement(measurements);
-        console.log(e);
+        await saveMeasurement(measurements);
       }
     }
   };
@@ -259,4 +257,4 @@ const AddContainer = ({ navigation: { goBack, navigate } }: Props) => {
   );
 };
 
-export default AddContainer;
+export default AddMeasureContainer;
