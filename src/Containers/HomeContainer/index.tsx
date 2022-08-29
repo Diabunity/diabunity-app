@@ -1,25 +1,66 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  Alert,
-  Dimensions,
-  View,
-} from 'react-native';
+import { Text, ScrollView, Dimensions, View } from 'react-native';
+import { SkeletonView } from 'react-native-ui-lib';
+import Icon from 'react-native-vector-icons/Feather';
+import { Card } from 'react-native-paper';
 import { Rect, Text as TextSVG, Svg } from 'react-native-svg';
-import { useTheme } from '@/Hooks';
+import { RouteProp } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+
 import { LineChart } from 'react-native-chart-kit';
-import { NFCReader } from '@/Services/modules/nfc';
-import Clipboard from '@react-native-community/clipboard';
-
+import { useTheme } from '@/Hooks';
 import Table, { TableBuilder, TENDENCY } from './Table';
-import { COLORS } from './styles';
+import { styles, COLORS } from './styles';
 
-const HomeContainer = () => {
-  const { Common, Fonts, Gutters, Layout } = useTheme();
-  const [nfcInstance, setNFCInstance] = useState<NFCReader>();
-  const [isScanning, setIsScanning] = useState(false);
+import AuthService from '@/Services/modules/auth';
+import { MeasurementStatus, userApi } from '@/Services/modules/users';
+import { SensorLifeStatus } from '@/Services/modules/nfc';
+import { NavigatorParams } from '@/Navigators/Application';
+import {
+  DatePeriod,
+  getChartDataset,
+  getSensorLifeTime,
+  handleHiddenPoints,
+} from '@/Utils';
+import { FormButton } from '@/Components';
+
+const HomeContainer = ({
+  route,
+  navigation: { navigate },
+}: {
+  route: RouteProp<
+    { params?: { refetch: boolean; sensorLife?: number } },
+    'params'
+  >;
+  navigation: NativeStackScreenProps<NavigatorParams>;
+}) => {
+  const { Layout, Colors } = useTheme();
+  const user = AuthService.getCurrentUser();
+  const { refetch, sensorLife } = route?.params || { refetch: false };
+  const {
+    data,
+    isFetching,
+    refetch: refetchFn,
+  } = userApi.useFetchMeasurementQuery(
+    {
+      id: user?.uid,
+      dateFilter: DatePeriod.LAST_8_HOURS,
+    },
+    { refetchOnMountOrArgChange: refetch }
+  );
+
+  const measurements = data?.measurements;
+  const average = data?.avg || { value: 0, status: MeasurementStatus.OK };
+  const periodInTarget = data?.periodInTarget || {
+    value: 0,
+    status: MeasurementStatus.OK,
+  };
+
+  const { age, status = SensorLifeStatus.UNKNOWN } =
+    getSensorLifeTime(sensorLife);
+  const [currentGlucose = { measurement: 0, status: MeasurementStatus.OK }] = [
+    measurements?.[0],
+  ];
   const [tooltipPos, setTooltipPos] = useState({
     x: 0,
     y: 0,
@@ -28,156 +69,152 @@ const HomeContainer = () => {
   });
 
   useEffect(() => {
-    const init = async () => {
-      const NFCObj = new NFCReader();
-      const supported = await NFCObj.init();
-      if (!supported) {
-        // Alert.alert('NFC is not supported');
-      } else {
-        setNFCInstance(NFCObj);
-      }
-    };
-    init();
-  }, []);
-
-  const onTag = async () => {
-    if (!nfcInstance || isScanning) {
-      return;
+    if (refetch) {
+      refetchFn();
     }
-    setIsScanning(true);
-    const glucoseData = await nfcInstance.getGlucoseData();
-    setIsScanning(false);
-    if (glucoseData) {
-      Clipboard.setString(glucoseData.toString());
-      Alert.alert('Glucose data copied to Clipboard!');
-    }
-  };
+  }, [refetch]);
 
   return (
-    <ScrollView
-      style={Layout.fill}
-      contentContainerStyle={{
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: 15,
-        marginLeft: 20,
-        marginRight: 20,
-      }}
-    >
-      <Text
-        style={{
-          fontSize: 16,
-          lineHeight: 24,
-          width: '100%',
-          textAlign: 'center',
-          borderBottomColor: COLORS.gray,
-          borderBottomWidth: 1,
-        }}
-      >
-        Últimas 24 horas
-      </Text>
-      <LineChart
-        data={{
-          labels: ['15:00', '15:37', '16:04', '16:21', '17:40', '18:04'],
-          datasets: [
-            {
-              data: [93, 110, 124, 140, 121, 89],
-            },
-          ],
-        }}
-        width={Dimensions.get('window').width - 40} // from react-native
-        height={202}
-        yAxisSuffix="mg/dL"
-        yAxisInterval={1} // optional, defaults to 1
-        chartConfig={{
-          backgroundColor: '#e26a00',
-          backgroundGradientFrom: '#fb8c00',
-          backgroundGradientTo: '#ffa726',
-          decimalPlaces: 0, // optional, defaults to 2dp
-          color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          style: {
-            borderRadius: 16,
-          },
-          propsForDots: {
-            r: '6',
-            strokeWidth: '2',
-            stroke: '#ffa726',
-          },
-        }}
-        bezier
-        style={{
-          marginVertical: 8,
-        }}
-        decorator={() => {
-          return tooltipPos.visible ? (
-            <View>
-              <Svg>
-                <Rect
-                  x={tooltipPos.x - 15}
-                  y={tooltipPos.y + 10}
-                  width="40"
-                  height="30"
-                  fill="black"
-                />
-                <TextSVG
-                  x={tooltipPos.x + 5}
-                  y={tooltipPos.y + 30}
-                  fill="white"
-                  fontSize="16"
-                  fontWeight="bold"
-                  textAnchor="middle"
-                >
-                  {tooltipPos.value}
-                </TextSVG>
-              </Svg>
-            </View>
-          ) : null;
-        }}
-        onDataPointClick={(data) => {
-          let isSamePoint = tooltipPos.x === data.x && tooltipPos.y === data.y;
+    <>
+      {!isFetching && !measurements?.length ? (
+        <View style={[Layout.fill, Layout.colCenter]}>
+          <Icon name="inbox" size={35} color={COLORS.darkGray} />
+          <Card.Title
+            style={[Layout.colCenter]}
+            title="No hay informacion para mostrar"
+            subtitle="No se han encontrado mediciones"
+            subtitleStyle={styles.card}
+          />
+          <FormButton
+            label="Empeza a medirte"
+            onPress={() => navigate('Add')}
+            noMarginBottom
+            backgroundColor={Colors.red}
+          />
+        </View>
+      ) : (
+        <ScrollView
+          style={Layout.fill}
+          contentContainerStyle={styles.scrollView}
+        >
+          <Text style={styles.title}>Últimas 24 horas</Text>
+          <ScrollView horizontal style={{ marginTop: 10 }}>
+            <SkeletonView
+              template={SkeletonView.templates.TEXT_CONTENT}
+              showContent={!!measurements}
+              style={{
+                ...Layout.colCenter,
+                ...styles.skeleton,
+              }}
+              renderContent={() => (
+                <LineChart
+                  data={getChartDataset(measurements)}
+                  width={Dimensions.get('window').width} // from react-native
+                  height={200}
+                  yAxisSuffix="mg/dL"
+                  yLabelsOffset={4}
+                  xLabelsOffset={4}
+                  fromZero
+                  yAxisInterval={2}
+                  hidePointsAtIndex={handleHiddenPoints(measurements?.length)}
+                  chartConfig={{
+                    propsForBackgroundLines: {
+                      stroke: COLORS.darkGray,
+                      opacity: '0.5',
+                    },
+                    backgroundGradientFrom: Colors.white,
+                    backgroundGradientTo: Colors.white,
+                    decimalPlaces: 0,
+                    strokeWidth: 1,
+                    color: () => Colors.red,
+                    labelColor: () => COLORS.darkGray,
+                    propsForDots: {
+                      r: '5',
+                    },
+                  }}
+                  bezier
+                  style={{
+                    marginVertical: 10,
+                  }}
+                  decorator={() => {
+                    return tooltipPos.visible ? (
+                      <View>
+                        <Svg>
+                          <Rect
+                            x={tooltipPos.x - 15}
+                            y={tooltipPos.y + 10}
+                            width="40"
+                            height="30"
+                            fill="black"
+                          />
+                          <TextSVG
+                            x={tooltipPos.x + 5}
+                            y={tooltipPos.y + 30}
+                            fill={Colors.white}
+                            fontSize="16"
+                            fontWeight="bold"
+                            textAnchor="middle"
+                          >
+                            {tooltipPos.value}
+                          </TextSVG>
+                        </Svg>
+                      </View>
+                    ) : null;
+                  }}
+                  onDataPointClick={(data) => {
+                    let isSamePoint =
+                      tooltipPos.x === data.x && tooltipPos.y === data.y;
 
-          if (isSamePoint) {
-            return;
-          } else {
-            setTooltipPos({
-              x: data.x,
-              value: data.value,
-              y: data.y,
-              visible: true,
-            });
-            setTimeout(() => {
-              setTooltipPos((previousState) => {
-                return {
-                  ...previousState,
-                  value: data.value,
-                  visible: !previousState.visible,
-                };
-              });
-            }, 1000);
-          }
-        }}
-      />
-      <Table
-        tendency={TENDENCY.UP}
-        // TODO : All these values should be fetched from the API/LocalStorage
-        data={new TableBuilder()
-          .periodInTarget(45)
-          .lastScanMeasure(76)
-          .average(134)
-          .sensorLife(4)
-          .build()}
-      />
-      <TouchableOpacity
-        style={[Common.button.rounded, Gutters.regularBMargin, { height: 50 }]}
-        onPress={onTag}
-        disabled={isScanning}
-        activeOpacity={!isScanning ? 0.5 : 1}
-      >
-        <Text style={Fonts.textRegular}>Medir Glucosa</Text>
-      </TouchableOpacity>
-    </ScrollView>
+                    if (isSamePoint) {
+                      return;
+                    } else {
+                      setTooltipPos({
+                        x: data.x,
+                        value: data.value,
+                        y: data.y,
+                        visible: true,
+                      });
+                      setTimeout(() => {
+                        setTooltipPos((previousState) => {
+                          return {
+                            ...previousState,
+                            value: data.value,
+                            visible: !previousState.visible,
+                          };
+                        });
+                      }, 1000);
+                    }
+                  }}
+                />
+              )}
+              times={2}
+            />
+          </ScrollView>
+          <SkeletonView
+            template={SkeletonView.templates.TEXT_CONTENT}
+            showContent={!isFetching}
+            renderContent={() => (
+              <Table
+                data={new TableBuilder()
+                  .tendency(TENDENCY.UP)
+                  .periodInTarget(periodInTarget.value, periodInTarget.status)
+                  .lastScanMeasure(
+                    currentGlucose.measurement,
+                    currentGlucose.status || MeasurementStatus.OK
+                  )
+                  .average(
+                    Math.round(parseFloat(average.value.toString())),
+                    average.status
+                  )
+                  .sensorLife(age, status)
+                  .build()}
+              />
+            )}
+            times={2}
+          />
+        </ScrollView>
+      )}
+    </>
   );
 };
 

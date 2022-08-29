@@ -1,3 +1,5 @@
+import { SensorLifeStatus } from '@/Services/modules/nfc';
+import { MeasurementStatus } from '@/Services/modules/users';
 import React from 'react';
 import { Text, StyleSheet } from 'react-native';
 import { View } from 'react-native-ui-lib';
@@ -15,92 +17,53 @@ enum ARROW {
   EQUAL = '\u2192',
   DOWN = '\u2193',
 }
-
-interface HeaderProps {
-  tendency: TENDENCY;
-}
-
 interface TableProps {
-  tendency: TENDENCY;
   data: Row[];
 }
 
 interface Row {
   label: string;
   value: string;
+  styles?: any;
 }
 
-const COLORS: { [key in TENDENCY]: string } = {
+const TENDENCY_COLORS: { [key in TENDENCY]: string } = {
   [TENDENCY.UP]: '#C1272D',
-  [TENDENCY.DOWN]: 'green',
-  [TENDENCY.EQUAL]: '#C1272D', // TODO: Which color should be?
+  [TENDENCY.DOWN]: '#0060B9',
+  [TENDENCY.EQUAL]: '#0EB500',
 };
 
-const Header = ({ tendency }: HeaderProps) => {
-  return (
-    <View style={headerStyles.container}>
-      <Text
-        style={{
-          color: COLORS[tendency],
-          ...headerStyles.text,
-        }}
-      >
-        Tendencia
-      </Text>
-      <Text
-        style={{
-          color: COLORS[tendency],
-          ...headerStyles.arrow,
-        }}
-      >
-        {tendency === TENDENCY.UP
-          ? ARROW.UP
-          : tendency === TENDENCY.DOWN
-          ? ARROW.DOWN
-          : ARROW.EQUAL}
-      </Text>
-    </View>
-  );
+const SENSOR_LIFE_COLORS: { [key in SensorLifeStatus]: string } = {
+  [SensorLifeStatus.UNKNOWN]: '#666666',
+  [SensorLifeStatus.EXPIRED]: '#C1272D',
+  [SensorLifeStatus.ABOUT_TO_EXPIRE]: '#DB7600',
+  [SensorLifeStatus.GOOD]: '#0060B9',
+  [SensorLifeStatus.ALMOST_NEW]: '#0EB500',
 };
 
-export default ({ tendency, data }: TableProps) => {
+const STATUS_COLORS: { [key in MeasurementStatus]: string } = {
+  [MeasurementStatus.LOW]: '#0060B9',
+  [MeasurementStatus.OK]: '#0EB500',
+  [MeasurementStatus.HIGH]: '#DB7600',
+  [MeasurementStatus.SUPER_HIGH]: '#C1272D',
+};
+
+export default ({ data }: TableProps) => {
   return (
     <>
-      <Header tendency={tendency} />
       <View style={tableStyles.container}>
         {data.map((row, index) => (
           <View key={index} style={tableStyles.row}>
             <Text style={tableStyles.label}>{row.label}</Text>
-            <Text style={tableStyles.value}>{row.value}</Text>
+            <Text style={{ ...tableStyles.value, ...row.styles }}>
+              {row.value}
+            </Text>
           </View>
         ))}
       </View>
     </>
   );
 };
-
-const headerStyles = StyleSheet.create({
-  container: {
-    display: 'flex',
-    flexDirection: 'row',
-    marginTop: 14,
-  },
-  text: {
-    fontSize: 16,
-    lineHeight: 24,
-    width: '50%',
-    paddingLeft: 12,
-    textTransform: 'uppercase',
-    fontWeight: '700',
-  },
-  arrow: {
-    width: '50%',
-    fontWeight: '700',
-    fontSize: 28,
-    lineHeight: 24,
-    paddingLeft: 15,
-  },
-});
 
 const tableStyles = StyleSheet.create({
   container: {
@@ -111,15 +74,20 @@ const tableStyles = StyleSheet.create({
     borderColor: COLORS_THEME.gray,
     marginTop: 15,
   },
+  arrow: {
+    fontSize: 28,
+  },
   row: {
     display: 'flex',
     flexDirection: 'row',
+    alignItems: 'center',
+    padding: 5,
     borderBottomWidth: 0.5,
     borderColor: COLORS_THEME.gray,
   },
   label: {
     width: '50%',
-    fontWeight: '600',
+    fontWeight: '700',
     color: COLORS_THEME.darkGray,
     paddingHorizontal: 12,
     paddingVertical: 10,
@@ -137,6 +105,7 @@ export class TableBuilder {
 
   constructor() {
     this._data = [
+      { label: 'TENDENCIA', value: '' },
       { label: 'Periodo en objetivo', value: '' },
       { label: 'Último escaneo', value: '' },
       { label: 'Promedio', value: '' },
@@ -144,31 +113,42 @@ export class TableBuilder {
     ];
   }
 
-  periodInTarget(percentage: number): TableBuilder {
-    // TODO: If percentage is greater than XX%, then color the value red
-    // TODO: If not, color it green
-    this._data[0].value = percentage + '%';
+  tendency(tendency: TENDENCY): TableBuilder {
+    this._data[0].value =
+      tendency === TENDENCY.UP
+        ? ARROW.UP
+        : tendency === TENDENCY.DOWN
+        ? ARROW.DOWN
+        : ARROW.EQUAL;
+    this._data[0].styles = {
+      color: TENDENCY_COLORS[tendency],
+      ...tableStyles.arrow,
+    };
+
     return this;
   }
 
-  lastScanMeasure(value: number): TableBuilder {
-    // TODO: If value is greater than the CAP set by the user, then color the value red
-    // TODO: If not, color it green
-    this._data[1].value = value + ' ml/dL';
+  periodInTarget(percentage: number, status: MeasurementStatus): TableBuilder {
+    this._data[1].value = percentage + '%';
+    this._data[1].styles = { color: STATUS_COLORS[status] };
     return this;
   }
 
-  average(value: number): TableBuilder {
-    // TODO: If value is greater than the CAP set by the user, then color the value red
-    // TODO: If not, color it green
-    this._data[2].value = value + ' ml/dL';
+  lastScanMeasure(value: number, status: MeasurementStatus): TableBuilder {
+    this._data[2].value = value + ' mg/dL';
+    this._data[2].styles = { color: STATUS_COLORS[status] };
     return this;
   }
 
-  sensorLife(days: number): TableBuilder {
-    // TODO: If amount of days is less than X days, then color the value red
-    // TODO: If not, color it green
-    this._data[3].value = days + ' días';
+  average(value: number, status: MeasurementStatus): TableBuilder {
+    this._data[3].value = value + ' mg/dL';
+    this._data[3].styles = { color: STATUS_COLORS[status] };
+    return this;
+  }
+
+  sensorLife(days: string, status: SensorLifeStatus): TableBuilder {
+    this._data[4].value = days;
+    this._data[4].styles = { color: SENSOR_LIFE_COLORS[status] };
     return this;
   }
 

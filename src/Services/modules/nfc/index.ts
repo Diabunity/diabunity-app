@@ -9,6 +9,13 @@ import NfcManager, {
 import { setShowNfcPrompt } from '@/Store/Theme';
 import { store } from '@/Store';
 
+export enum SensorLifeStatus {
+  UNKNOWN = 0,
+  EXPIRED = 1,
+  ABOUT_TO_EXPIRE = 2,
+  GOOD = 3,
+  ALMOST_NEW = 4,
+}
 export class NFCReader {
   STATUS_CMD = [0x02, 0xa1 - 0x100, 0x07];
   nfcHandler: typeof NfcManager.nfcVHandler;
@@ -35,9 +42,13 @@ export class NFCReader {
   getGlucoseData = async (): Promise<Array<number> | null | any> => {
     if (Platform.OS === 'ios') {
       //If iOS we get the data from the react-native-libre-manager library
-      return await new Promise((resolve) =>
+      const glucoseInfo = (await new Promise((resolve) =>
         LibreManagerTool.getGlucoseHistory((resp) => resolve(resp))
+      )) as Promise<any>;
+      const sensorLife = await new Promise((resolve) =>
+        LibreManagerTool.getSensorInfo((resp) => resolve(resp))
       );
+      return { ...glucoseInfo, sensorLife };
     } else {
       try {
         store.dispatch(setShowNfcPrompt({ showNfcPrompt: true }));
@@ -45,7 +56,13 @@ export class NFCReader {
         await NfcManager.requestTechnology(this.nfcTech);
         // the resolved tag object will contain `ndefMessage` property
         const tag = await NfcManager.getTag();
-        return await this.getMemory(tag);
+        const memoryData = await this.getMemory(tag);
+        const glucoseInfo = await LibreManagerTool.getGlucoseHistoryAndroid(
+          tag?.id,
+          memoryData
+        );
+        const sensorLife = LibreManagerTool.getSensorInfoAndroid(memoryData);
+        return { ...glucoseInfo, sensorLife };
       } catch (ex) {
         this.handleException(ex);
         return null;

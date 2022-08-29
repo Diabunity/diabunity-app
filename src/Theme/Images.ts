@@ -16,5 +16,6 @@ export default function ({}: ThemeVariables): ThemeImages {
     onboarding4: require('@/Assets/Images/onboarding-4.png'),
     onboarding5: require('@/Assets/Images/onboarding-5.png'),
     onboarding6: require('@/Assets/Images/onboarding-6.png'),
+    addDrop: require('@/Assets/Images/add-drop.png'),
   };
 }

@@ -1,5 +1,9 @@
 import { StyleSheet } from 'react-native';
 
+export const COLORS = {
+  red: '#C1272D',
+};
+
 export const styles = StyleSheet.create({
   input: {
     width: 277,
@@ -51,6 +55,15 @@ export const styles = StyleSheet.create({
   slider: {
     width: 277,
     height: 52,
-    color: '#C1272D',
+    color: COLORS.red,
+  },
+  sliderView: {
+    marginTop: 26,
+    flex: 1,
+    flexDirection: 'row',
+  },
+  sliderText: {
+    position: 'absolute',
+    top: 50,
   },
 });

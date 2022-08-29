@@ -1,13 +1,13 @@
 import React from 'react';
 import { Image, Text, View, Animated, StyleSheet, Modal } from 'react-native';
-import { Button } from 'react-native-paper';
+import { Button } from 'react-native-ui-lib';
 import NfcManager from 'react-native-nfc-manager';
 import { useTheme } from '@/Hooks';
 import { setShowNfcPrompt } from '@/Store/Theme';
 import { store } from '@/Store';
 
 function NfcPromptAndroid() {
-  const { Images, showNfcPrompt } = useTheme();
+  const { Images, Colors, showNfcPrompt } = useTheme();
   const [visible, setVisible] = React.useState(false);
   const animValue = React.useRef(new Animated.Value(0)).current;
   const _visible = showNfcPrompt;
@@ -73,12 +73,15 @@ function NfcPromptAndroid() {
               resizeMode="contain"
             />
 
-            <Text>Please bring your NFC tag closer</Text>
+            <Text>Por favor acerca tu parche NFC</Text>
           </View>
 
-          <Button mode="contained" onPress={cancelNfcScan}>
-            CANCEL
-          </Button>
+          <Button
+            mode="contained"
+            onPress={cancelNfcScan}
+            backgroundColor={Colors.red}
+            label="CANCELAR"
+          />
         </Animated.View>
 
         <Animated.View style={[styles.promptBg, bgAnimStyle]} />
