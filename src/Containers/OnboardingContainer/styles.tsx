@@ -65,6 +65,5 @@ export const styles = StyleSheet.create({
   sliderText: {
     position: 'absolute',
     top: 50,
-    color: COLORS.red,
   },
 });

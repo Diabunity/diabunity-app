@@ -40,6 +40,7 @@ export const uncomplement = (val: number, bitwidth: number) => {
 };
 
 export enum DatePeriod {
+  LAST_8_HOURS = 'last8Hours',
   LAST_DAY = 'lastDay',
   LAST_WEEK = 'lastDay',
   LAST_MONTH = 'lastMonth',
@@ -48,6 +49,13 @@ export enum DatePeriod {
 
 const getDatePeriod = (date: Date, format: string): Date => {
   switch (format) {
+    case DatePeriod.LAST_8_HOURS:
+      return new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        date.getHours() - 8
+      );
     case DatePeriod.LAST_DAY:
       return new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1);
     case DatePeriod.LAST_WEEK:

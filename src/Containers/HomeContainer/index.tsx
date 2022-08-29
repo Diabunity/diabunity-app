@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import { Card } from 'react-native-paper';
 import { Rect, Text as TextSVG, Svg } from 'react-native-svg';
 import { RouteProp } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { LineChart } from 'react-native-chart-kit';
 import { useTheme } from '@/Hooks';
@@ -14,20 +15,24 @@ import { styles, COLORS } from './styles';
 import AuthService from '@/Services/modules/auth';
 import { MeasurementStatus, userApi } from '@/Services/modules/users';
 import { SensorLifeStatus } from '@/Services/modules/nfc';
+import { NavigatorParams } from '@/Navigators/Application';
 import {
   DatePeriod,
   getChartDataset,
   getSensorLifeTime,
   handleHiddenPoints,
 } from '@/Utils';
+import { FormButton } from '@/Components';
 
 const HomeContainer = ({
   route,
+  navigation: { navigate },
 }: {
   route: RouteProp<
     { params?: { refetch: boolean; sensorLife?: number } },
     'params'
   >;
+  navigation: NativeStackScreenProps<NavigatorParams>;
 }) => {
   const { Layout, Colors } = useTheme();
   const user = AuthService.getCurrentUser();
@@ -39,7 +44,7 @@ const HomeContainer = ({
   } = userApi.useFetchMeasurementQuery(
     {
       id: user?.uid,
-      dateFilter: DatePeriod.LAST_DAY,
+      dateFilter: DatePeriod.LAST_8_HOURS,
     },
     { refetchOnMountOrArgChange: refetch }
   );
@@ -79,6 +84,12 @@ const HomeContainer = ({
             subtitle="No se han encontrado mediciones"
             subtitleStyle={styles.card}
           />
+          <FormButton
+            label="Empeza a medirte"
+            onPress={() => navigate('Add')}
+            noMarginBottom
+            backgroundColor={Colors.red}
+          />
         </View>
       ) : (
         <ScrollView
@@ -102,6 +113,7 @@ const HomeContainer = ({
                   yAxisSuffix="mg/dL"
                   yLabelsOffset={4}
                   xLabelsOffset={4}
+                  fromZero
                   yAxisInterval={2}
                   hidePointsAtIndex={handleHiddenPoints(measurements?.length)}
                   chartConfig={{
