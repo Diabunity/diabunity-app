@@ -19,6 +19,11 @@ type MeasurementEntry = {
   status: MeasurementStatus;
 };
 
+type PeriodEntry = {
+  value: number;
+  status: PeriodInTargetStatus;
+};
+
 export enum MeasurementMode {
   MANUAL = 0,
   SENSOR = 1,
@@ -29,6 +34,12 @@ export enum MeasurementStatus {
   OK = 1,
   HIGH = 2,
   SUPER_HIGH = 3,
+}
+
+export enum PeriodInTargetStatus {
+  BAD = 0,
+  STABLE = 1,
+  GOOD = 2,
 }
 
 export type Measurement = {
@@ -55,5 +66,5 @@ export type User = {
 export type Measurements = {
   avg: MeasurementEntry;
   measurements: Array<Measurement>;
-  periodInTarget: MeasurementEntry;
+  periodInTarget: PeriodEntry;
 };

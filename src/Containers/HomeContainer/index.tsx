@@ -13,7 +13,11 @@ import Table, { TableBuilder, TENDENCY } from './Table';
 import { styles, COLORS } from './styles';
 
 import AuthService from '@/Services/modules/auth';
-import { MeasurementStatus, userApi } from '@/Services/modules/users';
+import {
+  MeasurementStatus,
+  PeriodInTargetStatus,
+  userApi,
+} from '@/Services/modules/users';
 import { SensorLifeStatus } from '@/Services/modules/nfc';
 import { NavigatorParams } from '@/Navigators/Application';
 import {
@@ -24,16 +28,14 @@ import {
 } from '@/Utils';
 import { FormButton } from '@/Components';
 
-const HomeContainer = ({
-  route,
-  navigation: { navigate },
-}: {
+type Props = NativeStackScreenProps<NavigatorParams> & {
   route: RouteProp<
     { params?: { refetch: boolean; sensorLife?: number } },
     'params'
   >;
-  navigation: NativeStackScreenProps<NavigatorParams>;
-}) => {
+};
+
+const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
   const { Layout, Colors } = useTheme();
   const user = AuthService.getCurrentUser();
   const { refetch, sensorLife } = route?.params || { refetch: false };
@@ -53,7 +55,7 @@ const HomeContainer = ({
   const average = data?.avg || { value: 0, status: MeasurementStatus.OK };
   const periodInTarget = data?.periodInTarget || {
     value: 0,
-    status: MeasurementStatus.OK,
+    status: PeriodInTargetStatus.GOOD,
   };
 
   const { age, status = SensorLifeStatus.UNKNOWN } =
@@ -61,6 +63,7 @@ const HomeContainer = ({
   const [currentGlucose = { measurement: 0, status: MeasurementStatus.OK }] = [
     measurements?.[0],
   ];
+
   const [tooltipPos, setTooltipPos] = useState({
     x: 0,
     y: 0,
