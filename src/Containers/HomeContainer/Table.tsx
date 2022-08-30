@@ -141,7 +141,7 @@ export class TableBuilder {
     percentage: number,
     status: PeriodInTargetStatus
   ): TableBuilder {
-    this._data[1].value = percentage + '%';
+    this._data[1].value = percentage * 100 + '%';
     this._data[1].styles = { color: PERIOD_IN_TARGET_COLORS[status] };
     return this;
   }
