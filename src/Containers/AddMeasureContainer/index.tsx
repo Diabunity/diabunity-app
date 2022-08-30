@@ -15,7 +15,7 @@ import { FormButton, BackButton } from '@/Components';
 import { NavigatorParams } from '@/Navigators/Application';
 import { NFCReader } from '@/Services/modules/nfc';
 import { userApi, MeasurementMode } from '@/Services/modules/users';
-import { addMinutes } from '@/Utils';
+import { addMinutes, setByTimezone } from '@/Utils';
 
 import { styles, colors } from './styles';
 
@@ -58,6 +58,7 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
         navigate('Home', { refetch: true, sensorLife });
         setManualEnabled(false);
         reset();
+        resetFields();
       }, TOAST_TIMEOUT);
     }
     if (isError) {
@@ -67,6 +68,13 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
     }
     return () => clearTimeout(timer);
   }, [isSuccess, isError]);
+
+  const resetFields = () => {
+    setDate(new Date());
+    setTime(new Date());
+    setComments(undefined);
+    setMeasurement(undefined);
+  };
 
   const handleNFCMeasure = async () => {
     const isIOS = Platform.OS === 'ios';
@@ -108,13 +116,16 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
 
   const handleManualMeasure = async (isAdd = false) => {
     if (isAdd) {
+      const newDate = setByTimezone(date);
+      const newTime = setByTimezone(time);
       const timestamp = new Date(
-        date.getFullYear(),
-        date.getMonth(),
-        date.getDate(),
-        time.getHours(),
-        time.getMinutes()
-      );
+        newDate.getFullYear(),
+        newDate.getMonth(),
+        newDate.getDate(),
+        newTime.getHours(),
+        newTime.getMinutes()
+      ).toISOString();
+
       const measurements = [
         {
           measurement: Number(measurement),

@@ -91,8 +91,9 @@ export const getChartDataset = (
   measurements: Array<Measurement> | undefined
 ): LineChartData => {
   if (!measurements) return { datasets: [{ data: [] }], labels: [] };
-  const labels = measurements.map((m) => formatHour(new Date(m.timestamp)));
-  const data = measurements.map((m) => m.measurement);
+  const orderedArray = measurements.slice().reverse();
+  const labels = orderedArray.map((m) => formatHour(new Date(m.timestamp)));
+  const data = orderedArray.map((m) => m.measurement);
   return {
     labels,
     datasets: [{ data }],
@@ -124,4 +125,11 @@ export const getSensorLifeTime = (
     age: `${Math.floor(days)} ${Math.floor(days) === 1 ? 'dia' : 'dias'}`,
     status: days <= 5 ? SensorLifeStatus.GOOD : SensorLifeStatus.ALMOST_NEW,
   };
+};
+
+export const setByTimezone = (time: Date): Date => {
+  const date: Date = new Date();
+  const difference: number = -date.getTimezoneOffset() / 60;
+
+  return new Date(time.setHours(time.getHours() + difference));
 };

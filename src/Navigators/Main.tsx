@@ -1,7 +1,11 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Feather';
-import { HomeContainer, UserContainer, AddContainer } from '@/Containers';
+import {
+  HomeContainer,
+  UserContainer,
+  AddMeasureContainer,
+} from '@/Containers';
 
 const Tab = createBottomTabNavigator();
 
@@ -29,7 +33,7 @@ const MainNavigator = () => {
       />
       <Tab.Screen
         name="Add"
-        component={AddContainer}
+        component={AddMeasureContainer}
         options={{
           title: 'Agregar',
           tabBarIcon: ({ color, size }) => (

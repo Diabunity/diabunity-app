@@ -1,5 +1,8 @@
 import { SensorLifeStatus } from '@/Services/modules/nfc';
-import { MeasurementStatus } from '@/Services/modules/users';
+import {
+  MeasurementStatus,
+  PeriodInTargetStatus,
+} from '@/Services/modules/users';
 import React from 'react';
 import { Text, StyleSheet } from 'react-native';
 import { View } from 'react-native-ui-lib';
@@ -46,6 +49,12 @@ const STATUS_COLORS: { [key in MeasurementStatus]: string } = {
   [MeasurementStatus.OK]: '#0EB500',
   [MeasurementStatus.HIGH]: '#DB7600',
   [MeasurementStatus.SUPER_HIGH]: '#C1272D',
+};
+
+const PERIOD_IN_TARGET_COLORS: { [key in PeriodInTargetStatus]: string } = {
+  [PeriodInTargetStatus.BAD]: '#C1272D',
+  [PeriodInTargetStatus.STABLE]: '#DB7600',
+  [PeriodInTargetStatus.GOOD]: '#0EB500',
 };
 
 export default ({ data }: TableProps) => {
@@ -128,9 +137,12 @@ export class TableBuilder {
     return this;
   }
 
-  periodInTarget(percentage: number, status: MeasurementStatus): TableBuilder {
+  periodInTarget(
+    percentage: number,
+    status: PeriodInTargetStatus
+  ): TableBuilder {
     this._data[1].value = percentage + '%';
-    this._data[1].styles = { color: STATUS_COLORS[status] };
+    this._data[1].styles = { color: PERIOD_IN_TARGET_COLORS[status] };
     return this;
   }
 
