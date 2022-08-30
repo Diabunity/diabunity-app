@@ -18,6 +18,7 @@ export enum SensorLifeStatus {
 }
 export class NFCReader {
   STATUS_CMD = [0x02, 0xa1 - 0x100, 0x07];
+  ACTIVATE_CMD = [0x02, 0xa0, 0x07, 0xc2, 0xad, 0x75, 0x21];
   nfcHandler: typeof NfcManager.nfcVHandler;
 
   nfcTech: Array<NfcTech>;
@@ -41,6 +42,10 @@ export class NFCReader {
 
   getGlucoseData = async (): Promise<Array<number> | null | any> => {
     if (Platform.OS === 'ios') {
+      const sensorInfo: { activated: boolean } = await new Promise((resolve) =>
+        LibreManagerTool.activateSensor((resp) => resolve(resp))
+      );
+      if (!sensorInfo.activated) return;
       //If iOS we get the data from the react-native-libre-manager library
       const glucoseInfo = (await new Promise((resolve) =>
         LibreManagerTool.getGlucoseHistory((resp) => resolve(resp))
@@ -82,6 +87,11 @@ export class NFCReader {
     }
     const uid = hexToBytes(tag.id);
     let resp: Array<number>;
+    try {
+      await this.nfcHandler.transceive(this.ACTIVATE_CMD);
+    } catch {
+      /*mask error*/
+    }
     resp = await this.nfcHandler.transceive(this.STATUS_CMD);
     return this.readout(uid, resp);
   };
