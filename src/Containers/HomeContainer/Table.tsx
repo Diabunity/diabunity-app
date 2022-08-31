@@ -141,7 +141,7 @@ export class TableBuilder {
     percentage: number,
     status: PeriodInTargetStatus
   ): TableBuilder {
-    this._data[1].value = percentage * 100 + '%';
+    this._data[1].value = Math.round(percentage * 100) + '%';
     this._data[1].styles = { color: PERIOD_IN_TARGET_COLORS[status] };
     return this;
   }
@@ -153,7 +153,7 @@ export class TableBuilder {
   }
 
   average(value: number, status: MeasurementStatus): TableBuilder {
-    this._data[3].value = value + ' mg/dL';
+    this._data[3].value = Math.round(value) + ' mg/dL';
     this._data[3].styles = { color: STATUS_COLORS[status] };
     return this;
   }
