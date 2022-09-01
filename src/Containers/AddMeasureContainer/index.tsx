@@ -78,38 +78,48 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
 
   const handleNFCMeasure = async () => {
     const isIOS = Platform.OS === 'ios';
+    let glucoseData;
     if (!nfcInstance || isScanning) {
       return;
     }
     setIsScanning(true);
-    const glucoseData = await nfcInstance.getGlucoseData();
-    setIsScanning(false);
-    if (glucoseData) {
-      const {
-        history,
-        current_glucose: currentGlucose,
-        sensorLife: sensorAge,
-      } = glucoseData;
-      setSensorLife(sensorAge);
-      const measurements = [];
-      const timestamp = addMinutes(new Date(), 15);
-      for (const measurement of history) {
-        const m = {
-          measurement: isIOS ? measurement : measurement.value,
-          timestamp: isIOS
-            ? addMinutes(timestamp, -15)
-            : new Date(Number(measurement.utcTimeStamp)).toISOString(),
-          source: MeasurementMode.SENSOR,
-        };
-        measurements.push(m);
-      }
-      measurements.push({
-        measurement: currentGlucose,
-        timestamp: new Date(Date.now()).toISOString(),
-        source: MeasurementMode.SENSOR,
-      });
-      if (measurements.length > 0) {
-        await saveMeasurement(measurements);
+    try {
+      glucoseData = await nfcInstance.getGlucoseData();
+    } finally {
+      setIsScanning(false);
+      if (glucoseData) {
+        const {
+          history,
+          current_glucose: currentGlucose,
+          sensorLife: sensorAge,
+        } = glucoseData;
+        setSensorLife(sensorAge);
+        const measurements = [];
+        let timestamp = addMinutes(new Date(), 15);
+        for (const measurement of history) {
+          const value = isIOS ? measurement : measurement.value;
+          if (value > 0) {
+            timestamp = isIOS
+              ? addMinutes(timestamp, -15)
+              : setByTimezone(new Date(Number(measurement.utcTimeStamp)));
+            const m = {
+              measurement: value,
+              timestamp: timestamp.toISOString(),
+              source: MeasurementMode.SENSOR,
+            };
+            measurements.push(m);
+          }
+        }
+        if (currentGlucose > 0) {
+          measurements.push({
+            measurement: currentGlucose,
+            timestamp: setByTimezone(new Date(Date.now())).toISOString(),
+            source: MeasurementMode.SENSOR,
+          });
+        }
+        if (measurements.length > 0) {
+          await saveMeasurement(measurements);
+        }
       }
     }
   };

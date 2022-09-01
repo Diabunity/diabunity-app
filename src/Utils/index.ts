@@ -84,7 +84,7 @@ export const formatDatePeriod = (
 };
 
 export const addMinutes = (date: Date, minutes: number): Date => {
-  return new Date(date.getTime() + minutes * 60000);
+  return setByTimezone(new Date(date.getTime() + minutes * 60000));
 };
 
 export const getChartDataset = (
