@@ -16,9 +16,11 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import { api } from '@/Services/api';
 import * as modules from '@/Services/modules';
 import theme from './Theme';
+import notification from './Notification';
 
 const reducers = combineReducers({
   theme,
+  notification,
   ...Object.values(modules).reduce(
     (acc, module) => ({
       ...acc,

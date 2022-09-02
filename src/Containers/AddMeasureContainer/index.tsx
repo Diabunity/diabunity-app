@@ -6,22 +6,22 @@ import {
   Incubator,
   Text,
   TextField,
-  Toast,
 } from 'react-native-ui-lib';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useTheme } from '@/Hooks';
+import { store } from '@/Store';
 import { FormButton, BackButton } from '@/Components';
 
 import { NavigatorParams } from '@/Navigators/Application';
 import { NFCReader } from '@/Services/modules/nfc';
 import { userApi, MeasurementMode } from '@/Services/modules/users';
+import { setNotification } from '@/Store/Notification';
 import { addMinutes, setByTimezone } from '@/Utils';
 
 import { styles, colors } from './styles';
+import { TOAST_TIMEOUT } from '@/Constants';
 
 type Props = NativeStackScreenProps<NavigatorParams>;
-
-const TOAST_TIMEOUT = 2000;
 
 const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
   const { Layout, Images, Colors } = useTheme();
@@ -54,6 +54,13 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
   useEffect(() => {
     let timer: NodeJS.Timeout | undefined;
     if (isSuccess) {
+      store.dispatch(
+        setNotification({
+          preset: Incubator.ToastPresets.SUCCESS,
+          message: 'Medicion cargada exitosamente.',
+        })
+      );
+
       timer = setTimeout(() => {
         navigate('Home', { refetch: true, sensorLife });
         setManualEnabled(false);
@@ -62,6 +69,12 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
       }, TOAST_TIMEOUT);
     }
     if (isError) {
+      store.dispatch(
+        setNotification({
+          preset: Incubator.ToastPresets.FAILURE,
+          message: 'Hubo un error al cargar la medicion, intente nuevamente.',
+        })
+      );
       timer = setTimeout(() => {
         reset();
       }, TOAST_TIMEOUT);
@@ -78,39 +91,61 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
 
   const handleNFCMeasure = async () => {
     const isIOS = Platform.OS === 'ios';
+    let timer;
+    let glucoseData;
     if (!nfcInstance || isScanning) {
       return;
     }
     setIsScanning(true);
-    const glucoseData = await nfcInstance.getGlucoseData();
-    setIsScanning(false);
-    if (glucoseData) {
-      const {
-        history,
-        current_glucose: currentGlucose,
-        sensorLife: sensorAge,
-      } = glucoseData;
-      setSensorLife(sensorAge);
-      const measurements = [];
-      const timestamp = addMinutes(new Date(), 15);
-      for (const measurement of history) {
-        const m = {
-          measurement: isIOS ? measurement : measurement.value,
-          timestamp: isIOS
-            ? addMinutes(timestamp, -15)
-            : new Date(Number(measurement.utcTimeStamp)).toISOString(),
-          source: MeasurementMode.SENSOR,
-        };
-        measurements.push(m);
+    try {
+      if (isIOS) {
+        timer = setTimeout(() => setIsScanning(false), 1000); //This is a workaround for iOS since the lib does not return the onCancel event
       }
-      measurements.push({
-        measurement: currentGlucose,
-        timestamp: new Date(Date.now()).toISOString(),
-        source: MeasurementMode.SENSOR,
-      });
-      if (measurements.length > 0) {
-        await saveMeasurement(measurements);
+      glucoseData = await nfcInstance.getGlucoseData();
+    } catch {
+      store.dispatch(
+        setNotification({
+          preset: Incubator.ToastPresets.FAILURE,
+          message: 'Hubo un error al leer el parche.',
+        })
+      );
+    } finally {
+      if (glucoseData) {
+        const {
+          history,
+          current_glucose: currentGlucose,
+          sensorLife: sensorAge,
+        } = glucoseData;
+        setSensorLife(sensorAge);
+        const measurements = [];
+        let timestamp = addMinutes(new Date(), 15);
+        for (const measurement of history) {
+          const value = isIOS ? measurement : measurement.value;
+          if (value > 0) {
+            timestamp = isIOS
+              ? addMinutes(timestamp, -15)
+              : setByTimezone(new Date(Number(measurement.utcTimeStamp)));
+            const m = {
+              measurement: value,
+              timestamp: timestamp.toISOString(),
+              source: MeasurementMode.SENSOR,
+            };
+            measurements.push(m);
+          }
+        }
+        if (currentGlucose > 0) {
+          measurements.push({
+            measurement: currentGlucose,
+            timestamp: setByTimezone(new Date(Date.now())).toISOString(),
+            source: MeasurementMode.SENSOR,
+          });
+        }
+        if (measurements.length > 0) {
+          await saveMeasurement(measurements);
+        }
       }
+      clearTimeout(timer);
+      setIsScanning(false);
     }
   };
 
@@ -143,22 +178,6 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
 
   return (
     <View style={{ ...Layout.fill, padding: 20 }}>
-      <Toast
-        visible={isSuccess || isError}
-        position="top"
-        autoDismiss={TOAST_TIMEOUT}
-        backgroundColor={isError ? Colors.error : Colors.success}
-        message={
-          isSuccess
-            ? 'Medicion cargada exitosamente.'
-            : 'Hubo un error al cargar la medicion, intente nuevamente.'
-        }
-        preset={
-          isSuccess
-            ? Incubator.ToastPresets.SUCCESS
-            : Incubator.ToastPresets.FAILURE
-        }
-      />
       <BackButton
         customBack={manualEnabled ? () => setManualEnabled(false) : undefined}
         goBack={goBack}

@@ -38,7 +38,7 @@
     "react-native-config": "^1.4.6",
     "react-native-flipper": "^0.143.0",
     "react-native-gesture-handler": "^2.5.0",
-    "react-native-libre-manager": "git+ssh://git@github.com:diabunity/react-native-libre-manager.git#8ced92078fd38ade3c51df9fd065c9c4a6d02d2e",
+    "react-native-libre-manager": "git+ssh://git@github.com:diabunity/react-native-libre-manager.git#ad281707d324bad57698ec996d817a4385870870",
     "react-native-linear-gradient": "^2.6.2",
     "react-native-nfc-manager": "^3.13.3",
     "react-native-onboarding-swiper": "^1.2.0",
