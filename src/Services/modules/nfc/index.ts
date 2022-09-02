@@ -42,36 +42,27 @@ export class NFCReader {
 
   getGlucoseData = async (): Promise<Array<number> | null | any> => {
     if (Platform.OS === 'ios') {
-      try {
-        const { activated }: { activated: boolean } = await new Promise(
-          (resolve) =>
-            LibreManagerTool.activateSensor(
-              (
-                resp:
-                  | { activated: boolean }
-                  | PromiseLike<{ activated: boolean }>
-              ) => resolve(resp)
-            )
-        );
-        if (!activated) return;
-        //If iOS we get the data from the react-native-libre-manager library
-        const glucoseInfo = (await new Promise((resolve) =>
-          LibreManagerTool.getGlucoseHistory((resp: unknown) => resolve(resp))
-        )) as Promise<any>;
+      const { activated }: { activated: boolean } = await new Promise(
+        (resolve) =>
+          LibreManagerTool.activateSensor(
+            (
+              resp: { activated: boolean } | PromiseLike<{ activated: boolean }>
+            ) => resolve(resp)
+          )
+      );
+      if (!activated) return;
+      //If iOS we get the data from the react-native-libre-manager library
+      const glucoseInfo = (await new Promise((resolve) =>
+        LibreManagerTool.getGlucoseHistory((resp: unknown) => resolve(resp))
+      )) as Promise<any>;
 
-        const { sensorLife } = await new Promise((resolve) =>
-          LibreManagerTool.getSensorInfo((resp) => resolve(resp))
-        );
-
-        console.log('nO SOLO SE');
-
-        return {
-          ...glucoseInfo,
-          sensorLife: sensorLife?.age,
-        };
-      } catch {
-        console.log('NODR');
-      }
+      const { sensorLife } = await new Promise((resolve) =>
+        LibreManagerTool.getSensorInfo((resp) => resolve(resp))
+      );
+      return {
+        ...glucoseInfo,
+        sensorLife: sensorLife?.age,
+      };
     } else {
       try {
         store.dispatch(setShowNfcPrompt({ showNfcPrompt: true }));
