@@ -16,6 +16,9 @@ export enum SensorLifeStatus {
   GOOD = 3,
   ALMOST_NEW = 4,
 }
+
+const sleep = (milliseconds: number) =>
+  new Promise((resolve) => setTimeout(resolve, milliseconds));
 export class NFCReader {
   STATUS_CMD = [0x02, 0xa1 - 0x100, 0x07];
   ACTIVATE_CMD = [0x02, 0xa0, 0x07, 0xc2, 0xad, 0x75, 0x21];
@@ -40,29 +43,24 @@ export class NFCReader {
     NfcManager.cancelTechnologyRequest().catch(() => 0);
   };
 
+  getSensorLife = async (): Promise<number | undefined> => {
+    const MAX_LIFE = 14;
+    const { sensorLife } = await new Promise((resolve) =>
+      LibreManagerTool.getSensorInfo((resp) => resolve(resp))
+    );
+    const age = sensorLife && Math.round(MAX_LIFE - sensorLife / 60 / 24);
+    return age;
+  };
+
   getGlucoseData = async (): Promise<Array<number> | null | any> => {
     if (Platform.OS === 'ios') {
-      const { activated }: { activated: boolean } = await new Promise(
-        (resolve) =>
-          LibreManagerTool.activateSensor(
-            (
-              resp: { activated: boolean } | PromiseLike<{ activated: boolean }>
-            ) => resolve(resp)
-          )
-      );
-      if (!activated) return;
       //If iOS we get the data from the react-native-libre-manager library
       const glucoseInfo = (await new Promise((resolve) =>
         LibreManagerTool.getGlucoseHistory((resp: unknown) => resolve(resp))
       )) as Promise<any>;
-
-      const { sensorLife } = await new Promise((resolve) =>
-        LibreManagerTool.getSensorInfo((resp) => resolve(resp))
-      );
-      return {
-        ...glucoseInfo,
-        sensorLife: sensorLife?.age,
-      };
+      await sleep(4000);
+      const sensorLife = await this.getSensorLife();
+      return { ...glucoseInfo, sensorLife };
     } else {
       try {
         store.dispatch(setShowNfcPrompt({ showNfcPrompt: true }));
@@ -75,7 +73,9 @@ export class NFCReader {
           tag?.id,
           memoryData
         );
-        const sensorLife = LibreManagerTool.getSensorInfoAndroid(memoryData);
+        const { sensorLife } = await LibreManagerTool.getSensorInfoAndroid(
+          memoryData
+        );
         return { ...glucoseInfo, sensorLife };
       } catch (ex) {
         this.handleException(ex);

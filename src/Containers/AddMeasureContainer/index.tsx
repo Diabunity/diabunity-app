@@ -133,9 +133,10 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
             measurements.push(m);
           }
         }
-        if (currentGlucose > 0) {
+        const currentValue = isIOS ? currentGlucose[0] : currentGlucose;
+        if (currentValue > 0) {
           measurements.push({
-            measurement: currentGlucose,
+            measurement: currentValue,
             timestamp: setByTimezone(new Date(Date.now())).toISOString(),
             source: MeasurementMode.SENSOR,
           });
