@@ -20,4 +20,4 @@ export const MOCKED_DATA = [
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ];
 
-export const TOAST_TIMEOUT = 2000;
+export const TOAST_TIMEOUT = 1500;

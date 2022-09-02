@@ -3,6 +3,8 @@ import { View, Text } from 'react-native';
 import { Button } from 'react-native-ui-lib';
 import { useTheme } from '@/Hooks';
 import AuthService from '@/Services/modules/auth';
+import { FormButton } from '@/Components';
+import { Colors } from '@/Theme/Variables';
 
 const UserContainer = () => {
   const user = AuthService.getCurrentUser();
@@ -15,7 +17,12 @@ const UserContainer = () => {
   return (
     <View style={[Layout.fill, Layout.colCenter]}>
       {user && <Text style={Fonts.textRegular}>Hola, {user.displayName}!</Text>}
-      <Button label="Sign out" onPress={handleLogOut} />
+      <FormButton
+        label="Cerrar sesión"
+        onPress={handleLogOut}
+        noMarginBottom
+        backgroundColor={Colors.red}
+      />
     </View>
   );
 };

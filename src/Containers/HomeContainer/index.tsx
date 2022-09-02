@@ -104,7 +104,7 @@ const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
           <ScrollView horizontal style={{ marginTop: 10 }}>
             <SkeletonView
               template={SkeletonView.templates.TEXT_CONTENT}
-              showContent={!!measurements}
+              showContent={!!measurements && !isFetching}
               style={{
                 ...Layout.colCenter,
                 ...styles.skeleton,
