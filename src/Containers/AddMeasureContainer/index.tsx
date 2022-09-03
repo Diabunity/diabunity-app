@@ -124,7 +124,7 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
           if (value > 0) {
             timestamp = isIOS
               ? addMinutes(timestamp, -15)
-              : setByTimezone(new Date(Number(measurement.utcTimeStamp)));
+              : new Date(Number(measurement.utcTimeStamp));
             const m = {
               measurement: value,
               timestamp: timestamp.toISOString(),

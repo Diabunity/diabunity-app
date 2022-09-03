@@ -199,7 +199,7 @@ const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
             renderContent={() => (
               <Table
                 data={new TableBuilder()
-                  .tendency(TENDENCY.UP)
+                  .tendency(TENDENCY.EQUAL)
                   .periodInTarget(periodInTarget.value, periodInTarget.status)
                   .lastScanMeasure(
                     currentGlucose.measurement,

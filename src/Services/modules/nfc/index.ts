@@ -48,7 +48,7 @@ export class NFCReader {
     const { sensorLife } = await new Promise((resolve) =>
       LibreManagerTool.getSensorInfo((resp) => resolve(resp))
     );
-    const age = sensorLife && Math.round(MAX_LIFE - sensorLife / 60 / 24);
+    const age = sensorLife && Math.trunc(MAX_LIFE - sensorLife / 60 / 24);
     return age;
   };
 

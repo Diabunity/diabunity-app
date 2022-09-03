@@ -80,11 +80,12 @@ export const formatDatePeriod = (
   format: string
 ): { from: Date; to: Date } => {
   const start = getDatePeriod(end, format);
-  return { from: start, to: end };
+  return { from: setByTimezone(start), to: setByTimezone(end) };
 };
 
 export const addMinutes = (date: Date, minutes: number): Date => {
-  return setByTimezone(new Date(date.getTime() + minutes * 60000));
+  date.setMinutes(date.getMinutes() + minutes);
+  return date;
 };
 
 export const getChartDataset = (
