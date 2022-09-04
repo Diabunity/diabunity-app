@@ -30,7 +30,7 @@ import { FormButton } from '@/Components';
 
 type Props = NativeStackScreenProps<NavigatorParams> & {
   route: RouteProp<
-    { params?: { refetch: boolean; sensorLife?: number } },
+    { params?: { refetch: string | null; sensorLife?: number } },
     'params'
   >;
 };
@@ -38,7 +38,8 @@ type Props = NativeStackScreenProps<NavigatorParams> & {
 const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
   const { Layout, Colors } = useTheme();
   const user = AuthService.getCurrentUser();
-  const { refetch, sensorLife } = route?.params || { refetch: false };
+  const [shouldRefetch, setShouldRefetch] = useState<boolean>(false);
+  const { refetch, sensorLife } = route?.params || { refetch: null };
   const {
     data,
     isFetching,
@@ -48,7 +49,7 @@ const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
       id: user?.uid,
       dateFilter: DatePeriod.LAST_8_HOURS,
     },
-    { refetchOnMountOrArgChange: refetch }
+    { refetchOnMountOrArgChange: !!refetch }
   );
 
   const measurements = data?.measurements;

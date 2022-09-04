@@ -11,7 +11,7 @@ export const userApi = api.injectEndpoints({
     fetchMeasurement: fetchMeasurement(build),
     saveMeasurement: saveMeasurement(build),
   }),
-  overrideExisting: false,
+  overrideExisting: true,
 });
 
 type MeasurementEntry = {
