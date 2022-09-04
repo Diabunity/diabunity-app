@@ -38,7 +38,6 @@ type Props = NativeStackScreenProps<NavigatorParams> & {
 const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
   const { Layout, Colors } = useTheme();
   const user = AuthService.getCurrentUser();
-  const [shouldRefetch, setShouldRefetch] = useState<boolean>(false);
   const { refetch, sensorLife } = route?.params || { refetch: null };
   const {
     data,
