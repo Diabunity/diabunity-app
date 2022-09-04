@@ -62,7 +62,7 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
       );
 
       timer = setTimeout(() => {
-        navigate('Home', { refetch: true, sensorLife });
+        navigate('Home', { refetch: new Date().toISOString(), sensorLife });
         setManualEnabled(false);
         reset();
         resetFields();
