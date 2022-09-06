@@ -11,6 +11,7 @@ import { useNotification } from '@/Hooks';
 import { toggleNotification } from '@/Store/Notification';
 import { store } from '@/Store';
 import { TOAST_TIMEOUT } from '@/Constants';
+import { StyleSheet } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 
@@ -45,7 +46,7 @@ const MainNavigator = () => {
           tabBarLabelStyle: { fontSize: 12 },
           headerShown: false,
           tabBarHideOnKeyboard: true,
-          tabBarStyle: { paddingBottom: 3, height: 55 },
+          tabBarStyle: styles.tab,
         }}
       >
         <Tab.Screen
@@ -82,5 +83,27 @@ const MainNavigator = () => {
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  tab: {
+    shadowOffset: {
+      width: 0,
+      height: 14,
+    },
+    shadowOpacity: 0.58,
+    shadowRadius: 16.0,
+    elevation: 24,
+    borderTopLeftRadius: 21,
+    borderTopRightRadius: 21,
+    backgroundColor: '#fff',
+    position: 'absolute',
+    bottom: 0,
+    padding: 10,
+    width: '100%',
+    zIndex: 0,
+    paddingBottom: 3,
+    height: 55,
+  },
+});
 
 export default MainNavigator;

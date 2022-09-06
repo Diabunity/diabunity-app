@@ -8,6 +8,7 @@ import { styles, colors } from './styles';
 
 import type { NavigatorParams } from '../../Navigators/Application';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { FirebaseAuthTypes } from '@react-native-firebase/auth';
 
 const { Toast, TextField } = Incubator;
 
@@ -44,7 +45,13 @@ const AuthContainer = ({
 
   const handleSignUp = async (): Promise<void> => {
     try {
-      await AuthService.signUpWithEmailAndPassword(name, email, password);
+      const { user } = (await AuthService.signUpWithEmailAndPassword(
+        email,
+        password
+      )) as FirebaseAuthTypes.UserCredential;
+      await user.updateProfile({
+        displayName: name,
+      });
     } catch (e) {
       setError(true);
     }

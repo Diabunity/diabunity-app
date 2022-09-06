@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/Feather';
 
 type Props = {
   canGoBack?: () => boolean;
-  goBack: () => void;
+  goBack?: () => void;
   customBack?: () => void;
   customStyles?: ViewStyle;
 };

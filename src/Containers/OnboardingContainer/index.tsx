@@ -8,10 +8,10 @@ import {
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import Onboarding from 'react-native-onboarding-swiper';
+import { Slider } from '@miblanchard/react-native-slider';
 import {
   DateTimePicker,
   Text,
-  Slider,
   MaskedInput,
   Picker,
   PickerModes,
@@ -25,6 +25,7 @@ import AuthService from '@/Services/modules/auth';
 
 import { styles, COLORS } from './styles';
 import { NavigatorParams } from '@/Navigators/Application';
+import SliderContainer from '@/Components/Slider';
 
 ThemeManager.setComponentTheme('Incubator.WheelPicker', () => {
   return {
@@ -259,24 +260,15 @@ const OnboardingContainer = ({ navigation: { navigate } }: Props) => {
           image: <Image source={Images.onboarding6} />,
           title: 'Rango de glucosa',
           subtitle: (
-            <View style={styles.sliderView}>
-              <Text style={styles.sliderText} bodySmall>
-                {glucoseRange.min} mg/dL
-              </Text>
-              <Slider
-                useRange
-                onRangeChange={(range) => setGlucoseRange(range)}
-                containerStyle={styles.slider}
-                thumbTintColor={styles.slider.color}
-                minimumTrackTintColor={styles.slider.color}
-                minimumValue={0}
-                maximumValue={200}
-                step={1}
-              />
-              <Text style={{ ...styles.sliderText, right: 0 }} bodySmall>
-                {glucoseRange.max} mg/dL
-              </Text>
-            </View>
+            <SliderContainer
+              onValueChange={(value: number[]): void => {
+                const [min, max] = value;
+                setGlucoseRange({ min, max });
+              }}
+              sliderValue={[glucoseRange.min, glucoseRange.max]}
+            >
+              <Slider maximumValue={200} minimumValue={0} step={1} />
+            </SliderContainer>
           ),
           titleStyles: styles.pageTitle,
           subTitleStyles: styles.pageSubtitle,
