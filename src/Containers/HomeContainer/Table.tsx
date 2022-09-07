@@ -86,11 +86,11 @@ const tableStyles = StyleSheet.create({
   shadowProp: {
     shadowColor: '#000',
     shadowOffset: {
-      width: 0,
+      width: 2,
       height: 2,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
 
     elevation: 5,
   },
