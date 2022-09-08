@@ -23,7 +23,7 @@ export const Colors: ThemeColors = {
   black: '#000000',
   red: '#C1272D',
   text: '#212529',
-  primary: '#E14032',
+  primary: '#C1272D',
   success: '#28a745',
   error: '#dc3545',
 };

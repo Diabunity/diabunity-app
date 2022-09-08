@@ -15,7 +15,6 @@ const AuthService = class AuthService {
   }
 
   signUpWithEmailAndPassword(
-    name: string,
     email: string,
     password: string
   ): Promise<FirebaseAuthTypes.UserCredential | void> {
@@ -23,10 +22,10 @@ const AuthService = class AuthService {
       .createUserWithEmailAndPassword(email, password)
       .catch((error) => {
         if (error.code === 'auth/email-already-in-use') {
-          throw new Error('Email already in use');
+          throw new Error('El correo eléctronico está en uso.');
         }
         if (error.code === 'auth/invalid-email') {
-          throw new Error('That email address is invalid!');
+          throw new Error('Dirección de correo electronico inválida.');
         }
       });
   }

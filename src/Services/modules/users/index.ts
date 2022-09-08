@@ -1,6 +1,7 @@
 import { api } from '../../api';
 import fetchUser from './fetchUser';
 import saveUser from './saveUser';
+import updateUser from './updateUser';
 import fetchMeasurement from './fetchMeasurement';
 import saveMeasurement from './saveMeasurement';
 
@@ -8,6 +9,7 @@ export const userApi = api.injectEndpoints({
   endpoints: (build) => ({
     fetchUser: fetchUser(build),
     saveUser: saveUser(build),
+    updateUser: updateUser(build),
     fetchMeasurement: fetchMeasurement(build),
     saveMeasurement: saveMeasurement(build),
   }),

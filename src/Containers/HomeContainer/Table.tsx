@@ -1,11 +1,12 @@
+import React from 'react';
+import { Text, StyleSheet } from 'react-native';
+import { View } from 'react-native-ui-lib';
+import DropShadow from 'react-native-drop-shadow';
 import { SensorLifeStatus } from '@/Services/modules/nfc';
 import {
   MeasurementStatus,
   PeriodInTargetStatus,
 } from '@/Services/modules/users';
-import React from 'react';
-import { Text, StyleSheet } from 'react-native';
-import { View } from 'react-native-ui-lib';
 
 import { COLORS as COLORS_THEME } from './styles';
 
@@ -59,18 +60,16 @@ const PERIOD_IN_TARGET_COLORS: { [key in PeriodInTargetStatus]: string } = {
 
 export default ({ data }: TableProps) => {
   return (
-    <>
-      <View style={tableStyles.container}>
-        {data.map((row, index) => (
-          <View key={index} style={tableStyles.row}>
-            <Text style={tableStyles.label}>{row.label}</Text>
-            <Text style={{ ...tableStyles.value, ...row.styles }}>
-              {row.value}
-            </Text>
-          </View>
-        ))}
-      </View>
-    </>
+    <View style={{ ...tableStyles.container, ...tableStyles.dropShadow }}>
+      {data.map((row, index) => (
+        <View key={index} style={tableStyles.row}>
+          <Text style={tableStyles.label}>{row.label}</Text>
+          <Text style={{ ...tableStyles.value, ...row.styles }}>
+            {row.value}
+          </Text>
+        </View>
+      ))}
+    </View>
   );
 };
 
@@ -81,7 +80,18 @@ const tableStyles = StyleSheet.create({
     borderRadius: 3,
     borderWidth: 0.5,
     borderColor: COLORS_THEME.gray,
+    backgroundColor: COLORS_THEME.white,
     marginTop: 15,
+  },
+  dropShadow: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 2,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 5,
   },
   arrow: {
     fontSize: 28,

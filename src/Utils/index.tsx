@@ -134,3 +134,16 @@ export const setByTimezone = (time: Date): Date => {
 
   return new Date(time.setHours(time.getHours() + difference));
 };
+
+export const getNameInitials = (
+  fullName: string | undefined | null
+): string => {
+  if (!fullName) return '';
+  const names = fullName.split(' ');
+  let initials = names[0].substring(0, 1).toUpperCase();
+
+  if (names.length > 1) {
+    initials += names[names.length - 1].substring(0, 1).toUpperCase();
+  }
+  return initials;
+};
