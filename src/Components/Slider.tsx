@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
     shadowRadius: 1,
   },
 });
+
 const SliderContainer = (props: {
   children?: JSX.Element;
   sliderValue?: number[];
