@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { View, ScrollView } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
-
-import { Avatar, ListItem, Text } from 'react-native-ui-lib';
+import { Avatar, Incubator, ListItem, Text } from 'react-native-ui-lib';
 import Icon from 'react-native-vector-icons/Feather';
 import { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { User, userApi } from '@/Services/modules/users';
+import { setNotification } from '@/Store/Notification';
 import { useTheme } from '@/Hooks';
+import { store } from '@/Store';
 import AuthService from '@/Services/modules/auth';
 import { getNameInitials } from '@/Utils';
-import { styles } from './styles';
 import ExternalLink from '@/Components/ExternalLink';
 import BackButton from '@/Components/BackButton';
 import PersonalData from './PersonalData';
+import Settings from './Settings';
+import { styles } from './styles';
 
 enum PageSection {
   SETTINGS = 'SETTINGS',
@@ -35,7 +37,16 @@ const UserContainer = () => {
   }, [isFocused]);
 
   const handleLogOut = async () => {
-    await AuthService.signOut();
+    try {
+      await AuthService.signOut();
+    } catch {
+      store.dispatch(
+        setNotification({
+          preset: Incubator.ToastPresets.FAILURE,
+          message: 'Hubo un error al cerrar sesión.',
+        })
+      );
+    }
   };
 
   return (
@@ -125,11 +136,7 @@ const ProfileSection = ({
   const renderSection = () => {
     switch (page) {
       case PageSection.SETTINGS:
-        return (
-          <>
-            <Text>Settings</Text>
-          </>
-        );
+        return <Settings />;
       case PageSection.PERSONAL_DATA:
         return <PersonalData data={data} user={user} refetchFn={refetchFn} />;
       default:

@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   },
   thumb: {
     backgroundColor: Colors.red,
-    borderColor: '#FEFEFE',
+    borderColor: Colors.white,
     borderRadius: 10,
     borderWidth: 5,
     height: 20,
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.12)',
     borderRadius: 4,
     height: 6,
-    shadowColor: '#000000',
+    shadowColor: Colors.black,
     shadowOffset: {
       width: 0,
       height: 1,
@@ -56,7 +56,7 @@ const SliderContainer = (props: {
   children?: JSX.Element;
   sliderValue?: number[];
   trackMarks?: any;
-  onValueChange?: (value: number[]) => void;
+  onValueChange: (value: number[]) => void;
 }) => {
   const { sliderValue, trackMarks, onValueChange } = props;
   const [value, setValue] = React.useState(
@@ -65,7 +65,7 @@ const SliderContainer = (props: {
 
   const handleChange = (value: number[]) => {
     setValue(value);
-    onValueChange?.(value);
+    onValueChange(value);
   };
 
   const renderChildren = () => {

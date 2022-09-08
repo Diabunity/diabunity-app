@@ -60,7 +60,7 @@ const PERIOD_IN_TARGET_COLORS: { [key in PeriodInTargetStatus]: string } = {
 
 export default ({ data }: TableProps) => {
   return (
-    <View style={{ ...tableStyles.container, ...tableStyles.shadowProp }}>
+    <View style={{ ...tableStyles.container, ...tableStyles.dropShadow }}>
       {data.map((row, index) => (
         <View key={index} style={tableStyles.row}>
           <Text style={tableStyles.label}>{row.label}</Text>
@@ -83,7 +83,7 @@ const tableStyles = StyleSheet.create({
     backgroundColor: COLORS_THEME.white,
     marginTop: 15,
   },
-  shadowProp: {
+  dropShadow: {
     shadowColor: '#000',
     shadowOffset: {
       width: 2,

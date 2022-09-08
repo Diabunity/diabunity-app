@@ -21,7 +21,7 @@ const FormButton = ({
   backgroundColor = '#000', // TODO: This default color must be extracted from the theme or an upper scope
   ...rest
 }: FormButtonProps) => (
-  <DropShadow style={styles.shadowProp}>
+  <DropShadow style={styles.dropShadow}>
     <Button
       label={label.toUpperCase()}
       disabled={disabledCondition ?? false}
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
   },
-  shadowProp: {
+  dropShadow: {
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
