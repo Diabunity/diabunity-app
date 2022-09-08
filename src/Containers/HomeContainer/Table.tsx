@@ -91,7 +91,6 @@ const tableStyles = StyleSheet.create({
     },
     shadowOpacity: 0.2,
     shadowRadius: 2,
-
     elevation: 5,
   },
   arrow: {
