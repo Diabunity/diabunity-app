@@ -123,7 +123,7 @@ const MedicalReportContainer = ({ data, user, name, sensorLife }: Props) => {
       width,
       height,
       position: 'absolute',
-      right: -width - 5,
+      right: -width - 20,
     } as ViewStyle;
   };
 
