@@ -87,7 +87,7 @@ const MedicalReportContainer = ({ data, user, name, sensorLife }: Props) => {
       ? formatDate(new Date(user.birth_date))
       : 'No especificado.';
     const weight = user?.weight ? `${user.weight}KG` : 'No especificado.';
-    const height = user?.height ? `${user.weight}CM` : 'No especificado.';
+    const height = user?.height ? `${user.height}CM` : 'No especificado.';
     const diabetesType =
       user?.diabetes_type === DiabetesType.TYPE_1 ? 'Tipo 1' : 'Tipo 2';
     const glucoseRange = `${user?.glucose_min}mg/dl - ${user?.glucose_max}mg/dl`;
