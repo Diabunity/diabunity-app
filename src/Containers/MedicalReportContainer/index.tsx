@@ -11,7 +11,7 @@ import ViewShot from 'react-native-view-shot';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import { useTheme } from '@/Hooks';
 import { SensorLifeStatus } from '@/Services/modules/nfc';
-import { format, getSensorLifeTime } from '@/Utils';
+import { formatDate, getSensorLifeTime } from '@/Utils';
 import Table, {
   TableBuilder,
   TENDENCY,
@@ -21,6 +21,7 @@ import FormButton from '@/Components/FormButton';
 import LastDayChart from '@/Components/LastDayChart';
 import { base64Logo } from '@/Constants';
 import {
+  DiabetesType,
   Measurements,
   MeasurementStatus,
   PeriodInTargetStatus,
@@ -83,11 +84,12 @@ const MedicalReportContainer = ({ data, user, name, sensorLife }: Props) => {
 
   const createPDF = async () => {
     const date = user?.birth_date
-      ? format(new Date(user.birth_date))
+      ? formatDate(new Date(user.birth_date))
       : 'No especificado.';
-    const weight = user?.weight || 'No especificado.';
-    const height = user?.height || 'No especificado.';
-    const diabetesType = user?.diabetes_type || 'No especificado.';
+    const weight = user?.weight ? `${user.weight}KG` : 'No especificado.';
+    const height = user?.height ? `${user.weight}CM` : 'No especificado.';
+    const diabetesType =
+      user?.diabetes_type === DiabetesType.TYPE_1 ? 'Tipo 1' : 'Tipo 2';
     const glucoseRange = `${user?.glucose_min}mg/dl - ${user?.glucose_max}mg/dl`;
     const today = new Date();
     const options = {

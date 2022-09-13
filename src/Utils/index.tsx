@@ -148,7 +148,7 @@ export const getNameInitials = (
   return initials;
 };
 
-export const format = (inputDate: Date) => {
+export const formatDate = (inputDate: Date) => {
   let date, month, year;
 
   date = inputDate.getDate();
