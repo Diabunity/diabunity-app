@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Text, ScrollView, Dimensions, View } from 'react-native';
+import { Text, ScrollView, View } from 'react-native';
 import { SkeletonView } from 'react-native-ui-lib';
 import Icon from 'react-native-vector-icons/Feather';
 import { Card } from 'react-native-paper';
-import { Rect, Text as TextSVG, Svg } from 'react-native-svg';
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { LineChart } from 'react-native-chart-kit';
 import { useTheme } from '@/Hooks';
 import Table, { TableBuilder, TENDENCY } from './Table';
 import { styles, COLORS } from './styles';
@@ -20,13 +18,10 @@ import {
 } from '@/Services/modules/users';
 import { SensorLifeStatus } from '@/Services/modules/nfc';
 import { NavigatorParams } from '@/Navigators/Application';
-import {
-  DatePeriod,
-  getChartDataset,
-  getSensorLifeTime,
-  handleHiddenPoints,
-} from '@/Utils';
+import { DatePeriod, getSensorLifeTime } from '@/Utils';
 import { FormButton } from '@/Components';
+import MedicalReportContainer from '../MedicalReportContainer';
+import LastDayChart from '@/Components/LastDayChart';
 
 type Props = NativeStackScreenProps<NavigatorParams> & {
   route: RouteProp<
@@ -38,6 +33,10 @@ type Props = NativeStackScreenProps<NavigatorParams> & {
 const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
   const { Layout, Colors } = useTheme();
   const user = AuthService.getCurrentUser();
+  const { data: userData } = userApi.useFetchUserQuery(user?.uid, {
+    refetchOnMountOrArgChange: true,
+  });
+
   const { refetch, sensorLife } = route?.params || { refetch: null };
   const {
     data,
@@ -63,13 +62,6 @@ const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
   const [currentGlucose = { measurement: 0, status: MeasurementStatus.OK }] = [
     measurements?.[0],
   ];
-
-  const [tooltipPos, setTooltipPos] = useState({
-    x: 0,
-    y: 0,
-    visible: false,
-    value: 0,
-  });
 
   useEffect(() => {
     if (refetch) {
@@ -109,87 +101,7 @@ const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
                 ...Layout.colCenter,
                 ...styles.skeleton,
               }}
-              renderContent={() => (
-                <LineChart
-                  data={getChartDataset(measurements)}
-                  width={Dimensions.get('window').width} // from react-native
-                  height={200}
-                  yAxisSuffix="mg/dL"
-                  yLabelsOffset={4}
-                  xLabelsOffset={4}
-                  fromZero
-                  yAxisInterval={2}
-                  hidePointsAtIndex={handleHiddenPoints(measurements?.length)}
-                  chartConfig={{
-                    propsForBackgroundLines: {
-                      stroke: COLORS.darkGray,
-                      opacity: '0.5',
-                    },
-                    backgroundGradientFrom: Colors.white,
-                    backgroundGradientTo: Colors.white,
-                    decimalPlaces: 0,
-                    strokeWidth: 1,
-                    color: () => Colors.red,
-                    labelColor: () => COLORS.darkGray,
-                    propsForDots: {
-                      r: '5',
-                    },
-                  }}
-                  bezier
-                  style={{
-                    marginVertical: 10,
-                  }}
-                  decorator={() => {
-                    return tooltipPos.visible ? (
-                      <View>
-                        <Svg>
-                          <Rect
-                            x={tooltipPos.x - 15}
-                            y={tooltipPos.y + 10}
-                            width="40"
-                            height="30"
-                            fill="black"
-                          />
-                          <TextSVG
-                            x={tooltipPos.x + 5}
-                            y={tooltipPos.y + 30}
-                            fill={Colors.white}
-                            fontSize="16"
-                            fontWeight="bold"
-                            textAnchor="middle"
-                          >
-                            {tooltipPos.value}
-                          </TextSVG>
-                        </Svg>
-                      </View>
-                    ) : null;
-                  }}
-                  onDataPointClick={(data) => {
-                    let isSamePoint =
-                      tooltipPos.x === data.x && tooltipPos.y === data.y;
-
-                    if (isSamePoint) {
-                      return;
-                    } else {
-                      setTooltipPos({
-                        x: data.x,
-                        value: data.value,
-                        y: data.y,
-                        visible: true,
-                      });
-                      setTimeout(() => {
-                        setTooltipPos((previousState) => {
-                          return {
-                            ...previousState,
-                            value: data.value,
-                            visible: !previousState.visible,
-                          };
-                        });
-                      }, 1000);
-                    }
-                  }}
-                />
-              )}
+              renderContent={() => <LastDayChart measurements={measurements} />}
               times={2}
             />
           </ScrollView>
@@ -197,21 +109,29 @@ const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
             template={SkeletonView.templates.TEXT_CONTENT}
             showContent={!isFetching}
             renderContent={() => (
-              <Table
-                data={new TableBuilder()
-                  .tendency(TENDENCY.EQUAL)
-                  .periodInTarget(periodInTarget.value, periodInTarget.status)
-                  .lastScanMeasure(
-                    currentGlucose.measurement,
-                    currentGlucose.status || MeasurementStatus.OK
-                  )
-                  .average(
-                    Math.round(parseFloat(average.value.toString())),
-                    average.status
-                  )
-                  .sensorLife(age, status)
-                  .build()}
-              />
+              <View>
+                <Table
+                  data={new TableBuilder()
+                    .tendency(TENDENCY.EQUAL)
+                    .periodInTarget(periodInTarget.value, periodInTarget.status)
+                    .lastScanMeasure(
+                      currentGlucose.measurement,
+                      currentGlucose.status || MeasurementStatus.OK
+                    )
+                    .average(
+                      Math.round(parseFloat(average.value.toString())),
+                      average.status
+                    )
+                    .sensorLife(age, status)
+                    .build()}
+                />
+                <MedicalReportContainer
+                  data={data}
+                  name={user?.displayName}
+                  user={userData}
+                  sensorLife={sensorLife}
+                />
+              </View>
             )}
             times={2}
           />
