@@ -44,6 +44,11 @@ export enum PeriodInTargetStatus {
   GOOD = 2,
 }
 
+export enum DiabetesType {
+  TYPE_1 = 0,
+  TYPE_2 = 1,
+}
+
 export type Measurement = {
   measurement: number;
   timestamp: Date | string;
