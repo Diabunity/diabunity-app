@@ -7,11 +7,12 @@ import Icon from 'react-native-vector-icons/Feather';
 import { Card } from 'react-native-paper';
 import { useTheme } from '@/Hooks';
 import {
-  Measurement,
+  MeasurementMode,
+  Measurements,
   MeasurementStatus,
   userApi,
 } from '@/Services/modules/users';
-import { DatePeriod } from '@/Utils';
+import { DatePeriod, formatDate, formatHour } from '@/Utils';
 import { ScrollView, StyleSheet, Text } from 'react-native';
 import { styles } from './styles';
 import { SkeletonView, View } from 'react-native-ui-lib';
@@ -29,6 +30,11 @@ const COLORS = {
   darkGray: '#666',
   white: '#ffffff',
 };
+
+enum PAGE_DIRECTION {
+  NEXT = 'NEXT',
+  PREV = 'PREV',
+}
 
 const tableStyles = StyleSheet.create({
   container: {
@@ -107,9 +113,13 @@ const STATUS_LABEL: { [key in MeasurementStatus]: string } = {
   [MeasurementStatus.SUPER_HIGH]: 'HIPER GLUCEMIA',
 };
 
-const DatePickerr = () => {
-  const [dateTo, setDateTo] = useState(new Date());
-  const [dateFrom, setDateFrom] = useState(new Date());
+const MEASUREMENT_LABELS: { [key in MeasurementMode]: string } = {
+  [MeasurementMode.MANUAL]: 'Manual',
+  [MeasurementMode.SENSOR]: 'FreeStyle',
+};
+
+const HeaderDatePicker = ({ onDateChange }: { onDateChange: Function }) => {
+  const { Colors } = useTheme();
 
   return (
     <View
@@ -130,8 +140,8 @@ const DatePickerr = () => {
       <DatePicker
         style={{ height: 32, borderWidth: 0 }}
         customStyles={{
-          placeholderText: { fontSize: 16 }, // placeHolder style
-          headerStyle: { backgroundColor: 'red' }, // title container style
+          placeholderText: { fontSize: 16 },
+          headerStyle: { backgroundColor: Colors.red },
           headerMarkTitle: {}, // title mark style
           headerDateTitle: { fontSize: 16 }, // title Date style
           contentInput: {}, //content text container style
@@ -140,95 +150,144 @@ const DatePickerr = () => {
         placeholder={'22 de Julio, 2022 → 27 de Julio, 2022'}
         outFormat={'DD ' + '\\d\\e ' + 'MMMM' + ', YYYY'}
         headFormat={'DD ' + '\\d\\e ' + 'MMMM' + ', YYYY'}
+        selectedBgColor={Colors.red}
         mode={'range'}
         ButtonText="Seleccionar"
         ButtonStyle={{}}
         markText=" "
         clearStart="Desde"
         clearEnd="Hasta"
-        onConfirm={(f) => {
-          console.log(f);
+        onConfirm={(data: { startDate: string; endDate: string }) => {
+          onDateChange({
+            from: data.startDate.replaceAll('/', ''),
+            to: data.endDate.replaceAll('/', ''),
+          });
         }}
       />
     </View>
   );
 };
 
-const Table = ({ data }: { data: Array<Measurement> }) => {
+const Footer = ({
+  pages,
+  currentPage,
+  totalElements,
+  onPageChangeSelected,
+}: {
+  pages: number;
+  currentPage: number;
+  totalElements: number;
+  onPageChangeSelected: Function;
+}) => {
+  return (
+    <View style={{ ...tableStyles.row, ...tableStyles.pageInfoContainer }}>
+      <Text style={tableStyles.index}>1-5 de {pages}</Text>
+      <Text
+        style={{
+          ...tableStyles.index,
+          ...tableStyles.chevron,
+          ...tableStyles.disabled,
+        }}
+        onPress={() => onPageChangeSelected(PAGE_DIRECTION.PREV)}
+      >
+        &#10094;
+      </Text>
+      <Text
+        style={{
+          ...tableStyles.index,
+          ...tableStyles.chevron,
+          ...tableStyles.enabled,
+        }}
+        onPress={() => onPageChangeSelected(PAGE_DIRECTION.NEXT)}
+      >
+        &#10095;
+      </Text>
+    </View>
+  );
+};
+
+const Table = ({
+  data,
+  currentPage,
+  onDateChange,
+  onPageChangeSelected,
+}: {
+  data?: Measurements;
+  currentPage: number;
+  onDateChange: Function;
+  onPageChangeSelected: Function;
+}) => {
   return (
     <>
-      <DatePickerr />
+      <HeaderDatePicker onDateChange={onDateChange} />
       <View style={{ ...tableStyles.container, ...tableStyles.dropShadow }}>
-        {data.map((item, index) => (
-          <View key={index} style={tableStyles.row}>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                width: '30%',
-                alignItems: 'flex-start',
-              }}
-            >
-              <Text style={tableStyles.dateAndSource}>
-                {new Date(item.timestamp).getFullYear()}
+        {data!.measurements.map((item, index) => {
+          const currentItemDate = new Date(item.timestamp);
+
+          return (
+            <View key={index} style={tableStyles.row}>
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  width: '30%',
+                  alignItems: 'flex-start',
+                }}
+              >
+                <Text style={tableStyles.dateAndSource}>
+                  {formatDate(currentItemDate)}
+                </Text>
+                <Text style={tableStyles.dateAndSource}>
+                  {formatHour(currentItemDate, true)}hs
+                </Text>
+                <Text style={tableStyles.dateAndSource}>
+                  {MEASUREMENT_LABELS[item.source]}
+                </Text>
+              </View>
+              <Text
+                style={{
+                  ...tableStyles.value,
+                  color: STATUS_COLORS[item.status!],
+                }}
+              >
+                {item.measurement} mg/dL
               </Text>
-              <Text style={tableStyles.dateAndSource}>09:15:00:hs</Text>
-              <Text style={tableStyles.dateAndSource}>FreeStyle</Text>
+              <Text
+                style={{
+                  ...tableStyles.value,
+                  color: STATUS_COLORS[item.status!],
+                }}
+              >
+                {STATUS_LABEL[item.status!]}
+              </Text>
             </View>
-            <Text
-              style={{
-                ...tableStyles.value,
-                color: STATUS_COLORS[item.status!],
-              }}
-            >
-              {item.measurement} mg/dL
-            </Text>
-            <Text
-              style={{
-                ...tableStyles.value,
-                color: STATUS_COLORS[item.status!],
-              }}
-            >
-              {STATUS_LABEL[item.status!]}
-            </Text>
-          </View>
-        ))}
-        <View style={{ ...tableStyles.row, ...tableStyles.pageInfoContainer }}>
-          <Text style={tableStyles.index}>1-5 de 10</Text>
-          <Text
-            style={{
-              ...tableStyles.index,
-              ...tableStyles.chevron,
-              ...tableStyles.disabled,
-            }}
-          >
-            &#10094;
-          </Text>
-          <Text
-            style={{
-              ...tableStyles.index,
-              ...tableStyles.chevron,
-              ...tableStyles.enabled,
-            }}
-          >
-            &#10095;
-          </Text>
-        </View>
+          );
+        })}
+        <Footer
+          pages={data!.totalPages}
+          currentPage={currentPage}
+          totalElements={data!.totalElements}
+          onPageChangeSelected={onPageChangeSelected}
+        />
       </View>
     </>
   );
 };
 
 const HistoryContainer = ({ route, navigation: { navigate } }: Props) => {
-  const { Layout, Colors } = useTheme();
+  const { Layout } = useTheme();
   const user = AuthService.getCurrentUser();
   const { refetch } = route?.params ?? { refetch: false };
+  const [dateRange, setDateRange] = useState<{ from: string; to: string }>();
+  const [page, setPage] = useState<number>(0);
   const {
     data,
     isFetching,
     refetch: refetchFn,
   } = userApi.useFetchMeasurementQuery(
     {
+      page,
+      dateRange,
       id: user?.uid,
       dateFilter: DatePeriod.LAST_MONTH,
     },
@@ -240,6 +299,19 @@ const HistoryContainer = ({ route, navigation: { navigate } }: Props) => {
       refetchFn();
     }
   }, [refetch]);
+
+  const onDateChange = (dateRange: { from: string; to: string }) => {
+    setDateRange(dateRange);
+    setPage(0);
+  };
+
+  const onPageChangeSelected = (direction: PAGE_DIRECTION) => {
+    if (direction === PAGE_DIRECTION.NEXT) {
+      setPage(page + 1);
+    } else {
+      setPage(page - 1);
+    }
+  };
 
   return (
     <>
@@ -268,7 +340,12 @@ const HistoryContainer = ({ route, navigation: { navigate } }: Props) => {
             renderContent={() => (
               <>
                 <Text style={styles.title}>Historial de mediciones</Text>
-                <Table data={data!.measurements.slice(0, 5)} />
+                <Table
+                  data={data}
+                  currentPage={page}
+                  onDateChange={onDateChange}
+                  onPageChangeSelected={onPageChangeSelected}
+                />
               </>
             )}
             times={9}
