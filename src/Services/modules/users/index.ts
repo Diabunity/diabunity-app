@@ -74,4 +74,6 @@ export type Measurements = {
   avg: MeasurementEntry;
   measurements: Array<Measurement>;
   periodInTarget: PeriodEntry;
+  totalPages: number;
+  totalElements: number;
 };
