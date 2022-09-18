@@ -91,11 +91,9 @@ const tableStyles = StyleSheet.create({
   },
   enabled: {
     color: 'rgba(0, 0, 0, 0.54)',
-    marginLeft: 42,
   },
   disabled: {
     color: 'rgba(0, 0, 0, 0.2)',
-    marginLeft: 38,
   },
 });
 
@@ -179,26 +177,46 @@ const Footer = ({
   totalElements: number;
   onPageChangeSelected: Function;
 }) => {
+  const isLeftChevronEnabled = currentPage > 0;
+  const isRightChevronEnabled = currentPage < pages - 1;
+  const from = currentPage * 10 + 1;
+  const to = Math.min((currentPage + 1) * 10, totalElements);
   return (
     <View style={{ ...tableStyles.row, ...tableStyles.pageInfoContainer }}>
-      <Text style={tableStyles.index}>1-5 de {pages}</Text>
+      <Text style={tableStyles.index}>
+        {from}-{to} de {pages}
+      </Text>
       <Text
         style={{
+          marginLeft: 38,
           ...tableStyles.index,
           ...tableStyles.chevron,
-          ...tableStyles.disabled,
+          ...(isLeftChevronEnabled
+            ? { ...tableStyles.enabled }
+            : { ...tableStyles.disabled }),
         }}
-        onPress={() => onPageChangeSelected(PAGE_DIRECTION.PREV)}
+        onPress={
+          isLeftChevronEnabled
+            ? () => onPageChangeSelected(PAGE_DIRECTION.PREV)
+            : undefined
+        }
       >
         &#10094;
       </Text>
       <Text
         style={{
+          marginLeft: 42,
           ...tableStyles.index,
           ...tableStyles.chevron,
-          ...tableStyles.enabled,
+          ...(isRightChevronEnabled
+            ? { ...tableStyles.enabled }
+            : { ...tableStyles.disabled }),
         }}
-        onPress={() => onPageChangeSelected(PAGE_DIRECTION.NEXT)}
+        onPress={
+          isRightChevronEnabled
+            ? () => onPageChangeSelected(PAGE_DIRECTION.NEXT)
+            : undefined
+        }
       >
         &#10095;
       </Text>
