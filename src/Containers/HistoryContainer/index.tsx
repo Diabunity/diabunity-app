@@ -12,11 +12,12 @@ import {
   MeasurementStatus,
   userApi,
 } from '@/Services/modules/users';
-import { DatePeriod, formatDate, formatHour } from '@/Utils';
+import { DatePeriod, formatDate, formatHour, getDatePeriod } from '@/Utils';
 import { ScrollView, StyleSheet, Text } from 'react-native';
 import { styles } from './styles';
 import { SkeletonView, View } from 'react-native-ui-lib';
 import DatePicker from 'react-native-date-ranges';
+import moment from 'moment';
 
 type Props = NativeStackScreenProps<NavigatorParams> & {
   route: RouteProp<
@@ -118,6 +119,13 @@ const MEASUREMENT_LABELS: { [key in MeasurementMode]: string } = {
 
 const HeaderDatePicker = ({ onDateChange }: { onDateChange: Function }) => {
   const { Colors } = useTheme();
+  const dateFormat = 'DD ' + '\\d\\e ' + 'MMMM' + ', YYYY';
+  const placeHolder = {
+    startDate: moment(getDatePeriod(new Date(), DatePeriod.LAST_WEEK)).format(
+      dateFormat
+    ),
+    endDate: moment(new Date()).format(dateFormat),
+  };
 
   return (
     <View
@@ -140,14 +148,12 @@ const HeaderDatePicker = ({ onDateChange }: { onDateChange: Function }) => {
         customStyles={{
           placeholderText: { fontSize: 16 },
           headerStyle: { backgroundColor: Colors.red },
-          headerMarkTitle: {}, // title mark style
-          headerDateTitle: { fontSize: 16 }, // title Date style
-          contentInput: {}, //content text container style
-          contentText: { fontSize: 16 }, //after selected text Style
-        }} // optional
-        placeholder={'22 de Julio, 2022 → 27 de Julio, 2022'}
-        outFormat={'DD ' + '\\d\\e ' + 'MMMM' + ', YYYY'}
-        headFormat={'DD ' + '\\d\\e ' + 'MMMM' + ', YYYY'}
+          headerDateTitle: { fontSize: 16 },
+          contentText: { fontSize: 16 },
+        }}
+        placeholder={`${placeHolder.startDate} → ${placeHolder.endDate}`}
+        outFormat={dateFormat}
+        headFormat={dateFormat}
         selectedBgColor={Colors.red}
         mode={'range'}
         ButtonText="Seleccionar"
@@ -184,7 +190,7 @@ const Footer = ({
   return (
     <View style={{ ...tableStyles.row, ...tableStyles.pageInfoContainer }}>
       <Text style={tableStyles.index}>
-        {from}-{to} de {pages}
+        {from}-{to} de {totalElements}
       </Text>
       <Text
         style={{
