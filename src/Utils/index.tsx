@@ -47,7 +47,7 @@ export enum DatePeriod {
   LAST_YEAR = 'lastYear',
 }
 
-const getDatePeriod = (date: Date, format: string): Date => {
+export const getDatePeriod = (date: Date, format: string): Date => {
   switch (format) {
     case DatePeriod.LAST_8_HOURS:
       return new Date(
@@ -69,7 +69,10 @@ const getDatePeriod = (date: Date, format: string): Date => {
   }
 };
 
-export const formatHour = (date: Date, includeSeconds: boolean = false): string => {
+export const formatHour = (
+  date: Date,
+  includeSeconds: boolean = false
+): string => {
   const time = date.toLocaleTimeString('es-ES');
 
   if (includeSeconds) {
