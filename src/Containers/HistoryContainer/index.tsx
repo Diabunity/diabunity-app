@@ -233,17 +233,14 @@ const Footer = ({
 const Table = ({
   data,
   currentPage,
-  onDateChange,
   onPageChangeSelected,
 }: {
   data?: Measurements;
   currentPage: number;
-  onDateChange: Function;
   onPageChangeSelected: Function;
 }) => {
   return (
     <>
-      <HeaderDatePicker onDateChange={onDateChange} />
       <View style={{ ...tableStyles.container, ...tableStyles.dropShadow }}>
         {data!.measurements.map((item, index) => {
           const currentItemDate = new Date(item.timestamp);
@@ -313,7 +310,7 @@ const HistoryContainer = ({ route, navigation: { navigate } }: Props) => {
       page,
       dateRange,
       id: user?.uid,
-      dateFilter: DatePeriod.LAST_MONTH,
+      dateFilter: DatePeriod.LAST_WEEK,
     },
     { refetchOnMountOrArgChange: refetch }
   );
@@ -338,13 +335,15 @@ const HistoryContainer = ({ route, navigation: { navigate } }: Props) => {
   };
 
   return (
-    <>
+    <ScrollView style={Layout.fill} contentContainerStyle={styles.scrollView}>
+      <Text style={styles.title}>Historial de mediciones</Text>
+      <HeaderDatePicker onDateChange={onDateChange} />
       {!isFetching && !data?.measurements.length ? (
-        <View style={[Layout.fill, Layout.colCenter]}>
-          <Icon name="inbox" size={35} color={COLORS.darkGray} />
+        <View style={[Layout.fill, Layout.colCenter, { marginTop: 25 }]}>
           <Card.Title
             style={[Layout.colCenter]}
             title="No hay informacion para mostrar"
+            titleStyle={{ textAlign: 'center' }}
             subtitle="No se han encontrado mediciones para el periodo seleccionado"
             subtitleNumberOfLines={2}
             subtitleStyle={{
@@ -354,29 +353,20 @@ const HistoryContainer = ({ route, navigation: { navigate } }: Props) => {
           />
         </View>
       ) : (
-        <ScrollView
-          style={Layout.fill}
-          contentContainerStyle={styles.scrollView}
-        >
-          <SkeletonView
-            template={SkeletonView.templates.TEXT_CONTENT}
-            showContent={!isFetching && data?.measurements}
-            renderContent={() => (
-              <>
-                <Text style={styles.title}>Historial de mediciones</Text>
-                <Table
-                  data={data}
-                  currentPage={page}
-                  onDateChange={onDateChange}
-                  onPageChangeSelected={onPageChangeSelected}
-                />
-              </>
-            )}
-            times={9}
-          />
-        </ScrollView>
+        <SkeletonView
+          template={SkeletonView.templates.TEXT_CONTENT}
+          showContent={!isFetching && data?.measurements}
+          renderContent={() => (
+            <Table
+              data={data}
+              currentPage={page}
+              onPageChangeSelected={onPageChangeSelected}
+            />
+          )}
+          times={9}
+        />
       )}
-    </>
+    </ScrollView>
   );
 };
 
