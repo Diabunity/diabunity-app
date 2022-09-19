@@ -3,7 +3,6 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
 import { NavigatorParams } from '@/Navigators/Application';
 import AuthService from '@/Services/modules/auth';
-import Icon from 'react-native-vector-icons/Feather';
 import { Card } from 'react-native-paper';
 import { useTheme } from '@/Hooks';
 import {
@@ -36,67 +35,6 @@ enum PAGE_DIRECTION {
   NEXT = 'NEXT',
   PREV = 'PREV',
 }
-
-const tableStyles = StyleSheet.create({
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    borderRadius: 3,
-    borderWidth: 0.5,
-    borderColor: COLORS.gray,
-    backgroundColor: COLORS.white,
-    marginTop: 15,
-  },
-  dropShadow: {
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 2,
-      height: 2,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 5,
-  },
-  row: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    borderBottomWidth: 0.5,
-    borderColor: COLORS.gray,
-  },
-  dateAndSource: {
-    fontWeight: '400',
-    fontSize: 14,
-    color: 'rgba(0, 0, 0, 0.87)',
-  },
-  index: {
-    fontWeight: '400',
-    fontSize: 12,
-    color: 'rgba(0, 0, 0, 0.87)',
-  },
-  value: {
-    fontWeight: '600',
-    textAlign: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    width: '35%',
-  },
-  pageInfoContainer: {
-    justifyContent: 'flex-end',
-  },
-  chevron: {
-    fontSize: 18,
-    paddingHorizontal: 10,
-  },
-  enabled: {
-    color: 'rgba(0, 0, 0, 0.54)',
-  },
-  disabled: {
-    color: 'rgba(0, 0, 0, 0.2)',
-  },
-});
 
 const STATUS_COLORS: { [key in MeasurementStatus]: string } = {
   [MeasurementStatus.LOW]: '#0060B9',
@@ -140,7 +78,7 @@ const HeaderDatePicker = ({ onDateChange }: { onDateChange: Function }) => {
         borderWidth: 0.5,
         borderColor: COLORS.gray,
         backgroundColor: COLORS.white,
-        ...tableStyles.dropShadow,
+        ...styles.dropShadow,
       }}
     >
       <DatePicker
@@ -188,18 +126,18 @@ const Footer = ({
   const from = currentPage * 10 + 1;
   const to = Math.min((currentPage + 1) * 10, totalElements);
   return (
-    <View style={{ ...tableStyles.row, ...tableStyles.pageInfoContainer }}>
-      <Text style={tableStyles.index}>
+    <View style={{ ...styles.row, ...styles.pageInfoContainer }}>
+      <Text style={styles.index}>
         {from}-{to} de {totalElements}
       </Text>
       <Text
         style={{
           marginLeft: 38,
-          ...tableStyles.index,
-          ...tableStyles.chevron,
+          ...styles.index,
+          ...styles.chevron,
           ...(isLeftChevronEnabled
-            ? { ...tableStyles.enabled }
-            : { ...tableStyles.disabled }),
+            ? { ...styles.enabled }
+            : { ...styles.disabled }),
         }}
         onPress={
           isLeftChevronEnabled
@@ -212,11 +150,11 @@ const Footer = ({
       <Text
         style={{
           marginLeft: 42,
-          ...tableStyles.index,
-          ...tableStyles.chevron,
+          ...styles.index,
+          ...styles.chevron,
           ...(isRightChevronEnabled
-            ? { ...tableStyles.enabled }
-            : { ...tableStyles.disabled }),
+            ? { ...styles.enabled }
+            : { ...styles.disabled }),
         }}
         onPress={
           isRightChevronEnabled
@@ -238,62 +176,51 @@ const Table = ({
   data?: Measurements;
   currentPage: number;
   onPageChangeSelected: Function;
-}) => {
-  return (
-    <>
-      <View style={{ ...tableStyles.container, ...tableStyles.dropShadow }}>
-        {data!.measurements.map((item, index) => {
-          const currentItemDate = new Date(item.timestamp);
+}) => (
+  <View style={{ ...styles.container, ...styles.dropShadow }}>
+    {data!.measurements.map((item, index) => {
+      const currentItemDate = new Date(item.timestamp);
 
-          return (
-            <View key={index} style={tableStyles.row}>
-              <View
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  width: '30%',
-                  alignItems: 'flex-start',
-                }}
-              >
-                <Text style={tableStyles.dateAndSource}>
-                  {formatDate(currentItemDate)}
-                </Text>
-                <Text style={tableStyles.dateAndSource}>
-                  {formatHour(currentItemDate, true)}hs
-                </Text>
-                <Text style={tableStyles.dateAndSource}>
-                  {MEASUREMENT_LABELS[item.source]}
-                </Text>
-              </View>
-              <Text
-                style={{
-                  ...tableStyles.value,
-                  color: STATUS_COLORS[item.status!],
-                }}
-              >
-                {item.measurement} mg/dL
-              </Text>
-              <Text
-                style={{
-                  ...tableStyles.value,
-                  color: STATUS_COLORS[item.status!],
-                }}
-              >
-                {STATUS_LABEL[item.status!]}
-              </Text>
-            </View>
-          );
-        })}
-        <Footer
-          pages={data!.totalPages}
-          currentPage={currentPage}
-          totalElements={data!.totalElements}
-          onPageChangeSelected={onPageChangeSelected}
-        />
-      </View>
-    </>
-  );
-};
+      return (
+        <View key={index} style={styles.row}>
+          <View style={styles.dateAndSourceContainer}>
+            <Text style={styles.dateAndSource}>
+              {formatDate(currentItemDate)}
+            </Text>
+            <Text style={styles.dateAndSource}>
+              {formatHour(currentItemDate, true)}hs
+            </Text>
+            <Text style={styles.dateAndSource}>
+              {MEASUREMENT_LABELS[item.source]}
+            </Text>
+          </View>
+          <Text
+            style={{
+              ...styles.value,
+              color: STATUS_COLORS[item.status!],
+            }}
+          >
+            {item.measurement} mg/dL
+          </Text>
+          <Text
+            style={{
+              ...styles.value,
+              color: STATUS_COLORS[item.status!],
+            }}
+          >
+            {STATUS_LABEL[item.status!]}
+          </Text>
+        </View>
+      );
+    })}
+    <Footer
+      pages={data!.totalPages}
+      currentPage={currentPage}
+      totalElements={data!.totalElements}
+      onPageChangeSelected={onPageChangeSelected}
+    />
+  </View>
+);
 
 const HistoryContainer = ({ route, navigation: { navigate } }: Props) => {
   const { Layout } = useTheme();
