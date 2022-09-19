@@ -64,29 +64,11 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     color: 'rgba(0, 0, 0, 0.87)',
   },
-  index: {
-    fontWeight: '400',
-    fontSize: 12,
-    color: 'rgba(0, 0, 0, 0.87)',
-  },
   value: {
     fontWeight: '600',
     textAlign: 'center',
     paddingHorizontal: 12,
     paddingVertical: 10,
     width: '35%',
-  },
-  pageInfoContainer: {
-    justifyContent: 'flex-end',
-  },
-  chevron: {
-    fontSize: 18,
-    paddingHorizontal: 10,
-  },
-  enabled: {
-    color: 'rgba(0, 0, 0, 0.54)',
-  },
-  disabled: {
-    color: 'rgba(0, 0, 0, 0.2)',
   },
 });
