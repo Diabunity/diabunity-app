@@ -11,14 +11,13 @@ import {
   MeasurementStatus,
   userApi,
 } from '@/Services/modules/users';
-import { DatePeriod, formatDate, formatHour, getDatePeriod } from '@/Utils';
-import { ScrollView, StyleSheet, Text } from 'react-native';
+import { DatePeriod, formatDate, formatHour } from '@/Utils';
+import { ScrollView, Text } from 'react-native';
 import { styles } from './styles';
 import { SkeletonView, View } from 'react-native-ui-lib';
-import DatePicker from 'react-native-date-ranges';
-import moment from 'moment';
 
 import HeaderDatePicker from './HeaderDatePicker';
+import Footer, { PAGE_DIRECTION } from './Footer';
 
 type Props = NativeStackScreenProps<NavigatorParams> & {
   route: RouteProp<
@@ -26,11 +25,6 @@ type Props = NativeStackScreenProps<NavigatorParams> & {
     'params'
   >;
 };
-
-enum PAGE_DIRECTION {
-  NEXT = 'NEXT',
-  PREV = 'PREV',
-}
 
 const STATUS_COLORS: { [key in MeasurementStatus]: string } = {
   [MeasurementStatus.LOW]: '#0060B9',
@@ -49,64 +43,6 @@ const STATUS_LABEL: { [key in MeasurementStatus]: string } = {
 const MEASUREMENT_LABELS: { [key in MeasurementMode]: string } = {
   [MeasurementMode.MANUAL]: 'Manual',
   [MeasurementMode.SENSOR]: 'FreeStyle',
-};
-
-const Footer = ({
-  pages,
-  currentPage,
-  totalElements,
-  onPageChangeSelected,
-}: {
-  pages: number;
-  currentPage: number;
-  totalElements: number;
-  onPageChangeSelected: Function;
-}) => {
-  const isLeftChevronEnabled = currentPage > 0;
-  const isRightChevronEnabled = currentPage < pages - 1;
-  const from = currentPage * 10 + 1;
-  const to = Math.min((currentPage + 1) * 10, totalElements);
-  return (
-    <View style={{ ...styles.row, ...styles.pageInfoContainer }}>
-      <Text style={styles.index}>
-        {from}-{to} de {totalElements}
-      </Text>
-      <Text
-        style={{
-          marginLeft: 38,
-          ...styles.index,
-          ...styles.chevron,
-          ...(isLeftChevronEnabled
-            ? { ...styles.enabled }
-            : { ...styles.disabled }),
-        }}
-        onPress={
-          isLeftChevronEnabled
-            ? () => onPageChangeSelected(PAGE_DIRECTION.PREV)
-            : undefined
-        }
-      >
-        &#10094;
-      </Text>
-      <Text
-        style={{
-          marginLeft: 42,
-          ...styles.index,
-          ...styles.chevron,
-          ...(isRightChevronEnabled
-            ? { ...styles.enabled }
-            : { ...styles.disabled }),
-        }}
-        onPress={
-          isRightChevronEnabled
-            ? () => onPageChangeSelected(PAGE_DIRECTION.NEXT)
-            : undefined
-        }
-      >
-        &#10095;
-      </Text>
-    </View>
-  );
 };
 
 const Table = ({
