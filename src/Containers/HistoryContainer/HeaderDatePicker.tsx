@@ -5,25 +5,7 @@ import { DatePeriod, getDatePeriod } from '@/Utils';
 import DatePicker from 'react-native-date-ranges';
 import moment from 'moment';
 
-import { styles } from './styles';
-import { StyleSheet } from 'react-native';
-
-const headerStyles = StyleSheet.create({
-  container: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 32,
-    marginTop: 15,
-    borderRadius: 3,
-    borderWidth: 0.5,
-    ...styles.dropShadow,
-  },
-  font: {
-    fontSize: 16,
-  },
-});
+import { headerStyles as styles } from './styles';
 
 export default ({ onDateChange }: { onDateChange: Function }) => {
   const { Colors } = useTheme();
@@ -38,7 +20,7 @@ export default ({ onDateChange }: { onDateChange: Function }) => {
   return (
     <View
       style={{
-        ...headerStyles.container,
+        ...styles.container,
         borderColor: Colors.gray,
         backgroundColor: Colors.white,
       }}
@@ -46,10 +28,10 @@ export default ({ onDateChange }: { onDateChange: Function }) => {
       <DatePicker
         style={{ height: 32, borderWidth: 0 }}
         customStyles={{
-          placeholderText: headerStyles.font,
+          placeholderText: styles.font,
           headerStyle: { backgroundColor: Colors.red },
-          headerDateTitle: headerStyles.font,
-          contentText: headerStyles.font,
+          headerDateTitle: styles.font,
+          contentText: styles.font,
         }}
         placeholder={`${placeHolder.startDate} → ${placeHolder.endDate}`}
         outFormat={dateFormat}

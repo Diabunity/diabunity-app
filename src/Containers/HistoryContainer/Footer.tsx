@@ -1,33 +1,11 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
 import { Text, View } from 'react-native-ui-lib';
-import { styles } from './styles';
+import { footerStyles as styles } from './styles';
 
 export enum PAGE_DIRECTION {
   NEXT = 'NEXT',
   PREV = 'PREV',
 }
-
-const footerStyles = StyleSheet.create({
-  chevron: {
-    fontSize: 18,
-    paddingHorizontal: 10,
-  },
-  index: {
-    fontWeight: '400',
-    fontSize: 12,
-    color: 'rgba(0, 0, 0, 0.87)',
-  },
-  enabled: {
-    color: 'rgba(0, 0, 0, 0.54)',
-  },
-  disabled: {
-    color: 'rgba(0, 0, 0, 0.2)',
-  },
-  pageInfoContainer: {
-    justifyContent: 'flex-end',
-  },
-});
 
 export default ({
   pages,
@@ -45,18 +23,18 @@ export default ({
   const from = currentPage * 10 + 1;
   const to = Math.min((currentPage + 1) * 10, totalElements);
   return (
-    <View style={{ ...styles.row, ...footerStyles.pageInfoContainer }}>
-      <Text style={footerStyles.index}>
+    <View style={{ ...styles.row, ...styles.pageInfoContainer }}>
+      <Text style={styles.index}>
         {from}-{to} de {totalElements}
       </Text>
       <Text
         style={{
           marginLeft: 38,
-          ...footerStyles.index,
-          ...footerStyles.chevron,
+          ...styles.index,
+          ...styles.chevron,
           ...(isLeftChevronEnabled
-            ? { ...footerStyles.enabled }
-            : { ...footerStyles.disabled }),
+            ? { ...styles.enabled }
+            : { ...styles.disabled }),
         }}
         onPress={
           isLeftChevronEnabled
@@ -69,11 +47,11 @@ export default ({
       <Text
         style={{
           marginLeft: 42,
-          ...footerStyles.index,
-          ...footerStyles.chevron,
+          ...styles.index,
+          ...styles.chevron,
           ...(isRightChevronEnabled
-            ? { ...footerStyles.enabled }
-            : { ...footerStyles.disabled }),
+            ? { ...styles.enabled }
+            : { ...styles.disabled }),
         }}
         onPress={
           isRightChevronEnabled
