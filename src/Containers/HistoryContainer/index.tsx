@@ -18,17 +18,13 @@ import { SkeletonView, View } from 'react-native-ui-lib';
 import DatePicker from 'react-native-date-ranges';
 import moment from 'moment';
 
+import HeaderDatePicker from './HeaderDatePicker';
+
 type Props = NativeStackScreenProps<NavigatorParams> & {
   route: RouteProp<
     { params?: { refetch: boolean; sensorLife?: number } },
     'params'
   >;
-};
-
-const COLORS = {
-  gray: 'rgba(0, 0, 0, 0.12)',
-  darkGray: '#666',
-  white: '#ffffff',
 };
 
 enum PAGE_DIRECTION {
@@ -53,61 +49,6 @@ const STATUS_LABEL: { [key in MeasurementStatus]: string } = {
 const MEASUREMENT_LABELS: { [key in MeasurementMode]: string } = {
   [MeasurementMode.MANUAL]: 'Manual',
   [MeasurementMode.SENSOR]: 'FreeStyle',
-};
-
-const HeaderDatePicker = ({ onDateChange }: { onDateChange: Function }) => {
-  const { Colors } = useTheme();
-  const dateFormat = 'DD ' + '\\d\\e ' + 'MMMM' + ', YYYY';
-  const placeHolder = {
-    startDate: moment(getDatePeriod(new Date(), DatePeriod.LAST_WEEK)).format(
-      dateFormat
-    ),
-    endDate: moment(new Date()).format(dateFormat),
-  };
-
-  return (
-    <View
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: 32,
-        marginTop: 15,
-        borderRadius: 3,
-        borderWidth: 0.5,
-        borderColor: COLORS.gray,
-        backgroundColor: COLORS.white,
-        ...styles.dropShadow,
-      }}
-    >
-      <DatePicker
-        style={{ height: 32, borderWidth: 0 }}
-        customStyles={{
-          placeholderText: { fontSize: 16 },
-          headerStyle: { backgroundColor: Colors.red },
-          headerDateTitle: { fontSize: 16 },
-          contentText: { fontSize: 16 },
-        }}
-        placeholder={`${placeHolder.startDate} → ${placeHolder.endDate}`}
-        outFormat={dateFormat}
-        headFormat={dateFormat}
-        selectedBgColor={Colors.red}
-        mode={'range'}
-        ButtonText="Seleccionar"
-        ButtonStyle={{}}
-        markText=" "
-        clearStart="Desde"
-        clearEnd="Hasta"
-        onConfirm={(data: { startDate: string; endDate: string }) => {
-          onDateChange({
-            from: data.startDate.replaceAll('/', ''),
-            to: data.endDate.replaceAll('/', ''),
-          });
-        }}
-      />
-    </View>
-  );
 };
 
 const Footer = ({
