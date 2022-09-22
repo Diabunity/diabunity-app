@@ -40,7 +40,6 @@ export default ({ onDateChange }: { onDateChange: Function }) => {
         mode={'range'}
         ButtonText="Seleccionar"
         ButtonStyle={{}}
-        markText=" "
         clearStart="Desde"
         clearEnd="Hasta"
         onConfirm={(data: { startDate: string; endDate: string }) => {
