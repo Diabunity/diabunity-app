@@ -1,7 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RouteProp } from '@react-navigation/native';
-import { NavigatorParams } from '@/Navigators/Application';
+import React, { useState } from 'react';
 import AuthService from '@/Services/modules/auth';
 import { Card } from 'react-native-paper';
 import { useTheme } from '@/Hooks';
@@ -14,13 +11,6 @@ import HeaderDatePicker from './HeaderDatePicker';
 import { PAGE_DIRECTION } from './Footer';
 import Table from './Table';
 import Icon from 'react-native-vector-icons/Feather';
-
-type Props = NativeStackScreenProps<NavigatorParams> & {
-  route: RouteProp<
-    { params?: { refetch: boolean; sensorLife?: number } },
-    'params'
-  >;
-};
 
 const styles = StyleSheet.create({
   scrollView: {
@@ -43,31 +33,17 @@ const styles = StyleSheet.create({
   },
 });
 
-const HistoryContainer = ({ route, navigation: { navigate } }: Props) => {
+const HistoryContainer = () => {
   const { Layout } = useTheme();
   const user = AuthService.getCurrentUser();
-  const { refetch } = route?.params ?? { refetch: false };
   const [dateRange, setDateRange] = useState<{ from: string; to: string }>();
   const [page, setPage] = useState<number>(0);
-  const {
-    data,
-    isFetching,
-    refetch: refetchFn,
-  } = userApi.useFetchMeasurementQuery(
-    {
-      page,
-      dateRange,
-      id: user?.uid,
-      dateFilter: DatePeriod.LAST_WEEK,
-    },
-    { refetchOnMountOrArgChange: refetch }
-  );
-
-  useEffect(() => {
-    if (refetch) {
-      refetchFn();
-    }
-  }, [refetch]);
+  const { data, isFetching } = userApi.useFetchMeasurementQuery({
+    page,
+    dateRange,
+    id: user?.uid,
+    dateFilter: DatePeriod.LAST_WEEK,
+  });
 
   const onDateChange = (dateRange: { from: string; to: string }) => {
     setDateRange(dateRange);
