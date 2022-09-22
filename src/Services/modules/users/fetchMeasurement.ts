@@ -4,6 +4,8 @@ import { Measurements } from '.';
 
 import moment from 'moment';
 
+export const MAX_AMOUNT_OF_ELEMENTS_PER_PAGE = 10;
+
 export default (build: EndpointBuilder<any, any, any>) =>
   build.query<
     Measurements,
@@ -15,27 +17,27 @@ export default (build: EndpointBuilder<any, any, any>) =>
     }
   >({
     query: ({ id, dateFilter, dateRange, page }) => {
-      if (dateRange) {
-        const from = moment(dateRange.from).toISOString();
-        const to = moment(dateRange.to).toISOString();
+      let from;
+      let to;
 
-        return {
-          url: `/users/${id}/measurements`,
-          method: 'GET',
-          params: {
-            from,
-            to,
-            page: page ?? 0,
-            size: 10,
-          },
-        };
+      if (dateRange) {
+        from = moment(dateRange.from).toISOString();
+        to = moment(dateRange.to).toISOString();
+      } else {
+        const { from: f, to: t } = formatDatePeriod(new Date(), dateFilter);
+        from = f.toISOString();
+        to = t.toISOString();
       }
 
-      const { from, to } = formatDatePeriod(new Date(), dateFilter);
       return {
         url: `/users/${id}/measurements`,
         method: 'GET',
-        params: { from: from.toISOString(), to: to.toISOString() },
+        params: {
+          from,
+          to,
+          ...(dateRange && { page: page ?? 0 }),
+          ...(dateRange && { size: MAX_AMOUNT_OF_ELEMENTS_PER_PAGE }),
+        },
       };
     },
   });
