@@ -88,7 +88,13 @@ const HistoryContainer = ({ route, navigation: { navigate } }: Props) => {
         Historial de mediciones
       </Text>
       <HeaderDatePicker onDateChange={onDateChange} />
-      {!isFetching && !data?.measurements.length ? (
+      {isFetching ? (
+        <SkeletonView
+          template={SkeletonView.templates.TEXT_CONTENT}
+          style={styles.skeleton}
+          times={5}
+        />
+      ) : !data?.measurements.length ? (
         <View style={[Layout.fill, Layout.colCenter, { marginTop: 50 }]}>
           <Icon name="inbox" size={35} color={Colors.darkGray} />
           <Card.Title
@@ -104,18 +110,10 @@ const HistoryContainer = ({ route, navigation: { navigate } }: Props) => {
           />
         </View>
       ) : (
-        <SkeletonView
-          template={SkeletonView.templates.TEXT_CONTENT}
-          showContent={!isFetching && data?.measurements}
-          style={styles.skeleton}
-          renderContent={() => (
-            <Table
-              data={data}
-              currentPage={page}
-              onPageChangeSelected={onPageChangeSelected}
-            />
-          )}
-          times={5}
+        <Table
+          data={data}
+          currentPage={page}
+          onPageChangeSelected={onPageChangeSelected}
         />
       )}
     </ScrollView>
