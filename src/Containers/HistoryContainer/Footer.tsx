@@ -1,6 +1,8 @@
 import React from 'react';
 import { Text, View } from 'react-native-ui-lib';
-import { footerStyles as styles } from './styles';
+import { useTheme } from '@/Hooks';
+import { generateFooterStyles } from './styles';
+import { MAX_AMOUNT_OF_ELEMENTS_PER_PAGE } from '@/Services/modules/users/fetchMeasurement';
 
 export enum PAGE_DIRECTION {
   NEXT = 'NEXT',
@@ -18,10 +20,15 @@ export default ({
   totalElements: number;
   onPageChangeSelected: Function;
 }) => {
+  const { Colors } = useTheme();
+  const styles = generateFooterStyles(Colors);
   const isLeftChevronEnabled = currentPage > 0;
   const isRightChevronEnabled = currentPage < pages - 1;
-  const from = currentPage * 10 + 1;
-  const to = Math.min((currentPage + 1) * 10, totalElements);
+  const from = currentPage * MAX_AMOUNT_OF_ELEMENTS_PER_PAGE + 1;
+  const to = Math.min(
+    (currentPage + 1) * MAX_AMOUNT_OF_ELEMENTS_PER_PAGE,
+    totalElements
+  );
   return (
     <View style={{ ...styles.row, ...styles.pageInfoContainer }}>
       <Text style={styles.index}>
