@@ -13,6 +13,7 @@ import { Colors, SkeletonView, View } from 'react-native-ui-lib';
 import HeaderDatePicker from './HeaderDatePicker';
 import { PAGE_DIRECTION } from './Footer';
 import Table from './Table';
+import Icon from 'react-native-vector-icons/Feather';
 
 type Props = NativeStackScreenProps<NavigatorParams> & {
   route: RouteProp<
@@ -88,7 +89,8 @@ const HistoryContainer = ({ route, navigation: { navigate } }: Props) => {
       </Text>
       <HeaderDatePicker onDateChange={onDateChange} />
       {!isFetching && !data?.measurements.length ? (
-        <View style={[Layout.fill, Layout.colCenter, { marginTop: 25 }]}>
+        <View style={[Layout.fill, Layout.colCenter, { marginTop: 50 }]}>
+          <Icon name="inbox" size={35} color={Colors.darkGray} />
           <Card.Title
             style={[Layout.colCenter]}
             title="No hay informacion para mostrar"
@@ -105,6 +107,7 @@ const HistoryContainer = ({ route, navigation: { navigate } }: Props) => {
         <SkeletonView
           template={SkeletonView.templates.TEXT_CONTENT}
           showContent={!isFetching && data?.measurements}
+          style={styles.skeleton}
           renderContent={() => (
             <Table
               data={data}
@@ -112,7 +115,7 @@ const HistoryContainer = ({ route, navigation: { navigate } }: Props) => {
               onPageChangeSelected={onPageChangeSelected}
             />
           )}
-          times={9}
+          times={5}
         />
       )}
     </ScrollView>
