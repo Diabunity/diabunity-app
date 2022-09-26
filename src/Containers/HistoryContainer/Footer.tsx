@@ -3,11 +3,7 @@ import { Text, View } from 'react-native-ui-lib';
 import { useTheme } from '@/Hooks';
 import { generateFooterStyles } from './styles';
 import { MAX_AMOUNT_OF_ELEMENTS_PER_PAGE } from '@/Services/modules/users/fetchMeasurement';
-
-export enum PAGE_DIRECTION {
-  NEXT = 'NEXT',
-  PREV = 'PREV',
-}
+import { PAGE_DIRECTION } from '@/Constants';
 
 export default ({
   pages,

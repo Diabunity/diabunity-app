@@ -8,8 +8,8 @@ import { ScrollView, StyleSheet, Text } from 'react-native';
 import { Colors, SkeletonView, View } from 'react-native-ui-lib';
 
 import HeaderDatePicker from './HeaderDatePicker';
-import { PAGE_DIRECTION } from './Footer';
 import Table from './Table';
+import { PAGE_DIRECTION } from '@/Constants';
 
 const styles = StyleSheet.create({
   scrollView: {
