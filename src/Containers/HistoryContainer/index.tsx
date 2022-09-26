@@ -10,7 +10,6 @@ import { Colors, SkeletonView, View } from 'react-native-ui-lib';
 import HeaderDatePicker from './HeaderDatePicker';
 import { PAGE_DIRECTION } from './Footer';
 import Table from './Table';
-import Icon from 'react-native-vector-icons/Feather';
 
 const styles = StyleSheet.create({
   scrollView: {
@@ -72,7 +71,6 @@ const HistoryContainer = () => {
         />
       ) : !data?.measurements.length ? (
         <View style={[Layout.fill, Layout.colCenter, { marginTop: 50 }]}>
-          <Icon name="inbox" size={35} color={Colors.darkGray} />
           <Card.Title
             style={[Layout.colCenter]}
             title="No hay informacion para mostrar"
