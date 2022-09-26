@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Text, ScrollView, View } from 'react-native';
 import { SkeletonView } from 'react-native-ui-lib';
 import Icon from 'react-native-vector-icons/Feather';
