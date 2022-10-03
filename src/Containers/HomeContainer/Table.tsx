@@ -1,7 +1,6 @@
 import React from 'react';
 import { Text, StyleSheet } from 'react-native';
 import { View } from 'react-native-ui-lib';
-import DropShadow from 'react-native-drop-shadow';
 import { SensorLifeStatus } from '@/Services/modules/nfc';
 import {
   MeasurementStatus,

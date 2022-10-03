@@ -42,12 +42,12 @@ export const uncomplement = (val: number, bitwidth: number) => {
 export enum DatePeriod {
   LAST_8_HOURS = 'last8Hours',
   LAST_DAY = 'lastDay',
-  LAST_WEEK = 'lastDay',
+  LAST_WEEK = 'lastWeek',
   LAST_MONTH = 'lastMonth',
   LAST_YEAR = 'lastYear',
 }
 
-const getDatePeriod = (date: Date, format: string): Date => {
+export const getDatePeriod = (date: Date, format: string): Date => {
   switch (format) {
     case DatePeriod.LAST_8_HOURS:
       return new Date(
@@ -69,11 +69,18 @@ const getDatePeriod = (date: Date, format: string): Date => {
   }
 };
 
-const formatHour = (date: Date): string =>
-  `${date.getHours().toString().padStart(2, '0')}:${date
-    .getMinutes()
-    .toString()
-    .padStart(2, '0')}`;
+export const formatHour = (
+  date: Date,
+  includeSeconds: boolean = false
+): string => {
+  const time = date.toLocaleTimeString('es-ES');
+
+  if (includeSeconds) {
+    return time;
+  }
+
+  return time.substring(0, time.lastIndexOf(':'));
+};
 
 export const formatDatePeriod = (
   end: Date,

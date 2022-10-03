@@ -2,14 +2,42 @@ import { EndpointBuilder } from '@reduxjs/toolkit/dist/query/endpointDefinitions
 import { DatePeriod, formatDatePeriod } from '@/Utils';
 import { Measurements } from '.';
 
+import moment from 'moment';
+
+export const MAX_AMOUNT_OF_ELEMENTS_PER_PAGE = 10;
+
 export default (build: EndpointBuilder<any, any, any>) =>
-  build.query<Measurements, { id?: string; dateFilter: DatePeriod }>({
-    query: ({ id, dateFilter }) => {
-      const { from, to } = formatDatePeriod(new Date(), dateFilter);
+  build.query<
+    Measurements,
+    {
+      id?: string;
+      dateFilter: DatePeriod;
+      dateRange?: { from: string; to: string };
+      page?: number;
+    }
+  >({
+    query: ({ id, dateFilter, dateRange, page }) => {
+      let from;
+      let to;
+
+      if (dateRange) {
+        from = moment(dateRange.from).toISOString();
+        to = moment(dateRange.to).toISOString();
+      } else {
+        const { from: f, to: t } = formatDatePeriod(new Date(), dateFilter);
+        from = f.toISOString();
+        to = t.toISOString();
+      }
+
       return {
         url: `/users/${id}/measurements`,
         method: 'GET',
-        params: { from: from.toISOString(), to: to.toISOString() },
+        params: {
+          from,
+          to,
+          ...(dateRange && { page: page ?? 0 }),
+          ...(dateRange && { size: MAX_AMOUNT_OF_ELEMENTS_PER_PAGE }),
+        },
       };
     },
   });

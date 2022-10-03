@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import { Toast, View } from 'react-native-ui-lib';
 import {
   HomeContainer,
+  HistoryContainer,
   UserContainer,
   AddMeasureContainer,
 } from '@/Containers';
@@ -56,6 +57,16 @@ const MainNavigator = () => {
             title: 'Inicio',
             tabBarIcon: ({ color, size }) => (
               <Icon name="home" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="History"
+          component={HistoryContainer}
+          options={{
+            title: 'Historial',
+            tabBarIcon: ({ color, size }) => (
+              <Icon name="rotate-ccw" size={size} color={color} />
             ),
           }}
         />
