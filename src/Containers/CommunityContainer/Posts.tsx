@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, SkeletonView } from 'react-native-ui-lib';
+import { Avatar, Incubator, SkeletonView } from 'react-native-ui-lib';
 import { ActivityIndicator, Image, Text, View } from 'react-native';
+import { Card } from 'react-native-paper';
+import DropShadow from 'react-native-drop-shadow';
 import { Picker } from 'react-native-slack-emoji/src';
 import Icon from 'react-native-vector-icons/Feather';
 import useTheme from '@/Hooks/useTheme';
+import AuthService from '@/Services/modules/auth';
 import { Post, postApi } from '@/Services/modules/posts';
+import { setNotification } from '@/Store/Notification';
+import { store } from '@/Store';
 import { getNameInitials, getRelativeTime } from '@/Utils';
 import { EmojiLisType } from '.';
 
 import { styles } from './styles';
-import { Card } from 'react-native-paper';
-import DropShadow from 'react-native-drop-shadow';
 
 type PostsProps = {
   handleSelected: (post: Post) => void;
@@ -26,6 +29,7 @@ const Posts = ({
   shouldRefetch,
 }: PostsProps) => {
   const { Layout, Colors, Fonts } = useTheme();
+  const user = AuthService.getCurrentUser();
   const [postPage, setPostPage] = useState<number>(0);
   const {
     data = null,
@@ -34,24 +38,29 @@ const Posts = ({
   } = postApi.useFetchPostsQuery({
     page: postPage,
   });
+  const [saveFavorite] = postApi.useSaveFavoriteMutation();
+  const [removeFavorite] = postApi.useRemoveFavoriteMutation();
   const [fetchCompleted, setFetchCompleted] = useState<boolean>(isFetching);
   const [postData, setPostData] = useState<Post[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [endReached, setEndReached] = useState<boolean>(shouldRefetch);
-
+  const [favsLoading, setFavsLoading] = useState<{ [key: string]: boolean }>(
+    {}
+  );
   const posts = data?.posts;
   const totalPages = data?.totalPages || 0;
+
   useEffect(() => {
     refetchFn();
   }, []);
-
   useEffect(() => {
     if (posts && !isFetching) {
       if (loading) {
         setPostData((prevState) => [
           ...prevState,
           ...posts.filter(
-            (post) => !prevState.map((post) => post.id).includes(post.id)
+            (post) =>
+              !prevState.map((post) => post.post_id).includes(post.post_id)
           ),
         ]);
       } else {
@@ -76,6 +85,29 @@ const Posts = ({
   useEffect(() => {
     setEndReached(shouldRefetch);
   }, [shouldRefetch]);
+
+  const handleFavorite = async (postId: string, isRemove: boolean) => {
+    try {
+      setFavsLoading((prevState) => ({ ...prevState, [postId]: true }));
+      if (!isRemove) {
+        await saveFavorite(postId);
+      } else {
+        await removeFavorite(postId);
+      }
+      refetchFn();
+    } catch {
+      store.dispatch(
+        setNotification({
+          preset: Incubator.ToastPresets.FAILURE,
+          message: `Hubo un error al ${
+            isRemove ? 'borrar' : 'crear'
+          } el favorito. Intente nuevamente`,
+        })
+      );
+    } finally {
+      setFavsLoading((prevState) => ({ ...prevState, [postId]: false }));
+    }
+  };
 
   const onSelect = (emoji: any, emojiName: string, data: any) => {
     const objIndex = emojiList.findIndex((e) => e.name === emojiName);
@@ -155,7 +187,7 @@ const Posts = ({
           renderContent={() =>
             postData?.map((post) => {
               return (
-                <View key={post.id}>
+                <View key={post.post_id}>
                   <View style={{ padding: 20 }}>
                     <View
                       style={[Layout.rowCenter, Layout.justifyContentBetween]}
@@ -221,12 +253,35 @@ const Posts = ({
                           size={30}
                         />
                         <Text style={{ marginLeft: 5 }}>
-                          {post.qtyComments}
+                          {post.qty_comments}
                         </Text>
                       </View>
                       <View style={[Layout.rowCenter, styles.actionableItem]}>
-                        <Icon name="star" size={30} />
-                        <Text style={{ marginLeft: 5 }}>22</Text>
+                        <Icon
+                          name="star"
+                          size={30}
+                          onPress={() =>
+                            handleFavorite(
+                              post.post_id,
+                              post?.users_favorites.includes(user?.uid || '')
+                            )
+                          }
+                          color={
+                            post?.users_favorites.includes(user?.uid || '')
+                              ? Colors.red
+                              : Colors.black
+                          }
+                        />
+                        {favsLoading[post.post_id] ? (
+                          <ActivityIndicator
+                            size="small"
+                            color={Colors.black}
+                          />
+                        ) : (
+                          <Text style={{ marginLeft: 5 }}>
+                            {post?.users_favorites.length}
+                          </Text>
+                        )}
                       </View>
                     </View>
                   </View>

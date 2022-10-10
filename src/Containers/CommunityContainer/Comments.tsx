@@ -3,6 +3,7 @@ import { Avatar, SkeletonView } from 'react-native-ui-lib';
 import { Image, Text, View } from 'react-native';
 import { Picker } from 'react-native-slack-emoji/src';
 import Icon from 'react-native-vector-icons/Feather';
+import AuthService from '@/Services/modules/auth';
 import useTheme from '@/Hooks/useTheme';
 import { getNameInitials, getRelativeTime } from '@/Utils';
 import { Post, postApi } from '@/Services/modules/posts';
@@ -19,9 +20,13 @@ type CommentProps = {
 
 const Comments = ({ emojiList, post }: CommentProps) => {
   const { Layout, Colors, Fonts } = useTheme();
-  const { data = null, isFetching } = postApi.useFetchCommentsQuery(post?.id, {
-    refetchOnMountOrArgChange: true,
-  });
+  const user = AuthService.getCurrentUser();
+  const { data = null, isFetching } = postApi.useFetchCommentsQuery(
+    post?.post_id,
+    {
+      refetchOnMountOrArgChange: true,
+    }
+  );
 
   const posts = data?.posts;
 
@@ -86,11 +91,21 @@ const Comments = ({ emojiList, post }: CommentProps) => {
           >
             <View style={[Layout.rowCenter, styles.actionableItem]}>
               <Icon name="message-square" size={30} />
-              <Text style={{ marginLeft: 5 }}>{post?.qtyComments}</Text>
+              <Text style={{ marginLeft: 5 }}>{post?.qty_comments}</Text>
             </View>
             <View style={[Layout.rowCenter, styles.actionableItem]}>
-              <Icon name="star" size={30} />
-              <Text style={{ marginLeft: 5 }}>22</Text>
+              <Icon
+                name="star"
+                size={30}
+                color={
+                  post?.users_favorites.includes(user?.uid || '')
+                    ? Colors.red
+                    : Colors.black
+                }
+              />
+              <Text style={{ marginLeft: 5 }}>
+                {post?.users_favorites.length}
+              </Text>
             </View>
           </View>
         </View>
@@ -124,7 +139,10 @@ const Comments = ({ emojiList, post }: CommentProps) => {
             renderContent={() =>
               posts?.map((post) => {
                 return (
-                  <View key={post.id} style={{ padding: 20, paddingBottom: 0 }}>
+                  <View
+                    key={post.post_id}
+                    style={{ padding: 20, paddingBottom: 0 }}
+                  >
                     <View
                       style={[Layout.rowCenter, Layout.justifyContentBetween]}
                     >

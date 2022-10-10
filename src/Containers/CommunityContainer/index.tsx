@@ -182,7 +182,7 @@ const CommunitySection = ({
   const publishComment = async () => {
     const newComent = {
       body: comment,
-      parent_id: selectedPost?.id,
+      parent_id: selectedPost?.post_id,
     } as Post;
     await savePost(newComent);
   };
