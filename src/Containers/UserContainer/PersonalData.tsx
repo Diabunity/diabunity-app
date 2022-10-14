@@ -4,6 +4,7 @@ import {
   TextInputChangeEventData,
   ActivityIndicator,
   View,
+  ScrollView,
 } from 'react-native';
 
 import {
@@ -115,7 +116,9 @@ const PersonalData = ({
   ): void => setState(value);
 
   return (
-    <>
+    <ScrollView
+      contentContainerStyle={[Layout.colCenter, { paddingBottom: 100 }]}
+    >
       <Text style={styles.title}>Datos Personales</Text>
       <View style={{ ...styles.picker, ...styles.margin }}>
         <View>
@@ -237,7 +240,7 @@ const PersonalData = ({
           color={Colors.black}
         />
       )}
-    </>
+    </ScrollView>
   );
 };
 
