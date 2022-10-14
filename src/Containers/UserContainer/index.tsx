@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView } from 'react-native';
+import { View } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import { Avatar, Incubator, ListItem, Text } from 'react-native-ui-lib';
 import Icon from 'react-native-vector-icons/Feather';
@@ -14,11 +14,13 @@ import ExternalLink from '@/Components/ExternalLink';
 import BackButton from '@/Components/BackButton';
 import PersonalData from './PersonalData';
 import Settings from './Settings';
+import Ranking from './Ranking';
 import { styles } from './styles';
 
 enum PageSection {
   SETTINGS = 'SETTINGS',
   PERSONAL_DATA = 'PERSONAL_DATA',
+  RANKING = 'RANKING',
 }
 
 const UserContainer = () => {
@@ -89,6 +91,13 @@ const UserContainer = () => {
               </Text>
             </ListItem>
             <ListItem
+              style={[Layout.rowCenter]}
+              onPress={() => setPage(PageSection.RANKING)}
+            >
+              <Icon name="flag" size={24} color={styles.icon.color} />
+              <Text style={{ ...styles.text, marginLeft: 12 }}>Ranking</Text>
+            </ListItem>
+            <ListItem
               onPress={() => setPage(PageSection.SETTINGS)}
               style={[Layout.rowCenter]}
             >
@@ -135,6 +144,8 @@ const ProfileSection = ({
   const { Layout } = useTheme();
   const renderSection = () => {
     switch (page) {
+      case PageSection.RANKING:
+        return <Ranking />;
       case PageSection.SETTINGS:
         return <Settings />;
       case PageSection.PERSONAL_DATA:
@@ -150,11 +161,7 @@ const ProfileSection = ({
         customBack={() => handleBack(undefined)}
         customStyles={styles.back}
       />
-      <ScrollView
-        contentContainerStyle={[Layout.colCenter, { paddingBottom: 100 }]}
-      >
-        {renderSection()}
-      </ScrollView>
+      {renderSection()}
     </>
   );
 };
