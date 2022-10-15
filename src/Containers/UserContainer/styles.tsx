@@ -1,17 +1,24 @@
 import { StyleSheet } from 'react-native';
 import { Colors } from '@/Theme/Variables';
 
-export const COLORS = {
-  gray: 'rgba(0, 0, 0, 0.12)',
-  darkGray: '#666',
+const title = {
+  marginBottom: 20,
+  fontSize: 16,
+  lineHeight: 24,
+  width: '90%',
+  textAlign: 'center',
+  color: Colors.darkGray,
+  borderBottomColor: Colors.gray,
+  borderBottomWidth: 1,
 };
 
 export const styles = StyleSheet.create({
+  title,
   icon: {
-    color: '#323232',
+    color: Colors.dark,
   },
   text: {
-    color: '#000000',
+    color: Colors.black,
     fontSize: 14,
   },
   divider: {
@@ -21,7 +28,7 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 0.2,
     position: 'relative',
     top: 5,
-    borderBottomColor: 'rgba(0,0,0,0.2)',
+    borderBottomColor: Colors.shadow,
     marginHorizontal: 22,
   },
   back: {
@@ -33,11 +40,11 @@ export const styles = StyleSheet.create({
     height: 52,
     paddingVertical: 8,
     paddingHorizontal: 12,
-    backgroundColor: 'rgba(0, 0, 0, 0.06)',
+    backgroundColor: Colors.inputBackgroundShadow,
     borderTopRightRadius: 4,
     borderTopLeftRadius: 4,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.42)',
+    borderBottomColor: Colors.inputBorder,
   },
   picker: {
     height: 72,
@@ -73,14 +80,64 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
     paddingBottom: 20,
   },
-  title: {
-    marginBottom: 20,
+});
+
+export const rankingStyles = StyleSheet.create({
+  title,
+  currentUserContainer: {
+    marginHorizontal: 21,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 2,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  currentUserName: {
     fontSize: 16,
-    lineHeight: 24,
-    width: '90%',
+    fontWeight: '700',
+    alignSelf: 'center',
+    paddingTop: 10,
+  },
+  currentUserStatsContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  currentUserLabel: {
+    fontSize: 14,
+    color: Colors.blackish,
+  },
+  currentUserValue: {
     textAlign: 'center',
-    color: COLORS.darkGray,
-    borderBottomColor: COLORS.gray,
-    borderBottomWidth: 1,
+    color: Colors.red,
+    fontWeight: '900',
+  },
+  row: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderBottomWidth: 0.5,
+    borderColor: Colors.gray,
+  },
+  rowNumber: {
+    fontSize: 20,
+    fontWeight: '700',
+  },
+  rowName: {
+    fontSize: 16,
+  },
+  rowPercentage: {
+    fontSize: 14,
+    marginLeft: 'auto',
+  },
+  avatar: {
+    marginVertical: 15,
+    marginLeft: 16,
+    marginRight: 13,
   },
 });
