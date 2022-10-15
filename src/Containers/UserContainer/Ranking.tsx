@@ -3,7 +3,7 @@ import { Text, View, Avatar } from 'react-native-ui-lib';
 import { ScrollView } from 'react-native';
 import { useTheme } from '@/Hooks';
 import { getNameInitials } from '@/Utils';
-import { generateTableStyles } from '../HistoryContainer/styles';
+import { rankingStyles } from './styles';
 
 interface User {
   username: string;
@@ -62,8 +62,6 @@ const data = {
 
 const Ranking = () => {
   const { Colors } = useTheme();
-  const styles = generateTableStyles(Colors);
-
   const userPosition = data.user_info.position;
   const userData: User = {
     ...data.ranking[userPosition - 1],
@@ -71,58 +69,13 @@ const Ranking = () => {
   };
   return (
     <>
-      <Text
-        style={{
-          marginBottom: 20,
-          fontSize: 16,
-          lineHeight: 24,
-          textAlign: 'center',
-          color: '#666',
-        }}
-      >
-        Ranking mensual
-      </Text>
-      <View
-        style={{
-          marginHorizontal: 21,
-          shadowColor: '#000',
-          shadowOffset: {
-            width: 2,
-            height: 2,
-          },
-          shadowOpacity: 0.2,
-          shadowRadius: 2,
-          elevation: 2,
-        }}
-      >
-        <Text
-          style={{
-            fontSize: 16,
-            fontWeight: '700',
-            alignSelf: 'center',
-            paddingTop: 10,
-          }}
-        >
-          {userData.username}
-        </Text>
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-          }}
-        >
+      <Text style={rankingStyles.title}>Ranking mensual</Text>
+      <View style={rankingStyles.currentUserContainer}>
+        <Text style={rankingStyles.currentUserName}>{userData.username}</Text>
+        <View style={rankingStyles.currentUserStatsContainer}>
           <View>
-            <Text style={{ fontSize: 14, color: 'rgba(0, 0, 0, 0.87)' }}>
-              Puesto
-            </Text>
-            <Text
-              style={{
-                textAlign: 'center',
-                color: Colors.red,
-                fontWeight: '900',
-              }}
-            >
+            <Text style={rankingStyles.currentUserLabel}>Puesto</Text>
+            <Text style={rankingStyles.currentUserValue}>
               {userData.position}
             </Text>
           </View>
@@ -142,16 +95,8 @@ const Ranking = () => {
             label={getNameInitials(userData.username)}
           />
           <View>
-            <Text style={{ fontSize: 14, color: 'rgba(0, 0, 0, 0.87)' }}>
-              Objetivo
-            </Text>
-            <Text
-              style={{
-                textAlign: 'center',
-                color: Colors.red,
-                fontWeight: '900',
-              }}
-            >
+            <Text style={rankingStyles.currentUserLabel}>Objetivo</Text>
+            <Text style={rankingStyles.currentUserValue}>
               {userData.percentage}%
             </Text>
           </View>
@@ -168,15 +113,13 @@ const Ranking = () => {
             <View
               key={index}
               style={{
-                ...styles.row,
-                paddingHorizontal: 20,
+                ...rankingStyles.row,
                 backgroundColor: isUserPosition ? Colors.red : 'transparent',
               }}
             >
               <Text
                 style={{
-                  fontSize: 20,
-                  fontWeight: '700',
+                  ...rankingStyles.rowNumber,
                   color: isUserPosition ? Colors.white : Colors.black,
                 }}
               >
@@ -184,11 +127,7 @@ const Ranking = () => {
               </Text>
               <Avatar
                 size={35}
-                containerStyle={{
-                  marginVertical: 15,
-                  marginLeft: 16,
-                  marginRight: 13,
-                }}
+                containerStyle={rankingStyles.avatar}
                 animate
                 isOnline
                 imageProps={{ animationDuration: 1000 }}
@@ -199,7 +138,7 @@ const Ranking = () => {
               />
               <Text
                 style={{
-                  fontSize: 16,
+                  ...rankingStyles.rowName,
                   fontWeight: isUserPosition ? '700' : '400',
                   color: isUserPosition ? Colors.white : Colors.black,
                 }}
@@ -208,8 +147,7 @@ const Ranking = () => {
               </Text>
               <Text
                 style={{
-                  marginLeft: 'auto',
-                  fontSize: 14,
+                  ...rankingStyles.rowPercentage,
                   fontWeight: isUserPosition ? '900' : '400',
                   color: isUserPosition ? Colors.white : Colors.red,
                 }}
