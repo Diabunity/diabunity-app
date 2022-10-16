@@ -81,6 +81,9 @@ export const styles = StyleSheet.create({
 });
 
 export const rankingStyles = StyleSheet.create({
+  skeleton: {
+    marginHorizontal: 20,
+  },
   title: { ...title, width: '100%' },
   currentUserContainer: {
     marginHorizontal: 21,
