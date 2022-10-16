@@ -3,16 +3,10 @@ import { Text, View, Avatar } from 'react-native-ui-lib';
 import { ScrollView } from 'react-native';
 import { useTheme } from '@/Hooks';
 import { getNameInitials } from '@/Utils';
+import { userApi } from '@/Services/modules/users';
 import { rankingStyles } from './styles';
 
-interface User {
-  username: string;
-  picture?: string;
-  percentage: number;
-  position?: number;
-}
-
-const data = {
+const fakeData = {
   ranking: [
     {
       username: 'Miguel Angel',
@@ -62,21 +56,26 @@ const data = {
 
 const Ranking = () => {
   const { Colors } = useTheme();
-  const userPosition = data.user_info.position;
-  const userData: User = {
-    ...data.ranking[userPosition - 1],
-    position: userPosition,
-  };
+  const { data, isFetching } = userApi.useFetchRankingQuery();
+
+  const userPosition: number | null = data?.user_info?.position ?? null;
+  const userData = userPosition
+    ? {
+        ...data?.ranking[userPosition],
+        position: userPosition,
+      }
+    : null;
+
   return (
     <>
       <Text style={rankingStyles.title}>Ranking mensual</Text>
       <View style={rankingStyles.currentUserContainer}>
-        <Text style={rankingStyles.currentUserName}>{userData.username}</Text>
+        <Text style={rankingStyles.currentUserName}>{userData?.username}</Text>
         <View style={rankingStyles.currentUserStatsContainer}>
           <View>
             <Text style={rankingStyles.currentUserLabel}>Puesto</Text>
             <Text style={rankingStyles.currentUserValue}>
-              {userData.position}
+              {userData?.position ?? 'N/A'}
             </Text>
           </View>
           <Avatar
@@ -91,13 +90,13 @@ const Ranking = () => {
             imageProps={{ animationDuration: 1000 }}
             labelColor={Colors.white}
             backgroundColor={Colors.red}
-            source={{ uri: userData.picture }}
-            label={getNameInitials(userData.username)}
+            source={{ uri: userData?.picture }}
+            label={getNameInitials(userData?.username)}
           />
           <View>
             <Text style={rankingStyles.currentUserLabel}>Objetivo</Text>
             <Text style={rankingStyles.currentUserValue}>
-              {userData.percentage}%
+              {userData?.percentage ?? '-'}%
             </Text>
           </View>
         </View>
@@ -106,8 +105,8 @@ const Ranking = () => {
         style={{ width: '100%' }}
         contentContainerStyle={{ paddingBottom: 70 }}
       >
-        {data.ranking.map((item, index) => {
-          const isUserPosition = index === userPosition - 1;
+        {data?.ranking.map((item, index) => {
+          const isUserPosition = userPosition ? index === userPosition : false;
 
           return (
             <View
