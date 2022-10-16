@@ -8,8 +8,6 @@ const title = {
   width: '90%',
   textAlign: 'center',
   color: Colors.darkGray,
-  borderBottomColor: Colors.gray,
-  borderBottomWidth: 1,
 };
 
 export const styles = StyleSheet.create({
@@ -83,17 +81,19 @@ export const styles = StyleSheet.create({
 });
 
 export const rankingStyles = StyleSheet.create({
-  title,
+  title: { ...title, width: '100%' },
   currentUserContainer: {
     marginHorizontal: 21,
+    marginBottom: 20,
     shadowColor: '#000',
     shadowOffset: {
       width: 2,
       height: 2,
     },
     shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 2,
+    shadowRadius: 3,
+    elevation: 1,
+    borderWidth: 0.1,
   },
   currentUserName: {
     fontSize: 16,
