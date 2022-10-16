@@ -4,6 +4,7 @@ import saveUser from './saveUser';
 import updateUser from './updateUser';
 import fetchMeasurement from './fetchMeasurement';
 import saveMeasurement from './saveMeasurement';
+import fetchRanking from './fetchRanking';
 
 export const userApi = api.injectEndpoints({
   endpoints: (build) => ({
@@ -12,6 +13,7 @@ export const userApi = api.injectEndpoints({
     updateUser: updateUser(build),
     fetchMeasurement: fetchMeasurement(build),
     saveMeasurement: saveMeasurement(build),
+    fetchRanking: fetchRanking(build),
   }),
   overrideExisting: true,
 });
@@ -77,3 +79,13 @@ export type Measurements = {
   totalPages: number;
   totalElements: number;
 };
+
+export interface UserRanking {
+  username: string;
+  picture?: string;
+  percentage: number;
+}
+
+export interface UserInfo {
+  position: number;
+}
