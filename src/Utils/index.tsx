@@ -168,3 +168,9 @@ export const formatDate = (inputDate: Date) => {
 
   return `${date}/${month}/${year}`;
 };
+
+export const getCurrentMonth = () => {
+  const month = new Date().getMonth() + 1;
+
+  return month.toString().padStart(2, '0');
+};
