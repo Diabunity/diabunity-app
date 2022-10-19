@@ -118,6 +118,11 @@ export const rankingStyles = StyleSheet.create({
     color: Colors.red,
     fontWeight: '900',
   },
+  currentUserAvatar: {
+    marginTop: 6,
+    marginBottom: 14,
+    marginHorizontal: 47,
+  },
   row: {
     display: 'flex',
     flexDirection: 'row',
@@ -138,7 +143,7 @@ export const rankingStyles = StyleSheet.create({
     fontSize: 14,
     marginLeft: 'auto',
   },
-  avatar: {
+  listAvatar: {
     marginVertical: 15,
     marginLeft: 16,
     marginRight: 13,

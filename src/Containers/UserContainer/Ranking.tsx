@@ -14,7 +14,7 @@ const Ranking = () => {
   const userData = userPosition
     ? {
         ...data?.ranking[userPosition],
-        position: userPosition,
+        position: userPosition + 1,
       }
     : null;
 
@@ -42,7 +42,7 @@ const Ranking = () => {
               </View>
               <Avatar
                 size={48}
-                containerStyle={rankingStyles.avatar}
+                containerStyle={rankingStyles.currentUserAvatar}
                 animate
                 isOnline
                 imageProps={{ animationDuration: 1000 }}
@@ -64,44 +64,39 @@ const Ranking = () => {
             contentContainerStyle={{ paddingBottom: 70 }}
           >
             {data?.ranking.map((item, index) => {
-              const isUserPosition = userPosition
-                ? index === userPosition
-                : false;
-
+              const isFirstUser = index === 0;
               return (
                 <View
                   key={index}
                   style={{
                     ...rankingStyles.row,
-                    backgroundColor: isUserPosition
-                      ? Colors.red
-                      : 'transparent',
+                    backgroundColor: isFirstUser ? Colors.red : 'transparent',
                   }}
                 >
                   <Text
                     style={{
                       ...rankingStyles.rowNumber,
-                      color: isUserPosition ? Colors.white : Colors.black,
+                      color: isFirstUser ? Colors.white : Colors.black,
                     }}
                   >
                     {index + 1}
                   </Text>
                   <Avatar
                     size={35}
-                    containerStyle={rankingStyles.avatar}
+                    containerStyle={rankingStyles.listAvatar}
                     animate
                     isOnline
                     imageProps={{ animationDuration: 1000 }}
-                    labelColor={isUserPosition ? Colors.red : Colors.white}
-                    backgroundColor={isUserPosition ? Colors.white : Colors.red}
+                    labelColor={isFirstUser ? Colors.red : Colors.white}
+                    backgroundColor={isFirstUser ? Colors.white : Colors.red}
                     source={{ uri: item.picture }}
                     label={getNameInitials(item.username)}
                   />
                   <Text
                     style={{
                       ...rankingStyles.rowName,
-                      fontWeight: isUserPosition ? '700' : '400',
-                      color: isUserPosition ? Colors.white : Colors.black,
+                      fontWeight: isFirstUser ? '700' : '400',
+                      color: isFirstUser ? Colors.white : Colors.black,
                     }}
                   >
                     {item.username}
@@ -109,8 +104,8 @@ const Ranking = () => {
                   <Text
                     style={{
                       ...rankingStyles.rowPercentage,
-                      fontWeight: isUserPosition ? '900' : '400',
-                      color: isUserPosition ? Colors.white : Colors.red,
+                      fontWeight: isFirstUser ? '900' : '400',
+                      color: isFirstUser ? Colors.white : Colors.red,
                     }}
                   >
                     {item.percentage}%
