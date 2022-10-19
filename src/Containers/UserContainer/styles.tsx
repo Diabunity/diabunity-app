@@ -88,15 +88,20 @@ export const rankingStyles = StyleSheet.create({
   currentUserContainer: {
     marginHorizontal: 21,
     marginBottom: 20,
+
+    // Shadow stuff
+    borderRadius: 3,
+    borderWidth: 0.5,
+    borderColor: Colors.gray,
+    backgroundColor: '#fff',
     shadowColor: '#000',
     shadowOffset: {
       width: 2,
       height: 2,
     },
     shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 1,
-    borderWidth: 0.1,
+    shadowRadius: 2,
+    elevation: 5,
   },
   currentUserName: {
     fontSize: 16,
