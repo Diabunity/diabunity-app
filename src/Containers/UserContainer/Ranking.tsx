@@ -42,11 +42,7 @@ const Ranking = () => {
               </View>
               <Avatar
                 size={48}
-                containerStyle={{
-                  marginTop: 6,
-                  marginBottom: 14,
-                  marginHorizontal: 47,
-                }}
+                containerStyle={rankingStyles.avatar}
                 animate
                 isOnline
                 imageProps={{ animationDuration: 1000 }}
@@ -125,7 +121,7 @@ const Ranking = () => {
           </ScrollView>
         </>
       ) : (
-        <Text>We have no data</Text>
+        <Text>No hay información disponible</Text>
       )}
     </>
   );
