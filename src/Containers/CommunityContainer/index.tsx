@@ -1,13 +1,28 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Image, ScrollView, Text } from 'react-native';
-import { Avatar } from 'react-native-ui-lib';
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Image,
+  ScrollView,
+  SafeAreaView,
+  KeyboardAvoidingView,
+  Platform,
+  ImageSourcePropType,
+  ActivityIndicator,
+} from 'react-native';
+import { Avatar, Incubator, TextField } from 'react-native-ui-lib';
 import { FAB } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Feather';
 import { useTheme } from '@/Hooks';
+import { Post, postApi } from '@/Services/modules/posts';
+import { setNotification } from '@/Store/Notification';
+import { store } from '@/Store';
 import AuthService from '@/Services/modules/auth';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { NavigatorParams } from '@/Navigators/Application';
 import { User, userApi } from '@/Services/modules/users';
 import BackButton from '@/Components/BackButton';
 import Posts from './Posts';
+import NewPost from './NewPost';
 import Comments from './Comments';
 
 import { styles } from './styles';
@@ -26,10 +41,13 @@ export type EmojiLisType = {
   emoji: any;
 };
 
-const CommunityContainer = () => {
+type Props = NativeStackScreenProps<NavigatorParams>;
+
+const CommunityContainer = ({ navigation: { navigate } }: Props) => {
   const user = AuthService.getCurrentUser();
   const [page, setPage] = useState<PageSection | undefined>(PageSection.POSTS);
   const [emojiList, setEmojiList] = useState<EmojiLisType[]>([]);
+  const [shouldRefetch, setShouldRefetch] = useState<boolean>(false);
   const { Layout, Images, Colors } = useTheme();
 
   const getLeftComponent = () => {
@@ -39,26 +57,40 @@ const CommunityContainer = () => {
           <>
             <Avatar
               size={40}
-              containerStyle={{ marginVertical: 20, marginHorizontal: 20 }}
+              onPress={() => navigate('Profile')}
+              containerStyle={{ marginVertical: 20, marginLeft: 20 }}
               animate
-              isOnline
-              imageProps={{ animationDuration: 1000 }}
               labelColor={Colors.white}
               backgroundColor={Colors.red}
-              source={{ uri: user?.photoURL }}
+              source={
+                {
+                  uri: user?.photoURL,
+                } as ImageSourcePropType
+              }
             />
           </>
         );
       case PageSection.COMMENT:
         return (
           <BackButton
-            customBack={() => setPage(PageSection.POSTS)}
+            customBack={() => {
+              setShouldRefetch(false);
+              setPage(PageSection.POSTS);
+            }}
             customStyles={styles.back}
           />
         );
       case PageSection.NEW_POST:
         return (
-          <Icon onPress={() => setPage(PageSection.POSTS)} name="x" size={30} />
+          <Icon
+            style={{ marginLeft: 5 }}
+            onPress={() => {
+              setShouldRefetch(false);
+              setPage(PageSection.POSTS);
+            }}
+            name="x"
+            size={30}
+          />
         );
     }
   };
@@ -74,6 +106,7 @@ const CommunityContainer = () => {
       <View
         style={[
           Layout.rowCenter,
+          Layout.alignItemsCenter,
           Layout.justifyContentBetween,
           { marginRight: 10 },
         ]}
@@ -86,43 +119,105 @@ const CommunityContainer = () => {
         emojiList={emojiList}
         setEmojiList={setEmojiList}
         setPage={setPage}
+        refetch={shouldRefetch}
+        setShouldRefetch={setShouldRefetch}
         page={page}
       />
     </View>
   );
 };
 
+const keyboardVerticalOffset = Platform.OS === 'ios' ? 40 : 0;
+
 const CommunitySection = ({
   page,
   setPage,
   emojiList,
   setEmojiList,
-  data,
-  refetchFn,
+  refetch,
+  setShouldRefetch,
 }: {
   data?: User | null;
   emojiList: EmojiLisType[];
   setEmojiList: (emojiList: EmojiLisType[]) => void;
-  refetchFn?: () => void;
+  refetch: boolean;
+  setShouldRefetch: (refetch: boolean) => void;
   page: PageSection | undefined;
   setPage: (page: PageSection) => void;
 }) => {
+  const { Colors } = useTheme();
+  const [showSendIcon, setShowSendIcon] = useState<boolean>(false);
+  const [selectedPost, setSelectedPost] = useState<Post>();
+  const [comment, setComment] = useState<string>();
+  const [savePost, { isLoading, isSuccess, isError }] =
+    postApi.useSavePostMutation();
+
+  useEffect(() => {
+    if (isSuccess) {
+      store.dispatch(
+        setNotification({
+          preset: Incubator.ToastPresets.SUCCESS,
+          message: 'El comentario se ha creado exitosamente.',
+        })
+      );
+      setShouldRefetch(false);
+      setPage(PageSection.POSTS);
+      setSelectedPost(undefined);
+    }
+    if (isError) {
+      store.dispatch(
+        setNotification({
+          preset: Incubator.ToastPresets.FAILURE,
+          message: 'Hubo un error al crear el comentario. Intente nuevamente',
+        })
+      );
+    }
+  }, [isSuccess, isError]);
+
+  const handleSelected = (post: Post) => {
+    setSelectedPost(post);
+    setPage(PageSection.COMMENT);
+  };
+
+  const publishComment = async () => {
+    const newComent = {
+      body: comment,
+      parent_id: selectedPost?.id,
+    } as Post;
+    await savePost(newComent);
+  };
+
+  const isCloseToBottom = ({
+    layoutMeasurement,
+    contentOffset,
+    contentSize,
+  }: {
+    layoutMeasurement: { height: number };
+    contentOffset: { y: number };
+    contentSize: { height: number };
+  }) => {
+    const paddingToBottom = 20;
+    return (
+      layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom
+    );
+  };
+
   const renderSection = () => {
     switch (page) {
       case PageSection.COMMENT:
-        return <Comments emojiList={emojiList} />;
+        return <Comments post={selectedPost} emojiList={emojiList} />;
       case PageSection.NEW_POST:
         return (
-          <>
-            <Text>New Post</Text>
-          </>
+          <NewPost setShouldRefetch={setShouldRefetch} setPage={setPage} />
         );
       default:
         return (
           <Posts
+            shouldRefetch={refetch}
             emojiList={emojiList}
             setEmojiList={setEmojiList}
-            setPage={setPage}
+            handleSelected={handleSelected}
           />
         );
     }
@@ -130,9 +225,59 @@ const CommunitySection = ({
 
   return (
     <>
-      <ScrollView contentContainerStyle={[{ paddingBottom: 100 }]}>
-        {renderSection()}
-      </ScrollView>
+      <SafeAreaView style={{ flex: 1 }}>
+        <View>
+          <KeyboardAvoidingView
+            behavior="position"
+            keyboardVerticalOffset={keyboardVerticalOffset}
+          >
+            <ScrollView
+              onScroll={({ nativeEvent }) => {
+                if (isCloseToBottom(nativeEvent)) {
+                  setShouldRefetch(true);
+                } else {
+                  setShouldRefetch(false);
+                }
+              }}
+              scrollEventThrottle={400}
+              contentContainerStyle={[{ paddingBottom: 140 }]}
+            >
+              {renderSection()}
+            </ScrollView>
+
+            {page === PageSection.COMMENT && (
+              <View style={styles.bottomView}>
+                <TextField
+                  migrate
+                  floatOnFocus
+                  style={styles.input}
+                  placeholder="Escribe algo..."
+                  onChangeText={(value: string) => setComment(value)}
+                  enableErrors
+                  onFocus={() => setShowSendIcon(true)}
+                  onBlur={() => setShowSendIcon(false)}
+                />
+
+                {showSendIcon && (
+                  <Icon
+                    style={styles.textIcon}
+                    name="send"
+                    size={20}
+                    onPress={publishComment}
+                  />
+                )}
+                {isLoading && (
+                  <ActivityIndicator
+                    style={{ position: 'absolute' }}
+                    size="small"
+                    color={Colors.black}
+                  />
+                )}
+              </View>
+            )}
+          </KeyboardAvoidingView>
+        </View>
+      </SafeAreaView>
     </>
   );
 };

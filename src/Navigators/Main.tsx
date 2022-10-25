@@ -7,6 +7,7 @@ import {
   HistoryContainer,
   UserContainer,
   AddMeasureContainer,
+  CommunityContainer,
 } from '@/Containers';
 import { useNotification } from '@/Hooks';
 import { toggleNotification } from '@/Store/Notification';
@@ -61,6 +62,16 @@ const MainNavigator = () => {
           }}
         />
         <Tab.Screen
+          name="Add"
+          component={AddMeasureContainer}
+          options={{
+            title: 'Agregar',
+            tabBarIcon: ({ color, size }) => (
+              <Icon name="droplet" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tab.Screen
           name="History"
           component={HistoryContainer}
           options={{
@@ -71,12 +82,12 @@ const MainNavigator = () => {
           }}
         />
         <Tab.Screen
-          name="Add"
-          component={AddMeasureContainer}
+          name="Community"
+          component={CommunityContainer}
           options={{
-            title: 'Agregar',
+            title: 'Comunidad',
             tabBarIcon: ({ color, size }) => (
-              <Icon name="droplet" size={size} color={color} />
+              <Icon name="users" size={size} color={color} />
             ),
           }}
         />

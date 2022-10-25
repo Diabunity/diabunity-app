@@ -1,19 +1,29 @@
 import React from 'react';
-import { Avatar } from 'react-native-ui-lib';
-import { Text, View } from 'react-native';
+import { Avatar, SkeletonView } from 'react-native-ui-lib';
+import { Image, Text, View } from 'react-native';
 import { Picker } from 'react-native-slack-emoji/src';
 import Icon from 'react-native-vector-icons/Feather';
 import useTheme from '@/Hooks/useTheme';
+import { getNameInitials, getRelativeTime } from '@/Utils';
+import { Post, postApi } from '@/Services/modules/posts';
 import { EmojiLisType } from '.';
 
 import { styles } from './styles';
+import DropShadow from 'react-native-drop-shadow';
+import { Card } from 'react-native-paper';
 
 type CommentProps = {
   emojiList: EmojiLisType[];
+  post?: Post;
 };
 
-const Comments = ({ emojiList }: CommentProps) => {
+const Comments = ({ emojiList, post }: CommentProps) => {
   const { Layout, Colors, Fonts } = useTheme();
+  const { data = null, isFetching } = postApi.useFetchCommentsQuery(post?.id, {
+    refetchOnMountOrArgChange: true,
+  });
+
+  const posts = data?.posts;
 
   return (
     <>
@@ -25,10 +35,9 @@ const Comments = ({ emojiList }: CommentProps) => {
                 size={40}
                 containerStyle={{ marginVertical: 10 }}
                 animate
-                isOnline
                 labelColor={Colors.white}
                 backgroundColor={Colors.red}
-                label="MD"
+                label={getNameInitials(post?.username)}
               />
               <Text
                 style={[
@@ -37,18 +46,23 @@ const Comments = ({ emojiList }: CommentProps) => {
                   { color: Colors.red },
                 ]}
               >
-                Mati Dastugue
+                {post?.username}
               </Text>
             </View>
-            <Text>23h</Text>
+            <Text>{getRelativeTime(post?.timestamp ?? '')}</Text>
           </View>
-          <View style={[Layout.rowCenter]}>
-            <Text>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat.
-            </Text>
+          <View>
+            <Text>{post?.body}</Text>
+            {post?.image && (
+              <DropShadow style={styles.dropShadow}>
+                <Image
+                  source={{
+                    uri: `data:image/jpeg;base64,${post.image}`,
+                  }}
+                  style={styles.imageFeed}
+                />
+              </DropShadow>
+            )}
           </View>
           <View style={styles.emojiContainer}>
             <Picker
@@ -72,7 +86,7 @@ const Comments = ({ emojiList }: CommentProps) => {
           >
             <View style={[Layout.rowCenter, styles.actionableItem]}>
               <Icon name="message-square" size={30} />
-              <Text style={{ marginLeft: 5 }}>30</Text>
+              <Text style={{ marginLeft: 5 }}>{post?.qtyComments}</Text>
             </View>
             <View style={[Layout.rowCenter, styles.actionableItem]}>
               <Icon name="star" size={30} />
@@ -88,6 +102,68 @@ const Comments = ({ emojiList }: CommentProps) => {
             height: 4,
           }}
         />
+      </View>
+      <View>
+        {!isFetching && !posts?.length ? (
+          <View style={[Layout.fill, Layout.colCenter]}>
+            <Card.Title
+              style={[Layout.colCenter]}
+              title="No hay informacion para mostrar"
+              subtitle="No se han encontrado comentarios"
+              subtitleStyle={styles.card}
+            />
+          </View>
+        ) : (
+          <SkeletonView
+            template={SkeletonView.templates.LIST_ITEM}
+            showContent={!!posts && !isFetching}
+            style={{
+              ...Layout.colCenter,
+              ...styles.skeleton,
+            }}
+            renderContent={() =>
+              posts?.map((post) => {
+                return (
+                  <View key={post.id} style={{ padding: 20, paddingBottom: 0 }}>
+                    <View
+                      style={[Layout.rowCenter, Layout.justifyContentBetween]}
+                    >
+                      <View style={[Layout.rowCenter]}>
+                        <Avatar
+                          size={30}
+                          containerStyle={{ marginVertical: 10 }}
+                          animate
+                          labelColor={Colors.white}
+                          backgroundColor={Colors.red}
+                          label={getNameInitials(post.username)}
+                        />
+                        <Text
+                          style={[
+                            Fonts.textSmall,
+                            styles.userName,
+                            { color: Colors.red },
+                          ]}
+                        >
+                          {post.username}
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={[{ marginBottom: 20, paddingLeft: 40 }]}>
+                      <Text>{post.body}</Text>
+                    </View>
+                    <Text
+                      style={{
+                        ...styles.divider,
+                        borderBottomColor: Colors.darkGray,
+                      }}
+                    />
+                  </View>
+                );
+              })
+            }
+            times={5}
+          />
+        )}
       </View>
     </>
   );

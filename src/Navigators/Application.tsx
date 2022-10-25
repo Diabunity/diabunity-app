@@ -19,6 +19,7 @@ export type NavigatorParams = {
   Main: undefined;
   Home: { refetch: string | null; sensorLife?: number };
   Add: undefined;
+  Profile: undefined;
   SignIn: undefined;
   SignUp: undefined;
   Onboarding: undefined;
