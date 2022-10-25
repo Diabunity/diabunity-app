@@ -7,9 +7,11 @@ export default (build: EndpointBuilder<any, any, any>) =>
   build.mutation<Post, string>({
     query: (id) => {
       return {
-        url: `/users/${AuthService.getCurrentUser()?.uid}/favs/${id}`,
+        url: `/users/${AuthService.getCurrentUser()?.uid}/posts/favs`,
         method: 'POST',
-        body: {},
+        body: {
+          id,
+        },
       };
     },
   });

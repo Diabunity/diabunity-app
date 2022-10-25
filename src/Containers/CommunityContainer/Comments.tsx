@@ -21,12 +21,9 @@ type CommentProps = {
 const Comments = ({ emojiList, post }: CommentProps) => {
   const { Layout, Colors, Fonts } = useTheme();
   const user = AuthService.getCurrentUser();
-  const { data = null, isFetching } = postApi.useFetchCommentsQuery(
-    post?.post_id,
-    {
-      refetchOnMountOrArgChange: true,
-    }
-  );
+  const { data = null, isFetching } = postApi.useFetchCommentsQuery(post?.id, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const posts = data?.posts;
 
@@ -139,10 +136,7 @@ const Comments = ({ emojiList, post }: CommentProps) => {
             renderContent={() =>
               posts?.map((post) => {
                 return (
-                  <View
-                    key={post.post_id}
-                    style={{ padding: 20, paddingBottom: 0 }}
-                  >
+                  <View key={post.id} style={{ padding: 20, paddingBottom: 0 }}>
                     <View
                       style={[Layout.rowCenter, Layout.justifyContentBetween]}
                     >

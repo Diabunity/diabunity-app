@@ -17,7 +17,7 @@ export const postApi = api.injectEndpoints({
 });
 
 export type Post = {
-  post_id: string;
+  id: string;
   body: string;
   timestamp: string;
   qty_comments: number;

@@ -48,7 +48,8 @@ const Posts = ({
     {}
   );
   const posts = data?.posts;
-  const totalPages = data?.totalPages || 0;
+  console.log(data);
+  const totalPages = data?.paging.totalPages || 0;
 
   useEffect(() => {
     refetchFn();
@@ -59,8 +60,7 @@ const Posts = ({
         setPostData((prevState) => [
           ...prevState,
           ...posts.filter(
-            (post) =>
-              !prevState.map((post) => post.post_id).includes(post.post_id)
+            (post) => !prevState.map((post) => post.id).includes(post.id)
           ),
         ]);
       } else {
@@ -187,7 +187,7 @@ const Posts = ({
           renderContent={() =>
             postData?.map((post) => {
               return (
-                <View key={post.post_id}>
+                <View key={post.id}>
                   <View style={{ padding: 20 }}>
                     <View
                       style={[Layout.rowCenter, Layout.justifyContentBetween]}
@@ -262,7 +262,7 @@ const Posts = ({
                           size={30}
                           onPress={() =>
                             handleFavorite(
-                              post.post_id,
+                              post.id,
                               post?.users_favorites.includes(user?.uid || '')
                             )
                           }
@@ -272,7 +272,7 @@ const Posts = ({
                               : Colors.black
                           }
                         />
-                        {favsLoading[post.post_id] ? (
+                        {favsLoading[post.id] ? (
                           <ActivityIndicator
                             size="small"
                             color={Colors.black}

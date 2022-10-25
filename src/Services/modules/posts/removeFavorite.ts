@@ -7,7 +7,7 @@ export default (build: EndpointBuilder<any, any, any>) =>
   build.mutation<Post, string>({
     query: (id) => {
       return {
-        url: `/users/${AuthService.getCurrentUser()?.uid}/favs/${id}`,
+        url: `/users/${AuthService.getCurrentUser()?.uid}/favs/posts/${id}`,
         method: 'DELETE',
         body: {},
       };
