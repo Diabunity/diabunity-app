@@ -3,6 +3,7 @@ import { Text, View, Avatar, SkeletonView } from 'react-native-ui-lib';
 import { ScrollView } from 'react-native';
 import { useTheme } from '@/Hooks';
 import { getNameInitials } from '@/Utils';
+import { DIABUNITY_USER } from '@/Constants';
 import { userApi } from '@/Services/modules/users';
 import { rankingStyles } from './styles';
 import { FirebaseAuthTypes } from '@react-native-firebase/auth';
@@ -17,7 +18,7 @@ const Ranking = ({ user }: { user: FirebaseAuthTypes.User | null }) => {
         position: userPosition + 1,
       }
     : {
-        username: user?.displayName,
+        username: user?.displayName || DIABUNITY_USER,
         picture: user?.photoURL,
         position: null,
         percentage: null,
