@@ -5,8 +5,9 @@ import { useTheme } from '@/Hooks';
 import { getNameInitials } from '@/Utils';
 import { userApi } from '@/Services/modules/users';
 import { rankingStyles } from './styles';
+import { FirebaseAuthTypes } from '@react-native-firebase/auth';
 
-const Ranking = () => {
+const Ranking = ({ user }: { user: FirebaseAuthTypes.User }) => {
   const { Colors } = useTheme();
   const { data, isFetching } = userApi.useFetchRankingQuery();
   const userPosition: number | null = data?.user_info?.position ?? null;
@@ -15,7 +16,7 @@ const Ranking = () => {
         ...data?.ranking[userPosition],
         position: userPosition + 1,
       }
-    : null;
+    : { username: user.displayName, picture: user.photoURL, position: null };
 
   return (
     <>
