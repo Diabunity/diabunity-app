@@ -11,13 +11,14 @@ import {
 } from 'react-native';
 import { Avatar, Incubator, TextField } from 'react-native-ui-lib';
 import { FAB } from 'react-native-paper';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/Feather';
 import { useTheme } from '@/Hooks';
 import { Post, postApi } from '@/Services/modules/posts';
 import { setNotification } from '@/Store/Notification';
 import { store } from '@/Store';
 import AuthService from '@/Services/modules/auth';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { getNameInitials } from '@/Utils';
 import { PageSection as ProfileSection } from '@/Containers/UserContainer';
 import { NavigatorParams } from '@/Navigators/Application';
 import { User } from '@/Services/modules/users';
@@ -63,6 +64,7 @@ const CommunityContainer = ({ navigation: { navigate } }: Props) => {
               animate
               labelColor={Colors.white}
               backgroundColor={Colors.red}
+              label={getNameInitials(user?.displayName)}
               source={
                 {
                   uri: user?.photoURL,
