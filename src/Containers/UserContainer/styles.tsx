@@ -103,6 +103,19 @@ export const rankingStyles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 5,
   },
+  firstUserContainer: {
+    // Shadow stuff
+    borderWidth: 0.5,
+    borderColor: Colors.gray,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 2,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 5,
+  },
   currentUserName: {
     fontSize: 16,
     fontWeight: '700',

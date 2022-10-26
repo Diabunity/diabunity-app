@@ -70,12 +70,16 @@ const Ranking = ({ user }: { user: FirebaseAuthTypes.User | null }) => {
           >
             {data?.ranking.map((item, index) => {
               const isFirstUser = index === 0;
+              const firstContainerStyles = isFirstUser
+                ? rankingStyles.firstUserContainer
+                : {};
               return (
                 <View
                   key={index}
                   style={{
                     ...rankingStyles.row,
                     backgroundColor: isFirstUser ? Colors.red : 'transparent',
+                    ...firstContainerStyles,
                   }}
                 >
                   <Text
