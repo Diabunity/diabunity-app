@@ -15,6 +15,8 @@ import MainNavigator from './Main';
 import { navigationRef } from './utils';
 import { NfcPromptAndroid } from '@/Components';
 
+import messaging from '@react-native-firebase/messaging';
+
 export type NavigatorParams = {
   Main: undefined;
   Home: { refetch: string | null; sensorLife?: number };
@@ -26,6 +28,17 @@ export type NavigatorParams = {
 };
 
 const Stack = createStackNavigator<NavigatorParams>();
+
+async function onMessageReceived(message: any) {
+  console.log('Message goes here');
+  console.log(message);
+  console.log('Message ends here');
+
+  return Promise.resolve();
+}
+
+messaging().onMessage(onMessageReceived);
+messaging().setBackgroundMessageHandler(onMessageReceived);
 
 // @refresh reset
 const ApplicationNavigator = () => {
@@ -78,6 +91,46 @@ const ApplicationNavigator = () => {
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber; // unsubscribe on unmount
+  }, []);
+
+  useEffect(() => {
+    async function onAppBoost() {
+      await messaging().registerDeviceForRemoteMessages();
+      const token = await messaging().getToken();
+      console.log('Token for current device', token);
+
+      // post data into our server
+    }
+
+    onAppBoost();
+  }, []);
+
+  useEffect(() => {
+    // Assume a message-notification contains a "type" property in the data payload of the screen to open
+
+    messaging().onNotificationOpenedApp((remoteMessage) => {
+      console.log(
+        'Notification caused app to open from background state:',
+        remoteMessage.notification
+      );
+      console.log('Data: ', remoteMessage.data);
+      //navigation.navigate(remoteMessage.data.type);
+    });
+
+    // Check whether an initial notification is available
+    messaging()
+      .getInitialNotification()
+      .then((remoteMessage) => {
+        if (remoteMessage) {
+          console.log(
+            'Notification caused app to open from quit state:',
+            remoteMessage.notification
+          );
+          console.log('Data: ', remoteMessage.data);
+          // setInitialRoute(remoteMessage.data.type); // e.g. "Settings"
+        }
+        // setLoading(false);
+      });
   }, []);
 
   if (
