@@ -17,7 +17,7 @@ const Ranking = ({ user }: { user: FirebaseAuthTypes.User }) => {
         ...data?.ranking[userPosition],
         position: userPosition + 1,
       }
-    : { username: user.displayName, position: null };
+    : { username: user.displayName, picture: user.photoURL, position: null };
 
   return (
     <>
