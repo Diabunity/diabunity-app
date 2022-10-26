@@ -5,7 +5,7 @@ const MAX_AMOUNT_OF_ELEMENTS_PER_PAGE = 10;
 
 export default (build: EndpointBuilder<any, any, any>) =>
   build.query<
-    { posts: Post[]; paging: { totalPages: number; totalElements: number } },
+    { posts: Post[]; paging: { total_pages: number; total_elements: number } },
     { page: number; size?: number }
   >({
     query: ({ page }) => {

@@ -80,9 +80,9 @@ export default ({
         );
       })}
       <Footer
-        pages={data!.totalPages}
+        pages={data!.total_pages}
         currentPage={currentPage}
-        totalElements={data!.totalElements}
+        totalElements={data!.total_elements}
         onPageChangeSelected={onPageChangeSelected}
       />
     </View>

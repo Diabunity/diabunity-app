@@ -76,8 +76,8 @@ export type Measurements = {
   avg: MeasurementEntry;
   measurements: Array<Measurement>;
   periodInTarget: PeriodEntry;
-  totalPages: number;
-  totalElements: number;
+  total_pages: number;
+  total_elements: number;
 };
 
 export interface UserRanking {

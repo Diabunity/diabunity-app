@@ -18,8 +18,9 @@ import { setNotification } from '@/Store/Notification';
 import { store } from '@/Store';
 import AuthService from '@/Services/modules/auth';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { PageSection as ProfileSection } from '@/Containers/UserContainer';
 import { NavigatorParams } from '@/Navigators/Application';
-import { User, userApi } from '@/Services/modules/users';
+import { User } from '@/Services/modules/users';
 import BackButton from '@/Components/BackButton';
 import Posts from './Posts';
 import NewPost from './NewPost';
@@ -113,7 +114,13 @@ const CommunityContainer = ({ navigation: { navigate } }: Props) => {
       >
         {getLeftComponent()}
         <Image source={Images.logoType} />
-        <Icon name="bell" size={30} />
+        <Icon
+          onPress={() =>
+            navigate('Profile', { section: ProfileSection.RANKING })
+          }
+          name="bell"
+          size={30}
+        />
       </View>
       <CommunitySection
         emojiList={emojiList}

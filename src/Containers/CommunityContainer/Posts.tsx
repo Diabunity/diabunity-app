@@ -48,8 +48,7 @@ const Posts = ({
     {}
   );
   const posts = data?.posts;
-  console.log(data);
-  const totalPages = data?.paging.totalPages || 0;
+  const totalPages = data?.paging.total_pages || 0;
 
   useEffect(() => {
     refetchFn();

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused, RouteProp } from '@react-navigation/native';
 import { Avatar, Incubator, ListItem, Text } from 'react-native-ui-lib';
 import Icon from 'react-native-vector-icons/Feather';
 import { FirebaseAuthTypes } from '@react-native-firebase/auth';
@@ -17,16 +17,21 @@ import Settings from './Settings';
 import Ranking from './Ranking';
 import { styles } from './styles';
 
-enum PageSection {
+export enum PageSection {
   SETTINGS = 'SETTINGS',
   PERSONAL_DATA = 'PERSONAL_DATA',
   RANKING = 'RANKING',
 }
 
-const UserContainer = () => {
+const UserContainer = ({
+  route,
+}: {
+  route: RouteProp<{ params?: { section?: PageSection } }, 'params'>;
+}) => {
   const user = AuthService.getCurrentUser();
+  const { section } = route?.params || { section: undefined };
   const isFocused = useIsFocused();
-  const [page, setPage] = useState<PageSection | undefined>();
+  const [page, setPage] = useState<PageSection | undefined>(section);
   const { Layout, Fonts, Colors } = useTheme();
   const { data = null, refetch } = userApi.useFetchUserQuery(user?.uid, {
     refetchOnMountOrArgChange: true,

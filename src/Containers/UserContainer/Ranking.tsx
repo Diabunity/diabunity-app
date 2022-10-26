@@ -9,7 +9,6 @@ import { rankingStyles } from './styles';
 const Ranking = () => {
   const { Colors } = useTheme();
   const { data, isFetching } = userApi.useFetchRankingQuery();
-
   const userPosition: number | null = data?.user_info?.position ?? null;
   const userData = userPosition
     ? {
