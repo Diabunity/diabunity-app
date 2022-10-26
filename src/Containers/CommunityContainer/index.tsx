@@ -118,7 +118,7 @@ const CommunityContainer = ({ navigation: { navigate } }: Props) => {
           onPress={() =>
             navigate('Profile', { section: ProfileSection.RANKING })
           }
-          name="bell"
+          name="award"
           size={30}
         />
       </View>

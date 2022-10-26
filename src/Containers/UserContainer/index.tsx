@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { useIsFocused, RouteProp } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Avatar, Incubator, ListItem, Text } from 'react-native-ui-lib';
 import Icon from 'react-native-vector-icons/Feather';
 import { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { User, userApi } from '@/Services/modules/users';
+import { NavigatorParams } from '@/Navigators/Application';
 import { setNotification } from '@/Store/Notification';
 import { useTheme } from '@/Hooks';
 import { store } from '@/Store';
@@ -22,12 +24,11 @@ export enum PageSection {
   PERSONAL_DATA = 'PERSONAL_DATA',
   RANKING = 'RANKING',
 }
-
-const UserContainer = ({
-  route,
-}: {
+type Props = NativeStackScreenProps<NavigatorParams> & {
   route: RouteProp<{ params?: { section?: PageSection } }, 'params'>;
-}) => {
+};
+
+const UserContainer = ({ route, navigation: { setParams } }: Props) => {
   const user = AuthService.getCurrentUser();
   const { section } = route?.params || { section: undefined };
   const isFocused = useIsFocused();
@@ -40,8 +41,13 @@ const UserContainer = ({
   useEffect(() => {
     if (!isFocused) {
       setPage(undefined);
+      setParams({ section: undefined });
     }
   }, [isFocused]);
+
+  useEffect(() => {
+    setPage(section);
+  }, [section]);
 
   const handleLogOut = async () => {
     try {
@@ -99,7 +105,7 @@ const UserContainer = ({
               style={[Layout.rowCenter]}
               onPress={() => setPage(PageSection.RANKING)}
             >
-              <Icon name="flag" size={24} color={styles.icon.color} />
+              <Icon name="award" size={24} color={styles.icon.color} />
               <Text style={{ ...styles.text, marginLeft: 12 }}>Ranking</Text>
             </ListItem>
             <ListItem
