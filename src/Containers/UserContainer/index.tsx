@@ -145,7 +145,7 @@ const ProfileSection = ({
   const renderSection = () => {
     switch (page) {
       case PageSection.RANKING:
-        return <Ranking />;
+        return <Ranking user={user} />;
       case PageSection.SETTINGS:
         return <Settings />;
       case PageSection.PERSONAL_DATA:
