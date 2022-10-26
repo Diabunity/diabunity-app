@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import AuthService from '@/Services/modules/auth';
 import useTheme from '@/Hooks/useTheme';
 import { getNameInitials, getRelativeTime } from '@/Utils';
+import { DIABUNITY_USER } from '@/Constants';
 import { Post, postApi } from '@/Services/modules/posts';
 import { EmojiLisType } from '.';
 
@@ -39,7 +40,7 @@ const Comments = ({ emojiList, post }: CommentProps) => {
                 animate
                 labelColor={Colors.white}
                 backgroundColor={Colors.red}
-                label={getNameInitials(post?.username)}
+                label={getNameInitials(post?.username || DIABUNITY_USER)}
               />
               <Text
                 style={[
@@ -48,7 +49,7 @@ const Comments = ({ emojiList, post }: CommentProps) => {
                   { color: Colors.red },
                 ]}
               >
-                {post?.username}
+                {post?.username || DIABUNITY_USER}
               </Text>
             </View>
             <Text>{getRelativeTime(post?.timestamp ?? '')}</Text>

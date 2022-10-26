@@ -11,6 +11,7 @@ import { Post, postApi } from '@/Services/modules/posts';
 import { setNotification } from '@/Store/Notification';
 import { store } from '@/Store';
 import { getNameInitials, getRelativeTime } from '@/Utils';
+import { DIABUNITY_USER } from '@/Constants';
 import { EmojiLisType } from '.';
 
 import { styles } from './styles';
@@ -198,7 +199,9 @@ const Posts = ({
                           animate
                           labelColor={Colors.white}
                           backgroundColor={Colors.red}
-                          label={getNameInitials(post.username)}
+                          label={getNameInitials(
+                            post.username || DIABUNITY_USER
+                          )}
                         />
                         <Text
                           style={[
@@ -207,7 +210,7 @@ const Posts = ({
                             { color: Colors.red },
                           ]}
                         >
-                          {post.username}
+                          {post.username || DIABUNITY_USER}
                         </Text>
                       </View>
                       <Text>{getRelativeTime(post.timestamp)}</Text>
