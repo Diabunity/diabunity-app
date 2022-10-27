@@ -5,6 +5,7 @@ import { Measurements } from '.';
 import moment from 'moment';
 
 export const MAX_AMOUNT_OF_ELEMENTS_PER_PAGE = 10;
+const ALL_MEASUREMENT_RESULTS = 32;
 
 export default (build: EndpointBuilder<any, any, any>) =>
   build.query<
@@ -36,7 +37,11 @@ export default (build: EndpointBuilder<any, any, any>) =>
           from,
           to,
           ...(dateRange && { page: page ?? 0 }),
-          ...(dateRange && { size: MAX_AMOUNT_OF_ELEMENTS_PER_PAGE }),
+          ...{
+            size: dateRange
+              ? MAX_AMOUNT_OF_ELEMENTS_PER_PAGE
+              : ALL_MEASUREMENT_RESULTS,
+          },
         },
       };
     },

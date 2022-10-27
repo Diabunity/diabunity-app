@@ -11,18 +11,19 @@ import { FirebaseAuthTypes } from '@react-native-firebase/auth';
 const Ranking = ({ user }: { user: FirebaseAuthTypes.User | null }) => {
   const { Colors } = useTheme();
   const { data, isFetching } = userApi.useFetchRankingQuery();
-  const userPosition: number | null = data?.user_info?.position ?? null;
-  const userData = userPosition
-    ? {
-        ...data?.ranking[userPosition],
-        position: userPosition + 1,
-      }
-    : {
-        username: user?.displayName || DIABUNITY_USER,
-        picture: user?.photoURL,
-        position: null,
-        percentage: null,
-      };
+  const userPosition: number = data?.user_info?.position ?? -1;
+  const userData =
+    userPosition >= 0
+      ? {
+          ...data?.ranking[userPosition],
+          position: userPosition + 1,
+        }
+      : {
+          username: user?.displayName || DIABUNITY_USER,
+          picture: user?.photoURL,
+          position: null,
+          percentage: null,
+        };
 
   return (
     <>

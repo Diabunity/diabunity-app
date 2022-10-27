@@ -166,6 +166,7 @@ const OnboardingContainer = ({ navigation: { navigate } }: Props) => {
           subtitle: (
             <View style={styles.pageSubtitleContainer}>
               <DateTimePicker
+                migrateTextField
                 underlineColor="transparent"
                 underlineColorAndroid="transparent"
                 style={styles.input}

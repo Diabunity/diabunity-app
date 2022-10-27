@@ -35,7 +35,7 @@ export default ({
   currentPage,
   onPageChangeSelected,
 }: {
-  data?: Measurements;
+  data?: Measurements & { totalPages: number; totalElements: number };
   currentPage: number;
   onPageChangeSelected: Function;
 }) => {
@@ -80,9 +80,9 @@ export default ({
         );
       })}
       <Footer
-        pages={data!.total_pages}
+        pages={data!.totalPages}
         currentPage={currentPage}
-        totalElements={data!.total_elements}
+        totalElements={data!.totalElements}
         onPageChangeSelected={onPageChangeSelected}
       />
     </View>
