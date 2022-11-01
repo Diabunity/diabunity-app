@@ -35,7 +35,7 @@ export default ({
   currentPage,
   onPageChangeSelected,
 }: {
-  data?: Measurements & { totalPages: number; totalElements: number };
+  data?: Measurements;
   currentPage: number;
   onPageChangeSelected: Function;
 }) => {

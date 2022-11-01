@@ -12,6 +12,7 @@ import { setNotification } from '@/Store/Notification';
 import { store } from '@/Store';
 import { getNameInitials, getRelativeTime } from '@/Utils';
 import { DIABUNITY_USER } from '@/Constants';
+import Divider from '@/Components/Divider';
 import { EmojiLisType } from '.';
 
 import { styles } from './styles';
@@ -41,7 +42,7 @@ const Posts = ({
   });
   const [saveFavorite] = postApi.useSaveFavoriteMutation();
   const [removeFavorite] = postApi.useRemoveFavoriteMutation();
-  const [fetchCompleted, setFetchCompleted] = useState<boolean>(isFetching);
+  const [isFetchingState, setIsFetchingState] = useState<boolean>(isFetching);
   const [postData, setPostData] = useState<Post[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [endReached, setEndReached] = useState<boolean>(shouldRefetch);
@@ -67,7 +68,7 @@ const Posts = ({
         setPostData(posts);
       }
 
-      setFetchCompleted(false);
+      setIsFetchingState(false);
       setLoading(false);
       setEndReached(false);
     }
@@ -100,7 +101,7 @@ const Posts = ({
         setNotification({
           preset: Incubator.ToastPresets.FAILURE,
           message: `Hubo un error al ${
-            isRemove ? 'borrar' : 'crear'
+            isRemove ? 'borrar' : 'agregar'
           } el favorito. Intente nuevamente`,
         })
       );
@@ -159,7 +160,7 @@ const Posts = ({
   };
   return (
     <>
-      {!fetchCompleted && !postData?.length ? (
+      {!isFetchingState && !postData?.length ? (
         <View
           style={[
             Layout.fill,
@@ -179,7 +180,7 @@ const Posts = ({
       ) : (
         <SkeletonView
           template={SkeletonView.templates.LIST_ITEM}
-          showContent={!!postData && !fetchCompleted && !loading}
+          showContent={!!postData && !isFetchingState && !loading}
           style={{
             ...Layout.colCenter,
             ...styles.skeleton,
@@ -218,7 +219,12 @@ const Posts = ({
                     <View>
                       <Text>{post.body}</Text>
                       {post.image && (
-                        <DropShadow style={styles.dropShadow}>
+                        <DropShadow
+                          style={{
+                            ...styles.dropShadow,
+                            shadowColor: Colors.dark,
+                          }}
+                        >
                           <Image
                             source={{
                               uri: `data:image/jpeg;base64,${post.image}`,
@@ -228,18 +234,20 @@ const Posts = ({
                         </DropShadow>
                       )}
                     </View>
-                    <View style={styles.emojiContainer}>
+                    <View
+                      style={{
+                        ...styles.emojiContainer,
+                        backgroundColor: Colors.white,
+                      }}
+                    >
                       <Picker
                         emojiList={emojiList}
                         updateEmoji={updateEmoji}
                         onSelect={onSelect}
                       />
                     </View>
-                    <Text
-                      style={{
-                        ...styles.divider,
-                        borderBottomColor: Colors.darkGray,
-                      }}
+                    <Divider
+                      customStyles={{ borderBottomColor: Colors.darkGray }}
                     />
                     <View
                       style={[
@@ -287,12 +295,10 @@ const Posts = ({
                       </View>
                     </View>
                   </View>
-                  <Text
-                    style={{
+                  <Divider
+                    customStyles={{
                       ...styles.divider,
                       backgroundColor: Colors.darkGray,
-                      opacity: 0.5,
-                      height: 4,
                     }}
                   />
                 </View>
@@ -304,7 +310,7 @@ const Posts = ({
       )}
       <View style={styles.done}>
         {loading && <ActivityIndicator size="small" color={Colors.black} />}
-        {!loading && !fetchCompleted && postPage + 1 === totalPages && (
+        {!loading && !isFetchingState && postPage + 1 === totalPages && (
           <Text>No hay mas publicaciones.</Text>
         )}
       </View>

@@ -37,11 +37,9 @@ export default (build: EndpointBuilder<any, any, any>) =>
           from,
           to,
           ...(dateRange && { page: page ?? 0 }),
-          ...{
-            size: dateRange
-              ? MAX_AMOUNT_OF_ELEMENTS_PER_PAGE
-              : ALL_MEASUREMENT_RESULTS,
-          },
+          size: dateRange
+            ? MAX_AMOUNT_OF_ELEMENTS_PER_PAGE
+            : ALL_MEASUREMENT_RESULTS,
         },
       };
     },

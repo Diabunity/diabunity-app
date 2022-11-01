@@ -2,17 +2,18 @@ import React from 'react';
 import { Avatar, SkeletonView } from 'react-native-ui-lib';
 import { Image, Text, View } from 'react-native';
 import { Picker } from 'react-native-slack-emoji/src';
+import DropShadow from 'react-native-drop-shadow';
+import { Card } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Feather';
 import AuthService from '@/Services/modules/auth';
 import useTheme from '@/Hooks/useTheme';
 import { getNameInitials, getRelativeTime } from '@/Utils';
 import { DIABUNITY_USER } from '@/Constants';
 import { Post, postApi } from '@/Services/modules/posts';
+import Divider from '@/Components/Divider';
 import { EmojiLisType } from '.';
 
 import { styles } from './styles';
-import DropShadow from 'react-native-drop-shadow';
-import { Card } from 'react-native-paper';
 
 type CommentProps = {
   emojiList: EmojiLisType[];
@@ -57,7 +58,9 @@ const Comments = ({ emojiList, post }: CommentProps) => {
           <View>
             <Text>{post?.body}</Text>
             {post?.image && (
-              <DropShadow style={styles.dropShadow}>
+              <DropShadow
+                style={{ ...styles.dropShadow, shadowColor: Colors.dark }}
+              >
                 <Image
                   source={{
                     uri: `data:image/jpeg;base64,${post.image}`,
@@ -67,19 +70,19 @@ const Comments = ({ emojiList, post }: CommentProps) => {
               </DropShadow>
             )}
           </View>
-          <View style={styles.emojiContainer}>
+          <View
+            style={{
+              ...styles.emojiContainer,
+              backgroundColor: Colors.white,
+            }}
+          >
             <Picker
               emojiList={emojiList}
               updateEmoji={() => {}}
               onSelect={() => {}}
             />
           </View>
-          <Text
-            style={{
-              ...styles.divider,
-              borderBottomColor: Colors.darkGray,
-            }}
-          />
+          <Divider customStyles={{ borderBottomColor: Colors.darkGray }} />
           <View
             style={[
               Layout.rowHCenter,
@@ -107,12 +110,10 @@ const Comments = ({ emojiList, post }: CommentProps) => {
             </View>
           </View>
         </View>
-        <Text
-          style={{
+        <Divider
+          customStyles={{
             ...styles.divider,
             backgroundColor: Colors.darkGray,
-            opacity: 0.5,
-            height: 4,
           }}
         />
       </View>
@@ -137,7 +138,7 @@ const Comments = ({ emojiList, post }: CommentProps) => {
             renderContent={() =>
               posts?.map((post) => {
                 return (
-                  <View key={post.id} style={{ padding: 20, paddingBottom: 0 }}>
+                  <View key={post.id} style={styles.postContainer}>
                     <View
                       style={[Layout.rowCenter, Layout.justifyContentBetween]}
                     >
@@ -161,14 +162,11 @@ const Comments = ({ emojiList, post }: CommentProps) => {
                         </Text>
                       </View>
                     </View>
-                    <View style={[{ marginBottom: 20, paddingLeft: 40 }]}>
+                    <View style={styles.postBody}>
                       <Text>{post.body}</Text>
                     </View>
-                    <Text
-                      style={{
-                        ...styles.divider,
-                        borderBottomColor: Colors.darkGray,
-                      }}
+                    <Divider
+                      customStyles={{ borderBottomColor: Colors.darkGray }}
                     />
                   </View>
                 );

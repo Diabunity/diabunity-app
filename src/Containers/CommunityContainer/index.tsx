@@ -56,22 +56,20 @@ const CommunityContainer = ({ navigation: { navigate } }: Props) => {
     switch (page) {
       case PageSection.POSTS:
         return (
-          <>
-            <Avatar
-              size={40}
-              onPress={() => navigate('Profile')}
-              containerStyle={{ marginVertical: 20, marginLeft: 20 }}
-              animate
-              labelColor={Colors.white}
-              backgroundColor={Colors.red}
-              label={getNameInitials(user?.displayName)}
-              source={
-                {
-                  uri: user?.photoURL,
-                } as ImageSourcePropType
-              }
-            />
-          </>
+          <Avatar
+            size={40}
+            onPress={() => navigate('Profile')}
+            containerStyle={{ marginVertical: 20, marginLeft: 20 }}
+            animate
+            labelColor={Colors.white}
+            backgroundColor={Colors.red}
+            label={getNameInitials(user?.displayName)}
+            source={
+              {
+                uri: user?.photoURL,
+              } as ImageSourcePropType
+            }
+          />
         );
       case PageSection.COMMENT:
         return (
@@ -255,11 +253,16 @@ const CommunitySection = ({
             </ScrollView>
 
             {page === PageSection.COMMENT && (
-              <View style={styles.bottomView}>
+              <View
+                style={{ ...styles.bottomView, backgroundColor: Colors.white }}
+              >
                 <TextField
                   migrate
                   floatOnFocus
-                  style={styles.input}
+                  style={{
+                    ...styles.input,
+                    backgroundColor: Colors.inputBackgroundShadow,
+                  }}
                   placeholder="Escribe algo..."
                   onChangeText={(value: string) => setComment(value)}
                   enableErrors
@@ -269,7 +272,7 @@ const CommunitySection = ({
 
                 {showSendIcon && (
                   <Icon
-                    style={styles.textIcon}
+                    style={{ ...styles.textIcon, color: Colors.darkGray }}
                     name="send"
                     size={20}
                     onPress={publishComment}

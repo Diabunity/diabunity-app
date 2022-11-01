@@ -10,16 +10,12 @@ export const styles = StyleSheet.create({
     fontWeight: '700',
   },
   divider: {
-    width: '100%',
-    height: 0.1,
-    borderWidth: 0.16,
-    borderBottomWidth: 0.2,
-    position: 'relative',
+    opacity: 0.5,
+    height: 4,
   },
   emojiContainer: {
     flex: 1,
     padding: 10,
-    backgroundColor: 'white',
   },
   commentBox: {
     marginTop: 15,
@@ -38,7 +34,6 @@ export const styles = StyleSheet.create({
   bottomView: {
     width: '98%',
     height: 70,
-    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
@@ -48,18 +43,23 @@ export const styles = StyleSheet.create({
   headerLogo: {
     marginRight: 0,
   },
-
+  postContainer: {
+    padding: 20,
+    paddingBottom: 0,
+  },
+  postBody: {
+    marginBottom: 20,
+    paddingLeft: 40,
+  },
   input: {
     width: 320,
     height: 45,
     position: 'relative',
     top: 7,
     paddingHorizontal: 12,
-    backgroundColor: 'rgba(0, 0, 0, 0.06)',
     borderTopRightRadius: 4,
     borderTopLeftRadius: 4,
   },
-
   postBox: {
     height: 200,
   },
@@ -83,7 +83,6 @@ export const styles = StyleSheet.create({
     height: 350,
   },
   dropShadow: {
-    shadowColor: '#000',
     shadowOffset: {
       width: 2,
       height: 2,
@@ -95,7 +94,6 @@ export const styles = StyleSheet.create({
   textIcon: {
     position: 'absolute',
     right: 35,
-    color: '#666',
   },
   done: {
     fontSize: 20,

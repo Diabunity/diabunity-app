@@ -5,12 +5,15 @@ import { Avatar, Incubator, Text, TextField } from 'react-native-ui-lib';
 import Icon from 'react-native-vector-icons/Feather';
 import useTheme from '@/Hooks/useTheme';
 import FormButton from '@/Components/FormButton';
-
-import { styles } from './styles';
+import Divider from '@/Components/Divider';
+import { DIABUNITY_USER } from '@/Constants';
+import { getNameInitials } from '@/Utils';
 import { Post, postApi } from '@/Services/modules/posts';
+import AuthService from '@/Services/modules/auth';
 import { store } from '@/Store';
 import { setNotification } from '@/Store/Notification';
 import { PageSection } from '.';
+import { styles } from './styles';
 
 type PostProps = {
   setPage: (page: PageSection) => void;
@@ -18,12 +21,13 @@ type PostProps = {
 };
 
 const NewPost = ({ setPage, setShouldRefetch }: PostProps) => {
+  const user = AuthService.getCurrentUser();
   const { Layout, Colors, Fonts } = useTheme();
   const [image, setImage] = useState<{
     fileName?: string;
     base64?: string;
   }>();
-  const [post, setPost] = useState<string>();
+  const [postContent, setPostContent] = useState<string>();
   const [savePost, { isLoading, isSuccess, isError }] =
     postApi.useSavePostMutation();
 
@@ -37,8 +41,7 @@ const NewPost = ({ setPage, setShouldRefetch }: PostProps) => {
       );
       setShouldRefetch(false);
       setPage(PageSection.POSTS);
-    }
-    if (isError) {
+    } else if (isError) {
       store.dispatch(
         setNotification({
           preset: Incubator.ToastPresets.FAILURE,
@@ -67,7 +70,7 @@ const NewPost = ({ setPage, setShouldRefetch }: PostProps) => {
 
   const publishPost = async () => {
     const newPost = {
-      body: post,
+      body: postContent,
       image: image?.base64,
     } as Post;
 
@@ -84,17 +87,18 @@ const NewPost = ({ setPage, setShouldRefetch }: PostProps) => {
             animate
             labelColor={Colors.white}
             backgroundColor={Colors.red}
-            label="MD"
+            source={{ uri: user?.photoURL }}
+            label={getNameInitials(user?.displayName || DIABUNITY_USER)}
           />
           <Text
             style={[Fonts.textRegular, styles.userName, { color: Colors.red }]}
           >
-            Mati Dastugue
+            {user?.displayName || DIABUNITY_USER}
           </Text>
         </View>
         <TextField
           migrate
-          onChangeText={(value: string) => setPost(value)}
+          onChangeText={(value: string) => setPostContent(value)}
           style={styles.postBox}
           multiline={true}
           numberOfLines={10}
@@ -115,12 +119,8 @@ const NewPost = ({ setPage, setShouldRefetch }: PostProps) => {
             />
           </View>
         )}
-        <Text
-          style={{
-            ...styles.divider,
-            width: '95%',
-            borderBottomColor: Colors.darkGray,
-          }}
+        <Divider
+          customStyles={{ width: '95%', borderBottomColor: Colors.darkGray }}
         />
         <View style={[Layout.row, Layout.justifyContentBetween]}>
           <View style={[Layout.fill, Layout.row, Layout.alignItemsCenter]}>
@@ -134,7 +134,7 @@ const NewPost = ({ setPage, setShouldRefetch }: PostProps) => {
           </View>
           <View style={styles.postActions}>
             <FormButton
-              disabledCondition={!post}
+              disabledCondition={!postContent}
               label="Publicar"
               labelStyle={styles.button}
               noMarginBottom
