@@ -174,3 +174,71 @@ export const getCurrentMonth = () => {
 
   return month.toString().padStart(2, '0');
 };
+
+export const getRelativeTime = (timestamp: string) => {
+  const SECOND = 1000;
+  const MINUTE = 60;
+  const HOUR = 60;
+  const DAY = 24;
+  const WEEK = 7;
+  const MONTH = 30;
+  const YEAR = 365;
+
+  const date = new Date(`${timestamp}Z`).getTime();
+
+  const now = new Date().getTime();
+
+  // The difference between now and created
+  const howLongAgo = date - now;
+  // Convert to a positive integer
+  const time = Math.abs(howLongAgo);
+
+  // Define humanTime and units
+  let humanTime, units;
+
+  const DAY_TO_SECONDS = SECOND * MINUTE * HOUR * DAY;
+
+  // If there are years
+  if (time > DAY_TO_SECONDS * YEAR) {
+    (humanTime = time / (DAY_TO_SECONDS * YEAR)), 10;
+    units = humanTime >= 2 ? 'años' : 'año';
+  }
+
+  // If there are months
+  else if (time > DAY_TO_SECONDS * MONTH) {
+    humanTime = time / (DAY_TO_SECONDS * MONTH);
+    units = humanTime >= 2 ? 'meses' : 'mes';
+  }
+
+  // If there are weeks
+  else if (time > DAY_TO_SECONDS * WEEK) {
+    humanTime = time / (DAY_TO_SECONDS * WEEK);
+    units = humanTime >= 2 ? 'semanas' : 'semana';
+  }
+
+  // If there are days
+  else if (time > DAY_TO_SECONDS) {
+    humanTime = time / DAY_TO_SECONDS;
+    units = humanTime >= 2 ? 'dias' : 'dia';
+  }
+
+  // If there are hours
+  else if (time > SECOND * MINUTE * HOUR) {
+    humanTime = time / (SECOND * MINUTE * HOUR);
+    units = humanTime >= 2 ? 'horas' : 'hora';
+  }
+
+  // If there are minutes
+  else if (time > SECOND * MINUTE) {
+    humanTime = time / (SECOND * MINUTE);
+    units = humanTime >= 2 ? 'minutos' : 'minuto';
+  }
+
+  // Otherwise, use seconds
+  else {
+    humanTime = time / SECOND;
+    units = humanTime >= 2 ? 'segundos' : 'segundo';
+  }
+
+  return `hace ${humanTime.toFixed(0)} ${units}`;
+};

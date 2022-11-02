@@ -9,6 +9,7 @@ export default function ({}: ThemeVariables): ThemeImages {
   return {
     logo: require('@/Assets/Images/logo.png'),
     logoWithName: require('@/Assets/Images/logo-with-name.png'),
+    logoType: require('@/Assets/Images/logotipo.png'),
     nfcAndroid: require('@/Assets/Images/nfc-512.png'),
     onboarding1: require('@/Assets/Images/onboarding-1.png'),
     onboarding2: require('@/Assets/Images/onboarding-2.png'),

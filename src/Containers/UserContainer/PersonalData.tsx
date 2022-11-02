@@ -148,6 +148,7 @@ const PersonalData = ({
         </View>
         <DateTimePicker
           underlineColor="transparent"
+          migrateTextField
           underlineColorAndroid="transparent"
           style={styles.input}
           onChange={(date: Date): void => setDate(date)}

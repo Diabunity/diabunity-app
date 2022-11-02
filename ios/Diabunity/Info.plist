@@ -89,5 +89,7 @@
 		<string>D2760000850100</string>
 		<string>D2760000850101</string>
 	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<key>NSCameraUsageDescription</key>
 </dict>
 </plist>
