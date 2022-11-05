@@ -43,12 +43,17 @@ export type EmojiLisType = {
   emoji: any;
 };
 
-type Props = NativeStackScreenProps<NavigatorParams>;
+type Navigation = NativeStackScreenProps<NavigatorParams> | { navigation: any };
+type Props = Navigation & {
+  favoriteSection: boolean;
+};
 
-const CommunityContainer = ({ navigation: { navigate } }: Props) => {
+const CommunityContainer = ({
+  navigation: { navigate },
+  favoriteSection,
+}: Props) => {
   const user = AuthService.getCurrentUser();
   const [page, setPage] = useState<PageSection | undefined>(PageSection.POSTS);
-  const [emojiList, setEmojiList] = useState<EmojiLisType[]>([]);
   const [shouldRefetch, setShouldRefetch] = useState<boolean>(false);
   const { Layout, Images, Colors } = useTheme();
 
@@ -97,34 +102,35 @@ const CommunityContainer = ({ navigation: { navigate } }: Props) => {
   };
   return (
     <View style={{ ...Layout.fill }}>
-      {page === PageSection.POSTS && (
+      {page === PageSection.POSTS && !favoriteSection && (
         <FAB
           icon="plus"
           style={[styles.fab, { backgroundColor: Colors.red }]}
           onPress={() => setPage(PageSection.NEW_POST)}
         />
       )}
-      <View
-        style={[
-          Layout.rowCenter,
-          Layout.alignItemsCenter,
-          Layout.justifyContentBetween,
-          { marginRight: 10 },
-        ]}
-      >
-        {getLeftComponent()}
-        <Image source={Images.logoType} />
-        <Icon
-          onPress={() =>
-            navigate('Profile', { section: ProfileSection.RANKING })
-          }
-          name="award"
-          size={30}
-        />
-      </View>
+      {!favoriteSection && (
+        <View
+          style={[
+            Layout.rowCenter,
+            Layout.alignItemsCenter,
+            Layout.justifyContentBetween,
+            { marginRight: 10 },
+          ]}
+        >
+          {getLeftComponent()}
+          <Image source={Images.logoType} />
+          <Icon
+            onPress={() =>
+              navigate('Profile', { section: ProfileSection.RANKING })
+            }
+            name="award"
+            size={30}
+          />
+        </View>
+      )}
       <CommunitySection
-        emojiList={emojiList}
-        setEmojiList={setEmojiList}
+        favoriteSection={favoriteSection}
         setPage={setPage}
         refetch={shouldRefetch}
         setShouldRefetch={setShouldRefetch}
@@ -139,14 +145,12 @@ const keyboardVerticalOffset = Platform.OS === 'ios' ? 40 : 0;
 const CommunitySection = ({
   page,
   setPage,
-  emojiList,
-  setEmojiList,
+  favoriteSection,
   refetch,
   setShouldRefetch,
 }: {
   data?: User | null;
-  emojiList: EmojiLisType[];
-  setEmojiList: (emojiList: EmojiLisType[]) => void;
+  favoriteSection: boolean;
   refetch: boolean;
   setShouldRefetch: (refetch: boolean) => void;
   page: PageSection | undefined;
@@ -213,7 +217,7 @@ const CommunitySection = ({
   const renderSection = () => {
     switch (page) {
       case PageSection.COMMENT:
-        return <Comments post={selectedPost} emojiList={emojiList} />;
+        return <Comments post={selectedPost} />;
       case PageSection.NEW_POST:
         return (
           <NewPost setShouldRefetch={setShouldRefetch} setPage={setPage} />
@@ -221,9 +225,8 @@ const CommunitySection = ({
       default:
         return (
           <Posts
+            favoriteSection={favoriteSection}
             shouldRefetch={refetch}
-            emojiList={emojiList}
-            setEmojiList={setEmojiList}
             handleSelected={handleSelected}
           />
         );

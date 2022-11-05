@@ -16,11 +16,10 @@ import { EmojiLisType } from '.';
 import { styles } from './styles';
 
 type CommentProps = {
-  emojiList: EmojiLisType[];
   post?: Post;
 };
 
-const Comments = ({ emojiList, post }: CommentProps) => {
+const Comments = ({ post }: CommentProps) => {
   const { Layout, Colors, Fonts } = useTheme();
   const user = AuthService.getCurrentUser();
   const { data = null, isFetching } = postApi.useFetchCommentsQuery(post?.id, {
@@ -77,7 +76,7 @@ const Comments = ({ emojiList, post }: CommentProps) => {
             }}
           >
             <Picker
-              emojiList={emojiList}
+              emojiList={post?.emojis}
               updateEmoji={() => {}}
               onSelect={() => {}}
             />
