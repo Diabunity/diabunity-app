@@ -208,6 +208,7 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
               <Text>Fecha</Text>
             </View>
             <DateTimePicker
+              migrateTextField
               underlineColor="transparent"
               underlineColorAndroid="transparent"
               style={styles.input}
@@ -219,6 +220,7 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
               <Text>Hora</Text>
             </View>
             <DateTimePicker
+              migrateTextField
               underlineColor="transparent"
               underlineColorAndroid="transparent"
               style={styles.input}

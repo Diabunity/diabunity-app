@@ -56,6 +56,7 @@ const ForgotPasswordContainer = () => {
       <TextField
         style={styles.textField}
         ref={textFieldRef}
+        migrate
         placeholder="Email"
         onChangeText={(value: string) => setEmail(value)}
         enableErrors

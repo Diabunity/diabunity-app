@@ -13,7 +13,6 @@ import {
 import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 
-import { api } from '@/Services/api';
 import * as modules from '@/Services/modules';
 import theme from './Theme';
 import notification from './Notification';
@@ -45,7 +44,9 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat(api.middleware as Middleware);
+    })
+      .concat(modules.userApi.middleware as Middleware)
+      .concat(modules.postApi.middleware as Middleware);
 
     if (__DEV__ && !process.env.JEST_WORKER_ID) {
       const createDebugger = require('redux-flipper').default;

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused, RouteProp } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Avatar, Incubator, ListItem, Text } from 'react-native-ui-lib';
 import Icon from 'react-native-vector-icons/Feather';
 import { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { User, userApi } from '@/Services/modules/users';
+import { NavigatorParams } from '@/Navigators/Application';
 import { setNotification } from '@/Store/Notification';
 import { useTheme } from '@/Hooks';
 import { store } from '@/Store';
@@ -17,16 +19,20 @@ import Settings from './Settings';
 import Ranking from './Ranking';
 import { styles } from './styles';
 
-enum PageSection {
+export enum PageSection {
   SETTINGS = 'SETTINGS',
   PERSONAL_DATA = 'PERSONAL_DATA',
   RANKING = 'RANKING',
 }
+type Props = NativeStackScreenProps<NavigatorParams> & {
+  route: RouteProp<{ params?: { section?: PageSection } }, 'params'>;
+};
 
-const UserContainer = () => {
+const UserContainer = ({ route, navigation: { setParams } }: Props) => {
   const user = AuthService.getCurrentUser();
+  const { section } = route?.params || { section: undefined };
   const isFocused = useIsFocused();
-  const [page, setPage] = useState<PageSection | undefined>();
+  const [page, setPage] = useState<PageSection | undefined>(section);
   const { Layout, Fonts, Colors } = useTheme();
   const { data = null, refetch } = userApi.useFetchUserQuery(user?.uid, {
     refetchOnMountOrArgChange: true,
@@ -35,8 +41,13 @@ const UserContainer = () => {
   useEffect(() => {
     if (!isFocused) {
       setPage(undefined);
+      setParams({ section: undefined });
     }
   }, [isFocused]);
+
+  useEffect(() => {
+    setPage(section);
+  }, [section]);
 
   const handleLogOut = async () => {
     try {
@@ -94,7 +105,7 @@ const UserContainer = () => {
               style={[Layout.rowCenter]}
               onPress={() => setPage(PageSection.RANKING)}
             >
-              <Icon name="flag" size={24} color={styles.icon.color} />
+              <Icon name="award" size={24} color={styles.icon.color} />
               <Text style={{ ...styles.text, marginLeft: 12 }}>Ranking</Text>
             </ListItem>
             <ListItem
@@ -145,7 +156,7 @@ const ProfileSection = ({
   const renderSection = () => {
     switch (page) {
       case PageSection.RANKING:
-        return <Ranking />;
+        return <Ranking user={user} />;
       case PageSection.SETTINGS:
         return <Settings />;
       case PageSection.PERSONAL_DATA:

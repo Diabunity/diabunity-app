@@ -78,6 +78,7 @@ const AuthContainer = ({
             placeholder="Nombre"
             onChangeText={(value: string) => setName(value)}
             enableErrors
+            migrate
             validate={['required', (value: string) => value.length > 3]}
             validationMessage={[
               'Este campo es requerido',
@@ -92,6 +93,7 @@ const AuthContainer = ({
           placeholder="Email"
           onChangeText={(value: string) => setEmail(value)}
           enableErrors
+          migrate
           validate={['required', 'email']}
           validateOnChange
           validationMessage={[
@@ -105,6 +107,7 @@ const AuthContainer = ({
           placeholder="Contraseña"
           onChangeText={(value: string) => setPassword(value)}
           enableErrors
+          migrate
           validate={['required', (value: string) => value.length > 6]}
           validationMessage={[
             'Este campo es requerido',
@@ -120,6 +123,7 @@ const AuthContainer = ({
             placeholder="Repetir contraseña"
             onChangeText={(value: string) => setRepeatedPassword(value)}
             enableErrors
+            migrate
             validate={[
               'required',
               (value: string) => value.length > 6,

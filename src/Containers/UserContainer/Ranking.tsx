@@ -3,20 +3,27 @@ import { Text, View, Avatar, SkeletonView } from 'react-native-ui-lib';
 import { ScrollView } from 'react-native';
 import { useTheme } from '@/Hooks';
 import { getNameInitials } from '@/Utils';
+import { DIABUNITY_USER } from '@/Constants';
 import { userApi } from '@/Services/modules/users';
 import { rankingStyles } from './styles';
+import { FirebaseAuthTypes } from '@react-native-firebase/auth';
 
-const Ranking = () => {
+const Ranking = ({ user }: { user: FirebaseAuthTypes.User | null }) => {
   const { Colors } = useTheme();
   const { data, isFetching } = userApi.useFetchRankingQuery();
-
-  const userPosition: number | null = data?.user_info?.position ?? null;
-  const userData = userPosition
-    ? {
-        ...data?.ranking[userPosition],
-        position: userPosition + 1,
-      }
-    : null;
+  const userPosition: number = data?.user_info?.position ?? -1;
+  const userData =
+    userPosition >= 0
+      ? {
+          ...data?.ranking[userPosition],
+          position: userPosition + 1,
+        }
+      : {
+          username: user?.displayName || DIABUNITY_USER,
+          picture: user?.photoURL,
+          position: null,
+          percentage: null,
+        };
 
   return (
     <>
@@ -65,12 +72,16 @@ const Ranking = () => {
           >
             {data?.ranking.map((item, index) => {
               const isFirstUser = index === 0;
+              const firstContainerStyles = isFirstUser
+                ? rankingStyles.firstUserContainer
+                : {};
               return (
                 <View
                   key={index}
                   style={{
                     ...rankingStyles.row,
                     backgroundColor: isFirstUser ? Colors.red : 'transparent',
+                    ...firstContainerStyles,
                   }}
                 >
                   <Text
