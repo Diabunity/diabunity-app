@@ -7,7 +7,7 @@ import {
 import { Text, View } from 'react-native-ui-lib';
 
 import { generateTableStyles } from './styles';
-import { formatDate, formatHour } from '@/Utils';
+import { setByTimezone, formatDate, formatHour } from '@/Utils';
 import Footer from './Footer';
 import { useTheme } from '@/Hooks';
 
@@ -45,7 +45,7 @@ export default ({
   return (
     <View style={{ ...styles.container, ...styles.dropShadow }}>
       {data!.measurements.map((item, index) => {
-        const currentItemDate = new Date(item.timestamp);
+        const currentItemDate = setByTimezone(new Date(item.timestamp));
 
         return (
           <View key={index} style={styles.row}>
