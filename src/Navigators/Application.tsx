@@ -31,15 +31,23 @@ export type NavigatorParams = {
 const Stack = createStackNavigator<NavigatorParams>();
 
 async function onMessageReceived(message: any) {
-  console.log('Message goes here');
+  console.log('onMessageReceived');
   console.log(message);
-  console.log('Message ends here');
+  console.log('--Message ends here--');
+
+  return Promise.resolve();
+}
+
+async function onBackgroundMessageReceived(message: any) {
+  console.log('onBackgroundMessageReceived');
+  console.log(message);
+  console.log('--Message ends here--');
 
   return Promise.resolve();
 }
 
 messaging().onMessage(onMessageReceived);
-messaging().setBackgroundMessageHandler(onMessageReceived);
+messaging().setBackgroundMessageHandler(onBackgroundMessageReceived);
 
 // @refresh reset
 const ApplicationNavigator = () => {
@@ -96,10 +104,13 @@ const ApplicationNavigator = () => {
 
   useEffect(() => {
     async function onAppBoost() {
-      await messaging().registerDeviceForRemoteMessages();
-      const token = await messaging().getToken();
-      console.log('Token for current device', token);
+      const authorizationStatus = await messaging().requestPermission();
 
+      if (authorizationStatus) {
+        await messaging().registerDeviceForRemoteMessages();
+        const token = await messaging().getToken();
+        console.log('Token for current device', token);
+      }
       // post data into our server
     }
 
