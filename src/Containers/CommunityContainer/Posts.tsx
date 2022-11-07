@@ -131,6 +131,13 @@ const Posts = ({
         setEmojisLoading((prevState) => ({ ...prevState, [post.id]: true }));
         await saveEmoji({ id, emoji: savedEmoji });
         refetchFn();
+      } catch {
+        store.dispatch(
+          setNotification({
+            preset: Incubator.ToastPresets.FAILURE,
+            message: 'Hubo un error al agregar la reacción. Intente nuevamente',
+          })
+        );
       } finally {
         setEmojisLoading((prevState) => ({ ...prevState, [post.id]: false }));
       }
@@ -149,6 +156,15 @@ const Posts = ({
         await saveEmoji({ id, emoji: savedEmoji });
       }
       refetchFn();
+    } catch {
+      store.dispatch(
+        setNotification({
+          preset: Incubator.ToastPresets.FAILURE,
+          message: `Hubo un error al ${
+            selectedEmoji?.selected ? 'borrar' : 'agregar'
+          } la reacción. Intente nuevamente`,
+        })
+      );
     } finally {
       setEmojisLoading((prevState) => ({ ...prevState, [post.id]: false }));
     }

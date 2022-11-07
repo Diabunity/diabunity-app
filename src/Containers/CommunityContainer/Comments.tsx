@@ -27,7 +27,6 @@ const Comments = ({ post }: CommentProps) => {
   });
 
   const posts = data?.posts;
-
   return (
     <>
       <View>
@@ -148,7 +147,9 @@ const Comments = ({ post }: CommentProps) => {
                           animate
                           labelColor={Colors.white}
                           backgroundColor={Colors.red}
-                          label={getNameInitials(post.username)}
+                          label={getNameInitials(
+                            post.username || DIABUNITY_USER
+                          )}
                         />
                         <Text
                           style={[
@@ -157,7 +158,7 @@ const Comments = ({ post }: CommentProps) => {
                             { color: Colors.red },
                           ]}
                         >
-                          {post.username}
+                          {post.username || DIABUNITY_USER}
                         </Text>
                       </View>
                     </View>
