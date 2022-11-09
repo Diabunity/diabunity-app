@@ -13,22 +13,19 @@ import { store } from '@/Store';
 import { getNameInitials, getRelativeTime } from '@/Utils';
 import { DIABUNITY_USER } from '@/Constants';
 import Divider from '@/Components/Divider';
-import { EmojiLisType } from '.';
 
 import { styles } from './styles';
 
 type PostsProps = {
   handleSelected: (post: Post) => void;
-  emojiList: EmojiLisType[];
-  setEmojiList: (emojiList: EmojiLisType[]) => void;
   shouldRefetch: boolean;
+  favoriteSection: boolean;
 };
 
 const Posts = ({
   handleSelected,
-  emojiList,
-  setEmojiList,
   shouldRefetch,
+  favoriteSection,
 }: PostsProps) => {
   const { Layout, Colors, Fonts } = useTheme();
   const user = AuthService.getCurrentUser();
@@ -39,9 +36,12 @@ const Posts = ({
     refetch: refetchFn,
   } = postApi.useFetchPostsQuery({
     page: postPage,
+    favoriteSection,
   });
   const [saveFavorite] = postApi.useSaveFavoriteMutation();
   const [removeFavorite] = postApi.useRemoveFavoriteMutation();
+  const [saveEmoji] = postApi.useSaveEmojiMutation();
+  const [removeEmoji] = postApi.useRemoveEmojiMutation();
   const [isFetchingState, setIsFetchingState] = useState<boolean>(isFetching);
   const [postData, setPostData] = useState<Post[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -49,9 +49,11 @@ const Posts = ({
   const [favsLoading, setFavsLoading] = useState<{ [key: string]: boolean }>(
     {}
   );
+  const [emojisLoading, setEmojisLoading] = useState<{
+    [key: string]: boolean;
+  }>({});
   const posts = data?.posts;
   const totalPages = data?.paging.total_pages || 0;
-
   useEffect(() => {
     refetchFn();
   }, []);
@@ -71,6 +73,11 @@ const Posts = ({
       setIsFetchingState(false);
       setLoading(false);
       setEndReached(false);
+    } else {
+      if (!isFetching) {
+        setIsFetchingState(false);
+        setLoading(false);
+      }
     }
   }, [postPage, posts, isFetching]);
 
@@ -110,52 +117,56 @@ const Posts = ({
     }
   };
 
-  const onSelect = (emoji: any, emojiName: string, data: any) => {
-    const objIndex = emojiList.findIndex((e) => e.name === emojiName);
-    const filteredList = emojiList.filter((_, index) => index !== objIndex);
-
-    if (objIndex === -1) {
-      setEmojiList([...emojiList, { emoji, name: emojiName, data, index: 1 }]);
-    } else {
-      const filteredValue = emojiList[objIndex].added
-        ? emojiList[objIndex].index + 1
-        : emojiList[objIndex].index === 1
-        ? undefined
-        : emojiList[objIndex].index - 1;
-      if (!filteredValue) {
-        setEmojiList(filteredList);
-      } else {
-        setEmojiList([
-          ...emojiList.filter((_, index) => index !== objIndex),
-          {
-            ...emojiList[objIndex],
-            index: filteredValue,
-            added: !emojiList[objIndex].added,
-          },
-        ]);
+  const onSelect = async (
+    emoji: any,
+    emojiName: string,
+    data: any,
+    post: Post
+  ) => {
+    const { emojis, id } = post;
+    const selectedEmoji = emojis.find((item) => item.name === emojiName);
+    if (!selectedEmoji?.selected) {
+      const savedEmoji = { emoji, name: emojiName, data };
+      try {
+        setEmojisLoading((prevState) => ({ ...prevState, [post.id]: true }));
+        await saveEmoji({ id, emoji: savedEmoji });
+        refetchFn();
+      } catch {
+        store.dispatch(
+          setNotification({
+            preset: Incubator.ToastPresets.FAILURE,
+            message: 'Hubo un error al agregar la reacción. Intente nuevamente',
+          })
+        );
+      } finally {
+        setEmojisLoading((prevState) => ({ ...prevState, [post.id]: false }));
       }
     }
   };
 
-  const updateEmoji = (_: any, name: string) => {
-    const objIndex = emojiList.findIndex((e) => e.name === name);
-    const filteredList = emojiList.filter((_, index) => index !== objIndex);
-    const filteredValue = emojiList[objIndex].added
-      ? emojiList[objIndex].index + 1
-      : emojiList[objIndex].index === 1
-      ? undefined
-      : emojiList[objIndex].index - 1;
-    if (!filteredValue) {
-      setEmojiList(filteredList);
-    } else {
-      setEmojiList([
-        ...filteredList,
-        {
-          ...emojiList[objIndex],
-          index: filteredValue,
-          added: !emojiList[objIndex].added,
-        },
-      ]);
+  const updateEmoji = async (emoji: any, name: string, post: Post) => {
+    const { emojis, id } = post;
+    const selectedEmoji = emojis.find((item) => item.name === name);
+    try {
+      setEmojisLoading((prevState) => ({ ...prevState, [post.id]: true }));
+      if (selectedEmoji?.selected) {
+        await removeEmoji({ id, name });
+      } else {
+        const savedEmoji = { emoji, name, data: selectedEmoji?.data };
+        await saveEmoji({ id, emoji: savedEmoji });
+      }
+      refetchFn();
+    } catch {
+      store.dispatch(
+        setNotification({
+          preset: Incubator.ToastPresets.FAILURE,
+          message: `Hubo un error al ${
+            selectedEmoji?.selected ? 'borrar' : 'agregar'
+          } la reacción. Intente nuevamente`,
+        })
+      );
+    } finally {
+      setEmojisLoading((prevState) => ({ ...prevState, [post.id]: false }));
     }
   };
   return (
@@ -240,11 +251,21 @@ const Posts = ({
                         backgroundColor: Colors.white,
                       }}
                     >
-                      <Picker
-                        emojiList={emojiList}
-                        updateEmoji={updateEmoji}
-                        onSelect={onSelect}
-                      />
+                      {emojisLoading[post.id] ? (
+                        <ActivityIndicator size="small" color={Colors.black} />
+                      ) : (
+                        <Picker
+                          emojiList={post.emojis}
+                          updateEmoji={(emoji: any, name: string) =>
+                            updateEmoji(emoji, name, post)
+                          }
+                          onSelect={(
+                            emoji: any,
+                            emojiName: string,
+                            data: any
+                          ) => onSelect(emoji, emojiName, data, post)}
+                        />
+                      )}
                     </View>
                     <Divider
                       customStyles={{ borderBottomColor: Colors.darkGray }}

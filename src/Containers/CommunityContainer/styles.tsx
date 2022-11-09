@@ -93,7 +93,7 @@ export const styles = StyleSheet.create({
   },
   textIcon: {
     position: 'absolute',
-    right: 35,
+    right: '12%',
   },
   done: {
     fontSize: 20,

@@ -80,6 +80,10 @@ export const styles = StyleSheet.create({
   },
 });
 
+export const favoriteStyles = StyleSheet.create({
+  title: { ...title, width: '100%' },
+});
+
 export const rankingStyles = StyleSheet.create({
   skeleton: {
     marginHorizontal: 20,

@@ -16,11 +16,10 @@ import { EmojiLisType } from '.';
 import { styles } from './styles';
 
 type CommentProps = {
-  emojiList: EmojiLisType[];
   post?: Post;
 };
 
-const Comments = ({ emojiList, post }: CommentProps) => {
+const Comments = ({ post }: CommentProps) => {
   const { Layout, Colors, Fonts } = useTheme();
   const user = AuthService.getCurrentUser();
   const { data = null, isFetching } = postApi.useFetchCommentsQuery(post?.id, {
@@ -28,7 +27,6 @@ const Comments = ({ emojiList, post }: CommentProps) => {
   });
 
   const posts = data?.posts;
-
   return (
     <>
       <View>
@@ -77,7 +75,7 @@ const Comments = ({ emojiList, post }: CommentProps) => {
             }}
           >
             <Picker
-              emojiList={emojiList}
+              emojiList={post?.emojis}
               updateEmoji={() => {}}
               onSelect={() => {}}
             />
@@ -149,7 +147,9 @@ const Comments = ({ emojiList, post }: CommentProps) => {
                           animate
                           labelColor={Colors.white}
                           backgroundColor={Colors.red}
-                          label={getNameInitials(post.username)}
+                          label={getNameInitials(
+                            post.username || DIABUNITY_USER
+                          )}
                         />
                         <Text
                           style={[
@@ -158,7 +158,7 @@ const Comments = ({ emojiList, post }: CommentProps) => {
                             { color: Colors.red },
                           ]}
                         >
-                          {post.username}
+                          {post.username || DIABUNITY_USER}
                         </Text>
                       </View>
                     </View>

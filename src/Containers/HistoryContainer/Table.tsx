@@ -1,11 +1,14 @@
 import React from 'react';
+import { Hint, Text, View } from 'react-native-ui-lib';
+import Icon from 'react-native-vector-icons/Feather';
+
 import {
   MeasurementMode,
   Measurements,
   MeasurementStatus,
 } from '@/Services/modules/users';
-import { Text, View } from 'react-native-ui-lib';
 
+import { useState } from 'react';
 import { generateTableStyles } from './styles';
 import { setByTimezone, formatDate, formatHour } from '@/Utils';
 import Footer from './Footer';
@@ -39,6 +42,7 @@ export default ({
   currentPage: number;
   onPageChangeSelected: Function;
 }) => {
+  const [visible, setVisible] = useState<{ [key: string]: boolean }>({});
   const { Colors } = useTheme();
   const styles = generateTableStyles(Colors);
 
@@ -58,6 +62,39 @@ export default ({
               </Text>
               <Text style={styles.dateAndSource}>
                 {MEASUREMENT_LABELS[item.source]}
+                {item.comments && (
+                  <View>
+                    <Hint
+                      visible={visible[item.timestamp.toString()]}
+                      position={Hint.positions.BOTTOM}
+                      message={item.comments}
+                      offset={15}
+                      color={Colors.red}
+                      onBackgroundPress={() =>
+                        setVisible((prevState) => ({
+                          ...prevState,
+                          [item.timestamp.toString()]: false,
+                        }))
+                      }
+                    >
+                      <View>
+                        <Icon
+                          onPress={() =>
+                            setVisible((prevState) => ({
+                              ...prevState,
+                              [item.timestamp.toString()]:
+                                !prevState[item.timestamp.toString()],
+                            }))
+                          }
+                          name="info"
+                          style={styles.hintIcon}
+                          size={20}
+                          color={Colors.dark}
+                        />
+                      </View>
+                    </Hint>
+                  </View>
+                )}
               </Text>
             </View>
             <Text

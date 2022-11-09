@@ -54,6 +54,11 @@ export const generateTableStyles = (colors: ThemeColors) =>
       paddingVertical: 10,
       width: '35%',
     },
+    hintIcon: {
+      position: 'relative',
+      left: 5,
+      top: 5,
+    },
   });
 
 export const generateFooterStyles = (colors: ThemeColors) =>
