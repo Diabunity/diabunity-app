@@ -17,18 +17,22 @@ import BackButton from '@/Components/BackButton';
 import PersonalData from './PersonalData';
 import Settings from './Settings';
 import Ranking from './Ranking';
+import Favorites from './Favorites';
+
 import { styles } from './styles';
 
 export enum PageSection {
   SETTINGS = 'SETTINGS',
   PERSONAL_DATA = 'PERSONAL_DATA',
   RANKING = 'RANKING',
+  FAVORITES = 'FAVORITES',
 }
 type Props = NativeStackScreenProps<NavigatorParams> & {
   route: RouteProp<{ params?: { section?: PageSection } }, 'params'>;
 };
 
-const UserContainer = ({ route, navigation: { setParams } }: Props) => {
+const UserContainer = ({ route, navigation }: Props) => {
+  const { setParams } = navigation;
   const user = AuthService.getCurrentUser();
   const { section } = route?.params || { section: undefined };
   const isFocused = useIsFocused();
@@ -103,6 +107,13 @@ const UserContainer = ({ route, navigation: { setParams } }: Props) => {
             </ListItem>
             <ListItem
               style={[Layout.rowCenter]}
+              onPress={() => setPage(PageSection.FAVORITES)}
+            >
+              <Icon name="star" size={24} color={styles.icon.color} />
+              <Text style={{ ...styles.text, marginLeft: 12 }}>Favoritos</Text>
+            </ListItem>
+            <ListItem
+              style={[Layout.rowCenter]}
               onPress={() => setPage(PageSection.RANKING)}
             >
               <Icon name="award" size={24} color={styles.icon.color} />
@@ -155,6 +166,8 @@ const ProfileSection = ({
   const { Layout } = useTheme();
   const renderSection = () => {
     switch (page) {
+      case PageSection.FAVORITES:
+        return <Favorites />;
       case PageSection.RANKING:
         return <Ranking user={user} />;
       case PageSection.SETTINGS:

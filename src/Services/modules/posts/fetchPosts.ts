@@ -1,4 +1,5 @@
 import { EndpointBuilder } from '@reduxjs/toolkit/dist/query/endpointDefinitions';
+import AuthService from '@/Services/modules/auth';
 import { Post } from '.';
 
 const MAX_AMOUNT_OF_ELEMENTS_PER_PAGE = 10;
@@ -6,11 +7,13 @@ const MAX_AMOUNT_OF_ELEMENTS_PER_PAGE = 10;
 export default (build: EndpointBuilder<any, any, any>) =>
   build.query<
     { posts: Post[]; paging: { total_pages: number; total_elements: number } },
-    { page: number; size?: number }
+    { page: number; favoriteSection: boolean; size?: number }
   >({
-    query: ({ page }) => {
+    query: ({ page, favoriteSection }) => {
       return {
-        url: `/posts`,
+        url: favoriteSection
+          ? `/users/${AuthService.getCurrentUser()?.uid}/posts/favs`
+          : `/posts`,
         method: 'GET',
         params: {
           page,
