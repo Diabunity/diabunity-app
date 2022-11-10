@@ -142,7 +142,10 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
           });
         }
         if (measurements.length > 0) {
-          await saveMeasurement(measurements);
+          await saveMeasurement({
+            measurements,
+            trend_history: [100, 120, 130],
+          });
         }
       }
       clearTimeout(timer);
@@ -171,7 +174,10 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
         },
       ];
 
-      await saveMeasurement(measurements);
+      await saveMeasurement({
+        measurements,
+        trend_history: [100, 120, 130],
+      });
     } else {
       setManualEnabled(true);
     }
