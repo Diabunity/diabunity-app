@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import messaging from '@react-native-firebase/messaging';
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { SafeAreaView, StatusBar } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -14,8 +15,6 @@ import { useTheme } from '@/Hooks';
 import MainNavigator from './Main';
 import { navigationRef } from './utils';
 import { NfcPromptAndroid } from '@/Components';
-
-import messaging from '@react-native-firebase/messaging';
 
 export type NavigatorParams = {
   Main: undefined;
