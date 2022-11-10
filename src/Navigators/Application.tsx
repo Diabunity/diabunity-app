@@ -31,18 +31,10 @@ export type NavigatorParams = {
 const Stack = createStackNavigator<NavigatorParams>();
 
 async function onMessageReceived(message: any) {
-  console.log('onMessageReceived');
-  console.log(message);
-  console.log('--Message ends here--');
-
   return Promise.resolve();
 }
 
 async function onBackgroundMessageReceived(message: any) {
-  console.log('onBackgroundMessageReceived');
-  console.log(message);
-  console.log('--Message ends here--');
-
   return Promise.resolve();
 }
 
@@ -65,6 +57,7 @@ const ApplicationNavigator = () => {
     skip,
     refetchOnMountOrArgChange: true,
   });
+  const [saveDeviceId] = userApi.useSaveDeviceIdMutation();
   const [isLoading, setIsLoading] = useState(true);
   const { colors } = NavigationTheme;
 
@@ -109,7 +102,7 @@ const ApplicationNavigator = () => {
       if (authorizationStatus) {
         await messaging().registerDeviceForRemoteMessages();
         const token = await messaging().getToken();
-        console.log('Token for current device', token);
+        await saveDeviceId({ deviceId: token });
       }
       // post data into our server
     }
@@ -119,30 +112,12 @@ const ApplicationNavigator = () => {
 
   useEffect(() => {
     // Assume a message-notification contains a "type" property in the data payload of the screen to open
-
-    messaging().onNotificationOpenedApp((remoteMessage) => {
-      console.log(
-        'Notification caused app to open from background state:',
-        remoteMessage.notification
-      );
-      console.log('Data: ', remoteMessage.data);
-      //navigation.navigate(remoteMessage.data.type);
-    });
+    messaging().onNotificationOpenedApp((remoteMessage) => {});
 
     // Check whether an initial notification is available
     messaging()
       .getInitialNotification()
-      .then((remoteMessage) => {
-        if (remoteMessage) {
-          console.log(
-            'Notification caused app to open from quit state:',
-            remoteMessage.notification
-          );
-          console.log('Data: ', remoteMessage.data);
-          // setInitialRoute(remoteMessage.data.type); // e.g. "Settings"
-        }
-        // setLoading(false);
-      });
+      .then((remoteMessage) => {});
   }, []);
 
   if (
