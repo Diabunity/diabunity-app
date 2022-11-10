@@ -19,7 +19,7 @@ import {
 import { SensorLifeStatus } from '@/Services/modules/nfc';
 import { NavigatorParams } from '@/Navigators/Application';
 import { DatePeriod, getSensorLifeTime } from '@/Utils';
-import { FormButton } from '@/Components';
+import { FormButton, Tips } from '@/Components';
 import MedicalReportContainer from '../MedicalReportContainer';
 import LastDayChart from '@/Components/LastDayChart';
 
@@ -131,6 +131,7 @@ const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
                   user={userData}
                   sensorLife={sensorLife}
                 />
+                <Tips />
               </View>
             )}
             times={2}
