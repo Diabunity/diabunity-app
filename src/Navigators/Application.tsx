@@ -112,12 +112,12 @@ const ApplicationNavigator = () => {
 
   useEffect(() => {
     // Assume a message-notification contains a "type" property in the data payload of the screen to open
-    messaging().onNotificationOpenedApp((remoteMessage) => {});
+    messaging().onNotificationOpenedApp(() => {});
 
     // Check whether an initial notification is available
     messaging()
       .getInitialNotification()
-      .then((remoteMessage) => {});
+      .then(() => {});
   }, []);
 
   if (
