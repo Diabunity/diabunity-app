@@ -29,7 +29,7 @@ type Props = NativeStackScreenProps<NavigatorParams> & {
       params?: {
         refetch: string | null;
         sensorLife?: number;
-        tendency?: TENDENCY;
+        tendency: TENDENCY;
       };
     },
     'params'
@@ -43,11 +43,8 @@ const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
     refetchOnMountOrArgChange: true,
   });
 
-  const {
-    refetch,
-    sensorLife,
-    tendency = TENDENCY.UNKNOWN,
-  } = route?.params || { refetch: null };
+  const { refetch, sensorLife, tendency } = route?.params || { refetch: null };
+
   const {
     data,
     isFetching,
@@ -122,7 +119,7 @@ const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
               <View>
                 <Table
                   data={new TableBuilder()
-                    .tendency(tendency)
+                    .tendency(tendency ?? TENDENCY.UNKNOWN)
                     .periodInTarget(periodInTarget.value, periodInTarget.status)
                     .lastScanMeasure(
                       currentGlucose.measurement,

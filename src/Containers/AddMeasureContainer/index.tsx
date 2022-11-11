@@ -55,7 +55,7 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
 
   useEffect(() => {
     let timer: NodeJS.Timeout | undefined;
-    if (isSuccess) {
+    if (isSuccess && tendency !== undefined) {
       store.dispatch(
         setNotification({
           preset: Incubator.ToastPresets.SUCCESS,
@@ -86,7 +86,7 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
       }, TOAST_TIMEOUT);
     }
     return () => clearTimeout(timer);
-  }, [isSuccess, isError]);
+  }, [isSuccess, isError, tendency]);
 
   const resetFields = () => {
     setDate(new Date());
@@ -153,7 +153,7 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
             measurements,
             trend_history: trend_history.map((m: { value: number }) => m.value),
           })) as { data: { tendency: TENDENCY } };
-          setTendency(data.tendency);
+          setTendency(data.tendency ?? TENDENCY.UNKNOWN);
         }
       }
       clearTimeout(timer);
@@ -186,7 +186,7 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
         measurements,
         trend_history: [],
       })) as { data: { tendency: TENDENCY } };
-      setTendency(data.tendency);
+      setTendency(data.tendency ?? TENDENCY.UNKNOWN);
     } else {
       setManualEnabled(true);
     }
