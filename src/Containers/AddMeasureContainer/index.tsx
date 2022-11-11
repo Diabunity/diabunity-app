@@ -17,9 +17,10 @@ import { NFCReader } from '@/Services/modules/nfc';
 import { userApi, MeasurementMode } from '@/Services/modules/users';
 import { setNotification } from '@/Store/Notification';
 import { addMinutes, setByTimezone } from '@/Utils';
+import { TOAST_TIMEOUT } from '@/Constants';
+import { TENDENCY } from '../HomeContainer/Table';
 
 import { styles, colors } from './styles';
-import { TOAST_TIMEOUT } from '@/Constants';
 
 type Props = NativeStackScreenProps<NavigatorParams>;
 
@@ -34,6 +35,7 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
   const [manualEnabled, setManualEnabled] = useState<boolean>(false);
   const [measurement, setMeasurement] = useState<string>();
   const [sensorLife, setSensorLife] = useState<number | undefined>();
+  const [tendency, setTendency] = useState<TENDENCY | undefined>();
 
   const [date, setDate] = useState<Date>(new Date());
   const [time, setTime] = useState<Date>(new Date());
@@ -62,7 +64,11 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
       );
 
       timer = setTimeout(() => {
-        navigate('Home', { refetch: new Date().toISOString(), sensorLife });
+        navigate('Home', {
+          refetch: new Date().toISOString(),
+          sensorLife,
+          tendency,
+        });
         setManualEnabled(false);
         reset();
         resetFields();
@@ -114,6 +120,7 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
         const {
           history,
           current_glucose: currentGlucose,
+          trend_history,
           sensorLife: sensorAge,
         } = glucoseData;
         setSensorLife(sensorAge);
@@ -142,10 +149,11 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
           });
         }
         if (measurements.length > 0) {
-          await saveMeasurement({
+          const { data } = (await saveMeasurement({
             measurements,
-            trend_history: [100, 120, 130],
-          });
+            trend_history: trend_history.map((m: { value: number }) => m.value),
+          })) as { data: { tendency: TENDENCY } };
+          setTendency(data.tendency);
         }
       }
       clearTimeout(timer);
@@ -174,10 +182,11 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
         },
       ];
 
-      await saveMeasurement({
+      const { data } = (await saveMeasurement({
         measurements,
-        trend_history: [100, 120, 130],
-      });
+        trend_history: [],
+      })) as { data: { tendency: TENDENCY } };
+      setTendency(data.tendency);
     } else {
       setManualEnabled(true);
     }

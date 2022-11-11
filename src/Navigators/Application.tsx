@@ -12,13 +12,14 @@ import {
 } from '@/Containers';
 import { userApi } from '@/Services/modules/users';
 import { useTheme } from '@/Hooks';
+import { TENDENCY } from '@/Containers/HomeContainer/Table';
 import MainNavigator from './Main';
 import { navigationRef } from './utils';
 import { NfcPromptAndroid } from '@/Components';
 
 export type NavigatorParams = {
   Main: undefined;
-  Home: { refetch: string | null; sensorLife?: number };
+  Home: { refetch: string | null; sensorLife?: number; tendency?: TENDENCY };
   Add: undefined;
   Profile: { section?: string } | undefined;
   SignIn: undefined;
