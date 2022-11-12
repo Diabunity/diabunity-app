@@ -11,7 +11,7 @@ import { Post, postApi } from '@/Services/modules/posts';
 import { setNotification } from '@/Store/Notification';
 import { store } from '@/Store';
 import { getNameInitials, getRelativeTime } from '@/Utils';
-import { DIABUNITY_USER } from '@/Constants';
+import { DIABUNITY_USER, BRAND_NAME } from '@/Constants';
 import Divider from '@/Components/Divider';
 
 import { styles } from './styles';
@@ -27,7 +27,7 @@ const Posts = ({
   shouldRefetch,
   favoriteSection,
 }: PostsProps) => {
-  const { Layout, Colors, Fonts } = useTheme();
+  const { Layout, Colors, Fonts, Images } = useTheme();
   const user = AuthService.getCurrentUser();
   const [postPage, setPostPage] = useState<number>(0);
   const {
@@ -223,6 +223,12 @@ const Posts = ({
                           ]}
                         >
                           {post.username || DIABUNITY_USER}
+                          {post.username === BRAND_NAME && (
+                            <Image
+                              style={styles.checkmark}
+                              source={Images.checkmark}
+                            />
+                          )}
                         </Text>
                       </View>
                       <Text>{getRelativeTime(post.timestamp)}</Text>

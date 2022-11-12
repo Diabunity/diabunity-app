@@ -1,17 +1,18 @@
-import React from 'react';
-import { Avatar, SkeletonView } from 'react-native-ui-lib';
-import { Image, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { Avatar, SkeletonView, Incubator } from 'react-native-ui-lib';
+import { ActivityIndicator, Image, Text, View } from 'react-native';
 import { Picker } from 'react-native-slack-emoji/src';
 import DropShadow from 'react-native-drop-shadow';
 import { Card } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Feather';
 import AuthService from '@/Services/modules/auth';
+import { setNotification } from '@/Store/Notification';
+import { store } from '@/Store';
 import useTheme from '@/Hooks/useTheme';
 import { getNameInitials, getRelativeTime } from '@/Utils';
-import { DIABUNITY_USER } from '@/Constants';
+import { DIABUNITY_USER, BRAND_NAME } from '@/Constants';
 import { Post, postApi } from '@/Services/modules/posts';
 import Divider from '@/Components/Divider';
-import { EmojiLisType } from '.';
 
 import { styles } from './styles';
 
@@ -20,11 +21,71 @@ type CommentProps = {
 };
 
 const Comments = ({ post }: CommentProps) => {
-  const { Layout, Colors, Fonts } = useTheme();
+  const { Layout, Colors, Fonts, Images } = useTheme();
   const user = AuthService.getCurrentUser();
   const { data = null, isFetching } = postApi.useFetchCommentsQuery(post?.id, {
     refetchOnMountOrArgChange: true,
   });
+  const [saveEmoji] = postApi.useSaveEmojiMutation();
+  const [removeEmoji] = postApi.useRemoveEmojiMutation();
+  const [emojisLoading, setEmojisLoading] = useState<{
+    [key: string]: boolean;
+  }>({});
+
+  const onSelect = async (
+    emoji: any,
+    emojiName: string,
+    data: any,
+    post?: Post
+  ) => {
+    if (!post) return;
+    const { emojis, id } = post;
+    const selectedEmoji = emojis.find((item) => item.name === emojiName);
+    if (!selectedEmoji?.selected) {
+      const savedEmoji = { emoji, name: emojiName, data };
+      try {
+        setEmojisLoading((prevState) => ({ ...prevState, [post.id]: true }));
+        await saveEmoji({ id, emoji: savedEmoji });
+        //refetchFn();
+      } catch {
+        store.dispatch(
+          setNotification({
+            preset: Incubator.ToastPresets.FAILURE,
+            message: 'Hubo un error al agregar la reacción. Intente nuevamente',
+          })
+        );
+      } finally {
+        setEmojisLoading((prevState) => ({ ...prevState, [post.id]: false }));
+      }
+    }
+  };
+
+  const updateEmoji = async (emoji: any, name: string, post?: Post) => {
+    if (!post) return;
+    const { emojis, id } = post;
+    const selectedEmoji = emojis.find((item) => item.name === name);
+    try {
+      setEmojisLoading((prevState) => ({ ...prevState, [post.id]: true }));
+      if (selectedEmoji?.selected) {
+        await removeEmoji({ id, name });
+      } else {
+        const savedEmoji = { emoji, name, data: selectedEmoji?.data };
+        await saveEmoji({ id, emoji: savedEmoji });
+      }
+      //refetchFn();
+    } catch {
+      store.dispatch(
+        setNotification({
+          preset: Incubator.ToastPresets.FAILURE,
+          message: `Hubo un error al ${
+            selectedEmoji?.selected ? 'borrar' : 'agregar'
+          } la reacción. Intente nuevamente`,
+        })
+      );
+    } finally {
+      setEmojisLoading((prevState) => ({ ...prevState, [post.id]: false }));
+    }
+  };
 
   const posts = data?.posts;
   return (
@@ -49,6 +110,9 @@ const Comments = ({ post }: CommentProps) => {
                 ]}
               >
                 {post?.username || DIABUNITY_USER}
+                {post?.username === BRAND_NAME && (
+                  <Image style={styles.checkmark} source={Images.checkmark} />
+                )}
               </Text>
             </View>
             <Text>{getRelativeTime(post?.timestamp ?? '')}</Text>
@@ -74,11 +138,20 @@ const Comments = ({ post }: CommentProps) => {
               backgroundColor: Colors.white,
             }}
           >
-            <Picker
-              emojiList={post?.emojis}
-              updateEmoji={() => {}}
-              onSelect={() => {}}
-            />
+            {emojisLoading[post?.id || 0] ? (
+              <ActivityIndicator size="small" color={Colors.black} />
+            ) : (
+              <Picker
+                hideSelector
+                emojiList={post?.emojis}
+                updateEmoji={(emoji: any, name: string) =>
+                  updateEmoji(emoji, name, post)
+                }
+                onSelect={(emoji: any, emojiName: string, data: any) =>
+                  onSelect(emoji, emojiName, data, post)
+                }
+              />
+            )}
           </View>
           <Divider customStyles={{ borderBottomColor: Colors.darkGray }} />
           <View
@@ -159,6 +232,12 @@ const Comments = ({ post }: CommentProps) => {
                           ]}
                         >
                           {post.username || DIABUNITY_USER}
+                          {post.username === BRAND_NAME && (
+                            <Image
+                              style={styles.checkmark}
+                              source={Images.checkmark}
+                            />
+                          )}
                         </Text>
                       </View>
                     </View>

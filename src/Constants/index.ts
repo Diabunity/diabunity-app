@@ -28,6 +28,7 @@ export enum PAGE_DIRECTION {
 }
 
 export const DIABUNITY_USER = 'Diabunity User';
+export const BRAND_NAME = 'Diabunity';
 
 export const DIABETES_TIPS = [
   {

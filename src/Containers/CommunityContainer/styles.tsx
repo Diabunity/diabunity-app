@@ -30,7 +30,10 @@ export const styles = StyleSheet.create({
     zIndex: 100,
     bottom: 60,
   },
-
+  headerContainer: {
+    marginRight: 10,
+    marginTop: 10,
+  },
   bottomView: {
     width: '98%',
     height: 70,
@@ -67,6 +70,10 @@ export const styles = StyleSheet.create({
     width: 80,
     height: 20,
     textAlign: 'center',
+  },
+  checkmark: {
+    height: 25,
+    width: 25,
   },
   postActions: {
     position: 'relative',

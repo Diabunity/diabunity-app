@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Image,
@@ -115,7 +115,7 @@ const CommunityContainer = ({
             Layout.rowCenter,
             Layout.alignItemsCenter,
             Layout.justifyContentBetween,
-            { marginRight: 10 },
+            styles.headerContainer,
           ]}
         >
           {getLeftComponent()}
@@ -156,6 +156,7 @@ const CommunitySection = ({
   page: PageSection | undefined;
   setPage: (page: PageSection) => void;
 }) => {
+  const scrollViewRef = useRef<ScrollView | null>(null);
   const { Colors } = useTheme();
   const [showSendIcon, setShowSendIcon] = useState<boolean>(false);
   const [selectedPost, setSelectedPost] = useState<Post>();
@@ -242,6 +243,7 @@ const CommunitySection = ({
             keyboardVerticalOffset={keyboardVerticalOffset}
           >
             <ScrollView
+              ref={scrollViewRef}
               onScroll={({ nativeEvent }) => {
                 if (isCloseToBottom(nativeEvent)) {
                   setShouldRefetch(true);
@@ -269,7 +271,10 @@ const CommunitySection = ({
                   placeholder="Escribe algo..."
                   onChangeText={(value: string) => setComment(value)}
                   enableErrors
-                  onFocus={() => setShowSendIcon(true)}
+                  onFocus={() => {
+                    setShowSendIcon(true);
+                    scrollViewRef?.current?.scrollToEnd({ animated: true });
+                  }}
                   onBlur={() => setShowSendIcon(false)}
                 />
 

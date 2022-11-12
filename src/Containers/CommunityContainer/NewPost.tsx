@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import useTheme from '@/Hooks/useTheme';
 import FormButton from '@/Components/FormButton';
 import Divider from '@/Components/Divider';
-import { DIABUNITY_USER } from '@/Constants';
+import { DIABUNITY_USER, BRAND_NAME } from '@/Constants';
 import { getNameInitials } from '@/Utils';
 import { Post, postApi } from '@/Services/modules/posts';
 import AuthService from '@/Services/modules/auth';
@@ -22,7 +22,7 @@ type PostProps = {
 
 const NewPost = ({ setPage, setShouldRefetch }: PostProps) => {
   const user = AuthService.getCurrentUser();
-  const { Layout, Colors, Fonts } = useTheme();
+  const { Layout, Colors, Fonts, Images } = useTheme();
   const [image, setImage] = useState<{
     fileName?: string;
     base64?: string;
@@ -55,6 +55,7 @@ const NewPost = ({ setPage, setShouldRefetch }: PostProps) => {
     const { assets } = await launchCamera({
       mediaType: 'photo',
       includeBase64: true,
+      quality: 0.3,
     });
     setImage({ fileName: assets?.[0].fileName, base64: assets?.[0].base64 });
   };
@@ -63,6 +64,7 @@ const NewPost = ({ setPage, setShouldRefetch }: PostProps) => {
     const { assets } = await launchImageLibrary({
       mediaType: 'photo',
       includeBase64: true,
+      quality: 0.3,
     });
 
     setImage({ fileName: assets?.[0].fileName, base64: assets?.[0].base64 });
@@ -94,6 +96,9 @@ const NewPost = ({ setPage, setShouldRefetch }: PostProps) => {
             style={[Fonts.textRegular, styles.userName, { color: Colors.red }]}
           >
             {user?.displayName || DIABUNITY_USER}
+            {user?.displayName === BRAND_NAME && (
+              <Image style={styles.checkmark} source={Images.checkmark} />
+            )}
           </Text>
         </View>
         <TextField
