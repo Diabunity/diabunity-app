@@ -10,7 +10,7 @@ import {
 
 import { useState } from 'react';
 import { generateTableStyles } from './styles';
-import { setByTimezone, formatDate, formatHour } from '@/Utils';
+import { formatDate, formatHour } from '@/Utils';
 import Footer from './Footer';
 import { useTheme } from '@/Hooks';
 
