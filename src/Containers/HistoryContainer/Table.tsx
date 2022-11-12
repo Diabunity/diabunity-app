@@ -49,7 +49,7 @@ export default ({
   return (
     <View style={{ ...styles.container, ...styles.dropShadow }}>
       {data!.measurements.map((item, index) => {
-        const currentItemDate = setByTimezone(new Date(item.timestamp));
+        const currentItemDate = new Date(item.timestamp);
 
         return (
           <View key={index} style={styles.row}>

@@ -352,9 +352,9 @@ PODS:
     - glog
   - react-native-blur (0.8.0):
     - React
-  - react-native-config (1.4.6):
-    - react-native-config/App (= 1.4.6)
-  - react-native-config/App (1.4.6):
+  - react-native-config (1.4.11):
+    - react-native-config/App (= 1.4.11)
+  - react-native-config/App (1.4.11):
     - React-Core
   - react-native-flipper (0.143.0):
     - React-Core
@@ -364,7 +364,7 @@ PODS:
     - React-Core
   - react-native-libre13 (1.0.5):
     - React-Core
-  - react-native-netinfo (9.3.3):
+  - react-native-netinfo (9.3.6):
     - React-Core
   - react-native-nfc-manager (3.14.0):
     - React-Core
@@ -449,9 +449,9 @@ PODS:
     - React-Core
   - RNCMaskedView (0.2.8):
     - React-Core
-  - RNCPicker (2.4.6):
+  - RNCPicker (2.4.8):
     - React-Core
-  - RNDateTimePicker (6.5.0):
+  - RNDateTimePicker (6.5.3):
     - React-Core
   - RNFBApp (14.11.1):
     - Firebase/CoreOnly (= 8.15.0)
@@ -462,12 +462,12 @@ PODS:
     - RNFBApp
   - RNFileViewer (2.1.5):
     - React-Core
-  - RNGestureHandler (2.6.2):
+  - RNGestureHandler (2.8.0):
     - React-Core
-  - RNGoogleSignin (8.0.0):
-    - GoogleSignIn (~> 6.2.2)
+  - RNGoogleSignin (8.0.1):
+    - GoogleSignIn (~> 6.2)
     - React-Core
-  - RNReanimated (2.10.0):
+  - RNReanimated (2.11.0):
     - DoubleConversion
     - FBLazyVector
     - FBReactNativeSpec
@@ -494,7 +494,7 @@ PODS:
     - React-RCTText
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNScreens (3.17.0):
+  - RNScreens (3.18.2):
     - React-Core
     - React-RCTImage
   - RNSVG (12.4.4):
@@ -783,12 +783,12 @@ SPEC CHECKSUMS:
   React-jsinspector: f4775ea9118cbe1f72b834f0f842baa7a99508d8
   React-logger: a1f028f6d8639a3f364ef80419e5e862e1115250
   react-native-blur: cad4d93b364f91e7b7931b3fa935455487e5c33c
-  react-native-config: 7cd105e71d903104e8919261480858940a6b9c0e
+  react-native-config: bcafda5b4c51491ee1b0e1d0c4e3905bc7b56c1b
   react-native-flipper: df8e2a7e5dcc857033d925ad8c7e8c52760b8e06
   react-native-html-to-pdf: 4c5c6e26819fe202971061594058877aa9b25265
   react-native-image-picker: 4bc9ed38c8be255b515d8c88babbaf74973f91a8
   react-native-libre13: 6282adad8901a5efe6b8e195766f800ac9041d4f
-  react-native-netinfo: b514dd6d9cd512b90e178c5b7158df1a1c568d47
+  react-native-netinfo: f80db8cac2151405633324cb645c60af098ee461
   react-native-nfc-manager: 449c2c400a4f0ab3b8c084a713f41762a26b3307
   react-native-safe-area-context: 99b24a0c5acd0d5dcac2b1a7f18c49ea317be99a
   react-native-view-shot: a60a98a18c72bcaaaf2138f9aab960ae9b0d96c7
@@ -808,15 +808,15 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: 0c357f3156fcb16c8589ede67cc036330b6698ca
   RNCClipboard: 41d8d918092ae8e676f18adada19104fa3e68495
   RNCMaskedView: bc0170f389056201c82a55e242e5d90070e18e5a
-  RNCPicker: 2f71e09c52ab6327e2c393213368ea0e5bfbcb65
-  RNDateTimePicker: 154f8246e9c32fd663995647a7f9f667a8c6b258
+  RNCPicker: 0bf8ef8f7800524f32d2bb2a8bcadd53eda0ecd1
+  RNDateTimePicker: 400fc87d26052d1ac76d05935e0f8d0fd4c78f13
   RNFBApp: 9646e09d041ea159b84584865212e4cf33acd179
   RNFBAuth: af943e3ba071b5f4d18896c31e6cba3a77b1fa08
   RNFileViewer: ce7ca3ac370e18554d35d6355cffd7c30437c592
-  RNGestureHandler: 4defbd70b2faf3d6761b82fa7880285241762cb0
-  RNGoogleSignin: b2179ba653c759b936404a7746fc5302f9de6a5a
-  RNReanimated: c38d82b0e910e2478439686c58c02bac6e4232e9
-  RNScreens: 0df01424e9e0ed7827200d6ed1087ddd06c493f9
+  RNGestureHandler: 62232ba8f562f7dea5ba1b3383494eb5bf97a4d3
+  RNGoogleSignin: ec96ded826fcdca71ab5f58b1d086e969cabe67b
+  RNReanimated: 54cb0265322fe99f4f9f733991452fd7839f2c8e
+  RNScreens: 34cc502acf1b916c582c60003dc3089fa01dc66d
   RNSVG: ecd661f380a07ba690c9c5929c475a44f432d674
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
   Yoga: d6b6a80659aa3e91aaba01d0012e7edcbedcbecd

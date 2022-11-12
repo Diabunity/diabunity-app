@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { useTheme } from '@/Hooks';
 import { DIABETES_TIPS } from '@/Constants';
@@ -48,7 +48,13 @@ const Tips = () => {
               {tip.end}
             </Text>
           </View>
-        ) : null}
+        ) : (
+          <ActivityIndicator
+            style={styles.done}
+            size="small"
+            color={Colors.black}
+          />
+        )}
       </View>
     </View>
   );
@@ -61,7 +67,10 @@ const styles = StyleSheet.create({
     width: '100%',
     textAlign: 'center',
     marginTop: 20,
-    marginBottom: 10,
+  },
+  done: {
+    fontSize: 16,
+    marginTop: 10,
   },
   container: {
     display: 'flex',

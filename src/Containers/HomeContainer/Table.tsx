@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Text, StyleSheet } from 'react-native';
-import { View } from 'react-native-ui-lib';
+import { Hint, View } from 'react-native-ui-lib';
+import Icon from 'react-native-vector-icons/Feather';
 import { SensorLifeStatus } from '@/Services/modules/nfc';
+import { useTheme } from '@/Hooks';
 import {
   MeasurementStatus,
   PeriodInTargetStatus,
@@ -10,15 +12,21 @@ import {
 import { COLORS as COLORS_THEME } from './styles';
 
 export enum TENDENCY {
-  UP,
-  DOWN,
-  EQUAL,
+  RISING,
+  RISING_QUICKLY,
+  CHANGING_SLOWLY,
+  FAILING,
+  FAILING_QUICKLY,
+  UNKNOWN,
 }
 
 enum ARROW {
-  UP = '\u2191',
-  EQUAL = '\u2192',
-  DOWN = '\u2193',
+  RISING = '\u2197',
+  RISING_QUICKLY = '\u2191',
+  CHANGING_SLOWLY = '\u2192',
+  FAILING = '\u2198',
+  FAILING_QUICKLY = '\u2193',
+  UNKNOWN = 'Desconocido',
 }
 interface TableProps {
   data: Row[];
@@ -28,12 +36,25 @@ interface Row {
   label: string;
   value: string;
   styles?: any;
+  hint?: string;
 }
 
+const TENDENCY_ARROWS = {
+  [TENDENCY.RISING]: ARROW.RISING,
+  [TENDENCY.RISING_QUICKLY]: ARROW.RISING_QUICKLY,
+  [TENDENCY.CHANGING_SLOWLY]: ARROW.CHANGING_SLOWLY,
+  [TENDENCY.FAILING]: ARROW.FAILING,
+  [TENDENCY.FAILING_QUICKLY]: ARROW.FAILING_QUICKLY,
+  [TENDENCY.UNKNOWN]: ARROW.UNKNOWN,
+};
+
 const TENDENCY_COLORS: { [key in TENDENCY]: string } = {
-  [TENDENCY.UP]: '#C1272D',
-  [TENDENCY.DOWN]: '#0060B9',
-  [TENDENCY.EQUAL]: '#0EB500',
+  [TENDENCY.RISING]: '#DB7600',
+  [TENDENCY.RISING_QUICKLY]: '#C1272D',
+  [TENDENCY.CHANGING_SLOWLY]: '#0EB500',
+  [TENDENCY.FAILING]: '#0060B9',
+  [TENDENCY.FAILING_QUICKLY]: '#FFE800',
+  [TENDENCY.UNKNOWN]: '#666666',
 };
 
 const SENSOR_LIFE_COLORS: { [key in SensorLifeStatus]: string } = {
@@ -58,6 +79,9 @@ const PERIOD_IN_TARGET_COLORS: { [key in PeriodInTargetStatus]: string } = {
 };
 
 export default ({ data }: TableProps) => {
+  const { Colors } = useTheme();
+  const [visible, setVisible] = useState<{ [key: number]: boolean }>({});
+
   return (
     <View style={{ ...tableStyles.container, ...tableStyles.dropShadow }}>
       {data.map((row, index) => (
@@ -65,6 +89,38 @@ export default ({ data }: TableProps) => {
           <Text style={tableStyles.label}>{row.label}</Text>
           <Text style={{ ...tableStyles.value, ...row.styles }}>
             {row.value}
+            {row.hint && (
+              <View>
+                <Hint
+                  visible={visible[index]}
+                  position={Hint.positions.TOP}
+                  offset={15}
+                  message={row.hint}
+                  color={Colors.red}
+                  onBackgroundPress={() =>
+                    setVisible((prevState) => ({
+                      ...prevState,
+                      [index]: false,
+                    }))
+                  }
+                >
+                  <View>
+                    <Icon
+                      style={tableStyles.hintIcon}
+                      onPress={() =>
+                        setVisible((prevState) => ({
+                          ...prevState,
+                          [index]: !prevState[index],
+                        }))
+                      }
+                      name="info"
+                      size={20}
+                      color={Colors.dark}
+                    />
+                  </View>
+                </Hint>
+              </View>
+            )}
           </Text>
         </View>
       ))}
@@ -81,6 +137,11 @@ const tableStyles = StyleSheet.create({
     borderColor: COLORS_THEME.gray,
     backgroundColor: COLORS_THEME.white,
     marginTop: 15,
+  },
+  hintIcon: {
+    position: 'relative',
+    left: 5,
+    top: 5,
   },
   dropShadow: {
     shadowColor: '#000',
@@ -132,16 +193,18 @@ export class TableBuilder {
   }
 
   tendency(tendency: TENDENCY): TableBuilder {
-    this._data[0].value =
-      tendency === TENDENCY.UP
-        ? ARROW.UP
-        : tendency === TENDENCY.DOWN
-        ? ARROW.DOWN
-        : ARROW.EQUAL;
+    this._data[0].value = TENDENCY_ARROWS[tendency];
+    const { fontSize, ...rest } = tableStyles.arrow;
     this._data[0].styles = {
       color: TENDENCY_COLORS[tendency],
-      ...tableStyles.arrow,
+      ...rest,
+      ...(tendency !== TENDENCY.UNKNOWN && { fontSize }),
     };
+
+    this._data[0].hint =
+      tendency === TENDENCY.UNKNOWN
+        ? 'Vuelve a medirte para conocer la tendencia'
+        : undefined;
 
     return this;
   }
@@ -170,6 +233,10 @@ export class TableBuilder {
   sensorLife(days: string, status: SensorLifeStatus): TableBuilder {
     this._data[4].value = days;
     this._data[4].styles = { color: SENSOR_LIFE_COLORS[status] };
+    this._data[4].hint =
+      status === SensorLifeStatus.UNKNOWN
+        ? 'Vuelve a medirte para conocer la vida útil del sensor'
+        : undefined;
     return this;
   }
 

@@ -12,13 +12,14 @@ import {
 } from '@/Containers';
 import { userApi } from '@/Services/modules/users';
 import { useTheme } from '@/Hooks';
+import { TENDENCY } from '@/Containers/HomeContainer/Table';
 import MainNavigator from './Main';
 import { navigationRef } from './utils';
 import { NfcPromptAndroid } from '@/Components';
 
 export type NavigatorParams = {
   Main: undefined;
-  Home: { refetch: string | null; sensorLife?: number };
+  Home: { refetch: string | null; sensorLife?: number; tendency?: TENDENCY };
   Add: undefined;
   Profile: { section?: string } | undefined;
   SignIn: undefined;
@@ -96,14 +97,9 @@ const ApplicationNavigator = () => {
 
   useEffect(() => {
     async function onAppBoost() {
-      const authorizationStatus = await messaging().requestPermission();
-
-      if (authorizationStatus) {
-        await messaging().registerDeviceForRemoteMessages();
-        const token = await messaging().getToken();
-        await saveDeviceId({ deviceId: token });
-      }
-      // post data into our server
+      await messaging().registerDeviceForRemoteMessages();
+      const token = await messaging().getToken();
+      await saveDeviceId({ deviceId: token });
     }
 
     onAppBoost();
@@ -111,12 +107,12 @@ const ApplicationNavigator = () => {
 
   useEffect(() => {
     // Assume a message-notification contains a "type" property in the data payload of the screen to open
-    messaging().onNotificationOpenedApp((remoteMessage) => {});
+    messaging().onNotificationOpenedApp(() => {});
 
     // Check whether an initial notification is available
     messaging()
       .getInitialNotification()
-      .then((remoteMessage) => {});
+      .then(() => {});
   }, []);
 
   if (
