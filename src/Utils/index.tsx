@@ -73,13 +73,18 @@ export const formatHour = (
   date: Date,
   includeSeconds: boolean = false
 ): string => {
-  const time = date.toLocaleTimeString('es-ES');
+  const minutes = date.getMinutes();
+  const hour = date.getHours();
+  let time = `${hour.toString().padStart(2, '0')}:${minutes
+    .toString()
+    .padStart(2, '0')}`;
 
   if (includeSeconds) {
+    const seconds = date.getSeconds();
+    return `${time}:${seconds.toString().padStart(2, '0')}`;
+  } else {
     return time;
   }
-
-  return time.substring(0, time.lastIndexOf(':'));
 };
 
 export const formatDatePeriod = (
