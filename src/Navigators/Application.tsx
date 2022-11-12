@@ -97,13 +97,9 @@ const ApplicationNavigator = () => {
 
   useEffect(() => {
     async function onAppBoost() {
-      console.log('Entro');
       await messaging().registerDeviceForRemoteMessages();
       const token = await messaging().getToken();
-      console.log('Token', token);
       await saveDeviceId({ deviceId: token });
-
-      // post data into our server
     }
 
     onAppBoost();
