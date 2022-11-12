@@ -8,9 +8,10 @@ import { DIABUNITY_USER } from '@/Constants';
 import { userApi } from '@/Services/modules/users';
 
 import { rankingStyles } from './styles';
+import { Card } from 'react-native-paper';
 
 const Ranking = ({ user }: { user: FirebaseAuthTypes.User | null }) => {
-  const { Colors } = useTheme();
+  const { Colors, Layout } = useTheme();
   const { data, isFetching } = userApi.useFetchRankingQuery();
   const userPosition: number = data?.user_info?.position ?? -1;
   const userData =
@@ -128,7 +129,17 @@ const Ranking = ({ user }: { user: FirebaseAuthTypes.User | null }) => {
           </ScrollView>
         </>
       ) : (
-        <Text>No hay información disponible</Text>
+        <View style={[Layout.fill, Layout.colCenter]}>
+          <Card.Title
+            style={[Layout.colCenter]}
+            title="No hay informacion para mostrar"
+            subtitle="¡Comienza a medirte para participar del ranking!"
+            subtitleStyle={{
+              textAlign: 'center',
+              fontSize: 14,
+            }}
+          />
+        </View>
       )}
     </>
   );
