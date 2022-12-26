@@ -815,7 +815,7 @@ SPEC CHECKSUMS:
   RNFileViewer: ce7ca3ac370e18554d35d6355cffd7c30437c592
   RNGestureHandler: 62232ba8f562f7dea5ba1b3383494eb5bf97a4d3
   RNGoogleSignin: ec96ded826fcdca71ab5f58b1d086e969cabe67b
-  RNReanimated: 54cb0265322fe99f4f9f733991452fd7839f2c8e
+  RNReanimated: fd6d74898de7a12d69a6d5e9075a9c84f5cd396f
   RNScreens: 34cc502acf1b916c582c60003dc3089fa01dc66d
   RNSVG: ecd661f380a07ba690c9c5929c475a44f432d674
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import messaging from '@react-native-firebase/messaging';
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { SafeAreaView, StatusBar } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -29,17 +28,6 @@ export type NavigatorParams = {
 };
 
 const Stack = createStackNavigator<NavigatorParams>();
-
-async function onMessageReceived(message: any) {
-  return Promise.resolve();
-}
-
-async function onBackgroundMessageReceived(message: any) {
-  return Promise.resolve();
-}
-
-messaging().onMessage(onMessageReceived);
-messaging().setBackgroundMessageHandler(onBackgroundMessageReceived);
 
 // @refresh reset
 const ApplicationNavigator = () => {
@@ -93,26 +81,6 @@ const ApplicationNavigator = () => {
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber; // unsubscribe on unmount
-  }, []);
-
-  useEffect(() => {
-    async function onAppBoost() {
-      await messaging().registerDeviceForRemoteMessages();
-      const token = await messaging().getToken();
-      await saveDeviceId({ deviceId: token });
-    }
-
-    onAppBoost();
-  }, []);
-
-  useEffect(() => {
-    // Assume a message-notification contains a "type" property in the data payload of the screen to open
-    messaging().onNotificationOpenedApp(() => {});
-
-    // Check whether an initial notification is available
-    messaging()
-      .getInitialNotification()
-      .then(() => {});
   }, []);
 
   if (
