@@ -145,7 +145,6 @@ const NewPost = ({ setPage, setShouldRefetch }: PostProps) => {
               style={{ padding: 100 }}
               disabledCondition={!postContent}
               label="Publicar"
-              labelStyle={styles.button}
               noMarginBottom
               backgroundColor={Colors.red}
               onPress={publishPost}

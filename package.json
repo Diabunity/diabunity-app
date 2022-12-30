@@ -58,6 +58,7 @@
     "react-native-shimmer-placeholder": "^2.0.9",
     "react-native-slack-emoji": "git+ssh://git@github.com:diabunity/react-native-slack-emoji.git",
     "react-native-svg": "^12.4.0",
+    "react-native-text": "^1.2.2",
     "react-native-ui-lib": "^6.19.0",
     "react-native-vector-icons": "^9.2.0",
     "react-native-view-shot": "^3.4.0",

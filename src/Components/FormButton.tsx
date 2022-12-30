@@ -1,6 +1,7 @@
 import React from 'react';
-import { ImageProps, StyleSheet, TextStyle } from 'react-native';
+import { ImageProps, StyleSheet, TextStyle, Dimensions } from 'react-native';
 import DropShadow from 'react-native-drop-shadow';
+import { scaleText } from 'react-native-text';
 import { Button } from 'react-native-ui-lib';
 
 interface FormButtonProps {
@@ -37,15 +38,21 @@ const FormButton = ({
       borderRadius={4}
       labelStyle={{ ...styles.label, ...rest.labelStyle }}
       marginT-20
+      padding-28
       marginB-20={!noMarginBottom}
     />
   </DropShadow>
 );
 
+const fontStyles = scaleText({
+  deviceBaseWidth: Dimensions.get('window').width,
+  fontSize: 14,
+});
+
 const styles = StyleSheet.create({
   label: {
     letterSpacing: 1.25,
-    fontSize: 14,
+    ...fontStyles,
     fontWeight: '500',
   },
   dropShadow: {
