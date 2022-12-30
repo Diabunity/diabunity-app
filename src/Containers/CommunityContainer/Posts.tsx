@@ -150,9 +150,11 @@ const Posts = ({
     data: any,
     post: Post
   ) => {
-    const { emojis, id } = post;
-    const selectedEmoji = emojis.find((item) => item.name === emojiName);
+    const { id } = post;
     const currentEmojis = localEmojis[post.id];
+    const selectedEmoji = currentEmojis.find(
+      (item: { name: string }) => item.name === emojiName
+    );
     if (!selectedEmoji?.selected) {
       const savedEmoji = { emoji, name: emojiName, data };
       try {
@@ -182,9 +184,12 @@ const Posts = ({
 
   const updateEmoji = async (emoji: any, name: string, post: Post) => {
     if (isEmojiClicked.current) return;
-    const { emojis, id } = post;
-    const selectedEmoji = emojis.find((item) => item.name === name);
-    const currentEmojis = localEmojis[post.id];
+    const { id } = post;
+    const currentEmojis = localEmojis[id];
+    const selectedEmoji = currentEmojis.find(
+      (item: { name: string }) => item.name === name
+    );
+    if (!selectedEmoji) return;
     try {
       isEmojiClicked.current = true;
       const INDEX_VALUE = selectedEmoji?.selected ? -1 : 1;
