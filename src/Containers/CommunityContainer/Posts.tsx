@@ -11,7 +11,7 @@ import { Post, postApi } from '@/Services/modules/posts';
 import { setNotification } from '@/Store/Notification';
 import { store } from '@/Store';
 import { getNameInitials, getRelativeTime } from '@/Utils';
-import { DIABUNITY_USER, BRAND_NAME } from '@/Constants';
+import { DIABUNITY_USER, BRAND_NAME, emojiI18N } from '@/Constants';
 import Divider from '@/Components/Divider';
 
 import { styles } from './styles';
@@ -261,6 +261,7 @@ const Posts = ({
                         <ActivityIndicator size="small" color={Colors.black} />
                       ) : (
                         <Picker
+                          i18n={emojiI18N}
                           emojiList={post.emojis}
                           updateEmoji={(emoji: any, name: string) =>
                             updateEmoji(emoji, name, post)

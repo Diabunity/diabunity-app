@@ -17,6 +17,7 @@ import {
   PickerModes,
   ThemeManager,
   Colors,
+  Checkbox,
 } from 'react-native-ui-lib';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useTheme } from '@/Hooks';
@@ -26,6 +27,7 @@ import AuthService from '@/Services/modules/auth';
 import { styles, COLORS } from './styles';
 import { NavigatorParams } from '@/Navigators/Application';
 import SliderContainer from '@/Components/Slider';
+import { ExternalLink } from '@/Components';
 
 ThemeManager.setComponentTheme('Incubator.WheelPicker', () => {
   return {
@@ -56,15 +58,18 @@ const Dot = ({
 const Done = ({
   isLight,
   onPress,
+  acceptedTerms,
 }: {
   isLight: boolean;
   onPress: () => void;
+  acceptedTerms?: boolean;
 }) => (
-  <TouchableOpacity>
+  <TouchableOpacity disabled={!acceptedTerms}>
     <Text
-      onPress={onPress}
+      onPress={acceptedTerms ? onPress : undefined}
       style={{
         ...styles.done,
+        opacity: acceptedTerms ? 1 : 0.3,
         color: isLight ? 'rgba(0, 0, 0, 0.8)' : '#fff',
       }}
     >
@@ -90,6 +95,7 @@ const OnboardingContainer = ({ navigation: { navigate } }: Props) => {
   const [weight, setWeight] = useState<string>();
   const [height, setHeight] = useState<string>();
   const [type, setType] = useState<string>();
+  const [acceptedTerms, setAcceptedTerms] = useState<boolean>(false);
 
   const handleOnChange = (
     value: string,
@@ -114,7 +120,8 @@ const OnboardingContainer = ({ navigation: { navigate } }: Props) => {
       glucose_max: glucoseRange.max,
     };
 
-    await saveUser(user);
+    const a = await saveUser(user);
+    console.log(a);
   };
 
   const renderMask = (value: string, maskTick: string) => (
@@ -143,7 +150,7 @@ const OnboardingContainer = ({ navigation: { navigate } }: Props) => {
                 color={Colors.black}
               />
             )
-          : Done
+          : (props) => <Done {...props} acceptedTerms={acceptedTerms} />
       }
       DotComponent={Dot}
       containerStyles={styles.pageContainer}
@@ -261,15 +268,37 @@ const OnboardingContainer = ({ navigation: { navigate } }: Props) => {
           image: <Image source={Images.onboarding6} />,
           title: 'Rango de glucosa',
           subtitle: (
-            <SliderContainer
-              onValueChange={(value: number[]): void => {
-                const [min, max] = value;
-                setGlucoseRange({ min, max });
-              }}
-              sliderValue={[glucoseRange.min, glucoseRange.max]}
-            >
-              <Slider maximumValue={200} minimumValue={0} step={1} />
-            </SliderContainer>
+            <View style={[Layout.fill, Layout.colCenter]}>
+              <View style={{ marginBottom: 200 }}>
+                <SliderContainer
+                  onValueChange={(value: number[]): void => {
+                    const [min, max] = value;
+                    setGlucoseRange({ min, max });
+                  }}
+                  sliderValue={[glucoseRange.min, glucoseRange.max]}
+                >
+                  <Slider maximumValue={200} minimumValue={0} step={1} />
+                </SliderContainer>
+              </View>
+
+              <View style={[Layout.fill, Layout.justifyContent]}>
+                <View style={styles.checkboxContainer}>
+                  <Checkbox
+                    value={acceptedTerms}
+                    onValueChange={(value: boolean) => setAcceptedTerms(value)}
+                    color={Colors.red}
+                    style={styles.checkbox}
+                  />
+                  <Text style={styles.label}>He leído y acepto los</Text>
+                  <ExternalLink
+                    style={{ color: Colors.red }}
+                    url="https://diabunity.com/terminos-y-condiciones"
+                  >
+                    Términos y Condiciones
+                  </ExternalLink>
+                </View>
+              </View>
+            </View>
           ),
           titleStyles: styles.pageTitle,
           subTitleStyles: styles.pageSubtitle,
