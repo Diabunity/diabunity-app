@@ -120,8 +120,7 @@ const OnboardingContainer = ({ navigation: { navigate } }: Props) => {
       glucose_max: glucoseRange.max,
     };
 
-    const a = await saveUser(user);
-    console.log(a);
+    await saveUser(user);
   };
 
   const renderMask = (value: string, maskTick: string) => (
