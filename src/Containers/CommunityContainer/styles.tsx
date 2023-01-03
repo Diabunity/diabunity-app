@@ -1,9 +1,10 @@
+import { Colors } from '@/Theme/Variables';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   back: {
     marginTop: 5,
-    marginLeft: 0,
+    marginLeft: 15,
   },
   userName: {
     marginLeft: 10,
@@ -16,6 +17,10 @@ export const styles = StyleSheet.create({
   emojiContainer: {
     flex: 1,
     padding: 10,
+    paddingLeft: 0,
+  },
+  text: {
+    color: Colors.black,
   },
   commentBox: {
     marginTop: 15,
@@ -55,7 +60,7 @@ export const styles = StyleSheet.create({
     paddingLeft: 40,
   },
   input: {
-    width: 320,
+    width: 350,
     height: 45,
     position: 'relative',
     top: 7,
@@ -64,21 +69,20 @@ export const styles = StyleSheet.create({
     borderTopLeftRadius: 4,
   },
   postBox: {
-    height: 200,
+    height: 50,
   },
   button: {
     width: 80,
-    height: 20,
-    textAlign: 'center',
   },
   checkmark: {
     height: 25,
     width: 25,
+    position: 'relative',
+    top: 5,
   },
   postActions: {
     position: 'relative',
     bottom: 10,
-    right: 15,
   },
   imageContainer: {
     height: 100,

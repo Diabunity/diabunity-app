@@ -45,7 +45,7 @@ const ApplicationNavigator = () => {
     skip,
     refetchOnMountOrArgChange: true,
   });
-  const [saveDeviceId] = userApi.useSaveDeviceIdMutation();
+
   const [isLoading, setIsLoading] = useState(true);
   const { colors } = NavigationTheme;
 

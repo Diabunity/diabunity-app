@@ -45,7 +45,6 @@ export const styles = StyleSheet.create({
     fontWeight: '700',
   },
   googleButton: {
-    width: 277,
     margin: 0,
   },
 });

@@ -5,6 +5,7 @@ import { Picker } from 'react-native-slack-emoji/src';
 import DropShadow from 'react-native-drop-shadow';
 import { Card } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Feather';
+import { Config } from '@/Config';
 import AuthService from '@/Services/modules/auth';
 import { setNotification } from '@/Store/Notification';
 import { store } from '@/Store';
@@ -28,9 +29,7 @@ const Comments = ({ post }: CommentProps) => {
   });
   const [saveEmoji] = postApi.useSaveEmojiMutation();
   const [removeEmoji] = postApi.useRemoveEmojiMutation();
-  const [emojisLoading, setEmojisLoading] = useState<{
-    [key: string]: boolean;
-  }>({});
+  const [localEmojis, setLocalEmojis] = useState<any[]>(post?.emojis || []);
 
   const onSelect = async (
     emoji: any,
@@ -44,9 +43,16 @@ const Comments = ({ post }: CommentProps) => {
     if (!selectedEmoji?.selected) {
       const savedEmoji = { emoji, name: emojiName, data };
       try {
-        setEmojisLoading((prevState) => ({ ...prevState, [post.id]: true }));
+        const newEmojis = [
+          ...localEmojis,
+          {
+            ...savedEmoji,
+            index: 1,
+            selected: true,
+          },
+        ];
+        setLocalEmojis(newEmojis);
         await saveEmoji({ id, emoji: savedEmoji });
-        //refetchFn();
       } catch {
         store.dispatch(
           setNotification({
@@ -54,8 +60,6 @@ const Comments = ({ post }: CommentProps) => {
             message: 'Hubo un error al agregar la reacción. Intente nuevamente',
           })
         );
-      } finally {
-        setEmojisLoading((prevState) => ({ ...prevState, [post.id]: false }));
       }
     }
   };
@@ -65,14 +69,31 @@ const Comments = ({ post }: CommentProps) => {
     const { emojis, id } = post;
     const selectedEmoji = emojis.find((item) => item.name === name);
     try {
-      setEmojisLoading((prevState) => ({ ...prevState, [post.id]: true }));
+      const INDEX_VALUE = selectedEmoji?.selected ? -1 : 1;
+      const newEmojis = localEmojis
+        .map((emoji: { name: string; index: number; selected: boolean }) => {
+          const index =
+            emoji.name === selectedEmoji?.name
+              ? emoji.index + INDEX_VALUE
+              : emoji.index;
+          if (index === 0) return null;
+          return {
+            ...emoji,
+            index,
+            selected:
+              emoji.name === selectedEmoji?.name
+                ? !emoji.selected
+                : emoji.selected,
+          };
+        })
+        .filter(Boolean);
+      setLocalEmojis(newEmojis);
       if (selectedEmoji?.selected) {
         await removeEmoji({ id, name });
       } else {
         const savedEmoji = { emoji, name, data: selectedEmoji?.data };
         await saveEmoji({ id, emoji: savedEmoji });
       }
-      //refetchFn();
     } catch {
       store.dispatch(
         setNotification({
@@ -82,8 +103,6 @@ const Comments = ({ post }: CommentProps) => {
           } la reacción. Intente nuevamente`,
         })
       );
-    } finally {
-      setEmojisLoading((prevState) => ({ ...prevState, [post.id]: false }));
     }
   };
 
@@ -111,21 +130,23 @@ const Comments = ({ post }: CommentProps) => {
               >
                 {post?.username || DIABUNITY_USER}
                 {post?.username === BRAND_NAME && (
-                  <Image style={styles.checkmark} source={Images.checkmark} />
+                  <View>
+                    <Image style={styles.checkmark} source={Images.checkmark} />
+                  </View>
                 )}
               </Text>
             </View>
             <Text>{getRelativeTime(post?.timestamp ?? '')}</Text>
           </View>
           <View>
-            <Text>{post?.body}</Text>
+            <Text style={styles.text}>{post?.body}</Text>
             {post?.image && (
               <DropShadow
                 style={{ ...styles.dropShadow, shadowColor: Colors.dark }}
               >
                 <Image
                   source={{
-                    uri: `data:image/jpeg;base64,${post.image}`,
+                    uri: `${Config.S3_URL}${post.image}`,
                   }}
                   style={styles.imageFeed}
                 />
@@ -138,21 +159,17 @@ const Comments = ({ post }: CommentProps) => {
               backgroundColor: Colors.white,
             }}
           >
-            {emojisLoading[post?.id || 0] ? (
-              <ActivityIndicator size="small" color={Colors.black} />
-            ) : (
-              <Picker
-                hideSelector
-                i18n={emojiI18N}
-                emojiList={post?.emojis}
-                updateEmoji={(emoji: any, name: string) =>
-                  updateEmoji(emoji, name, post)
-                }
-                onSelect={(emoji: any, emojiName: string, data: any) =>
-                  onSelect(emoji, emojiName, data, post)
-                }
-              />
-            )}
+            <Picker
+              i18n={emojiI18N}
+              hideSelector
+              emojiList={localEmojis}
+              updateEmoji={(emoji: any, name: string) =>
+                updateEmoji(emoji, name, post)
+              }
+              onSelect={(emoji: any, emojiName: string, data: any) =>
+                onSelect(emoji, emojiName, data, post)
+              }
+            />
           </View>
           <Divider customStyles={{ borderBottomColor: Colors.darkGray }} />
           <View
@@ -163,8 +180,10 @@ const Comments = ({ post }: CommentProps) => {
             ]}
           >
             <View style={[Layout.rowCenter, styles.actionableItem]}>
-              <Icon name="message-square" size={30} />
-              <Text style={{ marginLeft: 5 }}>{post?.qty_comments}</Text>
+              <Icon color={Colors.black} name="message-square" size={30} />
+              <Text style={{ marginLeft: 5, ...styles.text }}>
+                {post?.qty_comments}
+              </Text>
             </View>
             <View style={[Layout.rowCenter, styles.actionableItem]}>
               <Icon
@@ -176,7 +195,7 @@ const Comments = ({ post }: CommentProps) => {
                     : Colors.black
                 }
               />
-              <Text style={{ marginLeft: 5 }}>
+              <Text style={{ marginLeft: 5, ...styles.text }}>
                 {post?.users_favorites.length}
               </Text>
             </View>
@@ -194,7 +213,7 @@ const Comments = ({ post }: CommentProps) => {
           <View style={[Layout.fill, Layout.colCenter]}>
             <Card.Title
               style={[Layout.colCenter]}
-              title="No hay informacion para mostrar"
+              title=""
               subtitle="No se han encontrado comentarios"
               subtitleStyle={styles.card}
             />
@@ -234,10 +253,12 @@ const Comments = ({ post }: CommentProps) => {
                         >
                           {post.username || DIABUNITY_USER}
                           {post.username === BRAND_NAME && (
-                            <Image
-                              style={styles.checkmark}
-                              source={Images.checkmark}
-                            />
+                            <View>
+                              <Image
+                                style={styles.checkmark}
+                                source={Images.checkmark}
+                              />
+                            </View>
                           )}
                         </Text>
                       </View>
