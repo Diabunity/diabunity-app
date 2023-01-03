@@ -6718,7 +6718,7 @@ react-native-shimmer-placeholder@^2.0.9:
 
 "react-native-slack-emoji@git+ssh://git@github.com:diabunity/react-native-slack-emoji.git":
   version "0.0.1"
-  resolved "git+ssh://git@github.com:diabunity/react-native-slack-emoji.git#045b9aa5efcb7cd7c5eb1a6fdf712605f4d14538"
+  resolved "git+ssh://git@github.com:diabunity/react-native-slack-emoji.git#3f142a2577433323d8a8553526bca6e99855df7d"
   dependencies:
     "@react-native-async-storage/async-storage" "^1.17.10"
 

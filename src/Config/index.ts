@@ -1,3 +1,3 @@
 export const Config = {
-  API_URL: 'https://app-diabunity.herokuapp.com/',
+  API_URL: 'http://diabunity-env.eba-mszbpqrm.us-east-1.elasticbeanstalk.com/',
 };
