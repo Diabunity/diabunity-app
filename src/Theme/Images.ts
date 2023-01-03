@@ -19,5 +19,6 @@ export default function ({}: ThemeVariables): ThemeImages {
     onboarding6: require('@/Assets/Images/onboarding-6.png'),
     checkmark: require('@/Assets/Images/checkmark.png'),
     addDrop: require('@/Assets/Images/add-drop.png'),
+    cafecitoLogo: require('@/Assets/Images/cafecito-logo.png'),
   };
 }

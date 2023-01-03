@@ -26,6 +26,7 @@ export const Colors: ThemeColors = {
   gray: 'rgba(0, 0, 0, 0.12)',
   darkGray: '#666',
   red: '#C1272D',
+  purple: '#8FA2CC',
   text: '#212529',
   primary: '#C1272D',
   success: '#28a745',
