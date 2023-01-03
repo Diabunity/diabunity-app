@@ -89,7 +89,7 @@ const CommunityContainer = ({
       case PageSection.NEW_POST:
         return (
           <Icon
-            style={{ marginLeft: 5 }}
+            style={{ marginLeft: 20 }}
             onPress={() => {
               setShouldRefetch(false);
               setPage(PageSection.POSTS);
@@ -125,6 +125,7 @@ const CommunityContainer = ({
               navigate('Profile', { section: ProfileSection.RANKING })
             }
             name="award"
+            color={Colors.black}
             size={30}
           />
         </View>

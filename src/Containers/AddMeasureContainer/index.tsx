@@ -222,29 +222,34 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
             <View style={styles.text}>
               <Text>Fecha</Text>
             </View>
-            <DateTimePicker
-              migrateTextField
-              underlineColor="transparent"
-              underlineColorAndroid="transparent"
-              style={styles.input}
-              onChange={(date: Date): void => setDate(date)}
-              value={date}
-              mode="date"
-            />
+            <View style={{ marginBottom: 20 }}>
+              <DateTimePicker
+                migrateTextField
+                underlineColor="transparent"
+                underlineColorAndroid="transparent"
+                style={styles.input}
+                onChange={(date: Date): void => setDate(date)}
+                value={date}
+                mode="date"
+              />
+            </View>
+
             <View style={styles.text}>
               <Text>Hora</Text>
             </View>
-            <DateTimePicker
-              migrateTextField
-              underlineColor="transparent"
-              underlineColorAndroid="transparent"
-              style={styles.input}
-              onChange={(time: Date): void => setTime(time)}
-              value={time}
-              is24Hour
-              timeFormat="HH:mm"
-              mode="time"
-            />
+            <View style={{ marginBottom: 20 }}>
+              <DateTimePicker
+                migrateTextField
+                underlineColor="transparent"
+                underlineColorAndroid="transparent"
+                style={styles.input}
+                onChange={(time: Date): void => setTime(time)}
+                value={time}
+                is24Hour
+                timeFormat="HH:mm"
+                mode="time"
+              />
+            </View>
             <View style={styles.text}>
               <Text>Observaciones</Text>
             </View>

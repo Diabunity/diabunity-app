@@ -12,6 +12,7 @@ interface FormButtonProps {
   labelStyle?: TextStyle;
   icon?: ImageProps['source'] | Function;
   activeOpacity?: number;
+  style?: any;
 }
 
 const FormButton = ({
@@ -25,6 +26,7 @@ const FormButton = ({
 }: FormButtonProps) => (
   <DropShadow style={styles.dropShadow}>
     <Button
+      style={rest.style}
       label={label.toUpperCase()}
       disabled={disabledCondition ?? false}
       onPress={onPress}

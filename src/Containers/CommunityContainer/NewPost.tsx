@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, View } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { Avatar, Incubator, Text, TextField } from 'react-native-ui-lib';
+import { Image as ImageLib } from 'react-native-compressor';
 import Icon from 'react-native-vector-icons/Feather';
 import useTheme from '@/Hooks/useTheme';
 import FormButton from '@/Components/FormButton';
@@ -51,23 +52,21 @@ const NewPost = ({ setPage, setShouldRefetch }: PostProps) => {
     }
   }, [isSuccess, isError]);
 
-  const handleCamera = async () => {
-    const { assets } = await launchCamera({
+  const handleImage = async (type: string = 'gallery') => {
+    const imageFn = type === 'gallery' ? launchImageLibrary : launchCamera;
+    let base64;
+    const { assets } = await imageFn({
       mediaType: 'photo',
-      includeBase64: true,
       quality: 0.3,
     });
-    setImage({ fileName: assets?.[0].fileName, base64: assets?.[0].base64 });
-  };
+    if (assets?.[0].uri) {
+      base64 = await ImageLib.compress(assets?.[0].uri, {
+        compressionMethod: 'auto',
+        returnableOutputType: 'base64',
+      });
+    }
 
-  const handleGallery = async () => {
-    const { assets } = await launchImageLibrary({
-      mediaType: 'photo',
-      includeBase64: true,
-      quality: 0.3,
-    });
-
-    setImage({ fileName: assets?.[0].fileName, base64: assets?.[0].base64 });
+    setImage({ fileName: assets?.[0].fileName, base64 });
   };
 
   const publishPost = async () => {
@@ -97,7 +96,9 @@ const NewPost = ({ setPage, setShouldRefetch }: PostProps) => {
           >
             {user?.displayName || DIABUNITY_USER}
             {user?.displayName === BRAND_NAME && (
-              <Image style={styles.checkmark} source={Images.checkmark} />
+              <View>
+                <Image style={styles.checkmark} source={Images.checkmark} />
+              </View>
             )}
           </Text>
         </View>
@@ -124,21 +125,24 @@ const NewPost = ({ setPage, setShouldRefetch }: PostProps) => {
             />
           </View>
         )}
-        <Divider
-          customStyles={{ width: '95%', borderBottomColor: Colors.darkGray }}
-        />
+        <Divider customStyles={{ borderBottomColor: Colors.darkGray }} />
         <View style={[Layout.row, Layout.justifyContentBetween]}>
           <View style={[Layout.fill, Layout.row, Layout.alignItemsCenter]}>
             <Icon
               style={{ marginRight: 20 }}
               name="camera"
               size={30}
-              onPress={handleCamera}
+              onPress={() => handleImage('camera')}
             />
-            <Icon name="image" size={30} onPress={handleGallery} />
+            <Icon
+              name="image"
+              size={30}
+              onPress={() => handleImage('gallery')}
+            />
           </View>
           <View style={styles.postActions}>
             <FormButton
+              style={{ padding: 100 }}
               disabledCondition={!postContent}
               label="Publicar"
               labelStyle={styles.button}

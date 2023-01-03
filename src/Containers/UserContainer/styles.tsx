@@ -76,6 +76,7 @@ export const styles = StyleSheet.create({
     color: Colors.white,
     fontSize: 16,
     marginLeft: 10,
+    fontWeight: '600',
   },
   slider: {
     width: 277,

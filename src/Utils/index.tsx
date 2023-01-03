@@ -206,44 +206,44 @@ export const getRelativeTime = (timestamp: string) => {
   // If there are years
   if (time > DAY_TO_SECONDS * YEAR) {
     (humanTime = time / (DAY_TO_SECONDS * YEAR)), 10;
-    units = humanTime >= 2 ? 'años' : 'año';
+    units = Math.round(humanTime) >= 2 ? 'años' : 'año';
   }
 
   // If there are months
   else if (time > DAY_TO_SECONDS * MONTH) {
     humanTime = time / (DAY_TO_SECONDS * MONTH);
-    units = humanTime >= 2 ? 'meses' : 'mes';
+    units = Math.round(humanTime) >= 2 ? 'meses' : 'mes';
   }
 
   // If there are weeks
   else if (time > DAY_TO_SECONDS * WEEK) {
     humanTime = time / (DAY_TO_SECONDS * WEEK);
-    units = humanTime >= 2 ? 'semanas' : 'semana';
+    units = 'sem';
   }
 
   // If there are days
   else if (time > DAY_TO_SECONDS) {
     humanTime = time / DAY_TO_SECONDS;
-    units = humanTime >= 2 ? 'dias' : 'dia';
+    units = Math.round(humanTime) >= 2 ? 'dias' : 'dia';
   }
 
   // If there are hours
   else if (time > SECOND * MINUTE * HOUR) {
     humanTime = time / (SECOND * MINUTE * HOUR);
-    units = humanTime >= 2 ? 'horas' : 'hora';
+    units = 'h';
   }
 
   // If there are minutes
   else if (time > SECOND * MINUTE) {
     humanTime = time / (SECOND * MINUTE);
-    units = humanTime >= 2 ? 'minutos' : 'minuto';
+    units = 'm';
   }
 
   // Otherwise, use seconds
   else {
     humanTime = time / SECOND;
-    units = humanTime >= 2 ? 'segundos' : 'segundo';
+    units = 's';
   }
 
-  return `hace ${humanTime.toFixed(0)} ${units}`;
+  return `${humanTime.toFixed(0)} ${units}`;
 };

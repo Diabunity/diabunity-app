@@ -2,25 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>UIAppFonts</key>
-	<array>
-		<string>AntDesign.ttf</string>
-		<string>Entypo.ttf</string>
-		<string>EvilIcons.ttf</string>
-		<string>Feather.ttf</string>
-		<string>FontAwesome.ttf</string>
-		<string>FontAwesome5_Brands.ttf</string>
-		<string>FontAwesome5_Regular.ttf</string>
-		<string>FontAwesome5_Solid.ttf</string>
-		<string>Foundation.ttf</string>
-		<string>Ionicons.ttf</string>
-		<string>MaterialIcons.ttf</string>
-		<string>MaterialCommunityIcons.ttf</string>
-		<string>SimpleLineIcons.ttf</string>
-		<string>Octicons.ttf</string>
-		<string>Zocial.ttf</string>
-		<string>Fontisto.ttf</string>
-	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -58,8 +39,6 @@
 			</array>
 		</dict>
 	</array>
-	<key>UIUserInterfaceStyle</key>
-    <string>Light</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -67,9 +46,33 @@
 	<key>NFCReaderUsageDescription</key>
 	<string>We need to use NFC</string>
 	<key>NSAppTransportSecurity</key>
-	<dict/>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>NSCameraUsageDescription</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>AntDesign.ttf</string>
+		<string>Entypo.ttf</string>
+		<string>EvilIcons.ttf</string>
+		<string>Feather.ttf</string>
+		<string>FontAwesome.ttf</string>
+		<string>FontAwesome5_Brands.ttf</string>
+		<string>FontAwesome5_Regular.ttf</string>
+		<string>FontAwesome5_Solid.ttf</string>
+		<string>Foundation.ttf</string>
+		<string>Ionicons.ttf</string>
+		<string>MaterialIcons.ttf</string>
+		<string>MaterialCommunityIcons.ttf</string>
+		<string>SimpleLineIcons.ttf</string>
+		<string>Octicons.ttf</string>
+		<string>Zocial.ttf</string>
+		<string>Fontisto.ttf</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
@@ -82,6 +85,8 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>UIUserInterfaceStyle</key>
+	<string>Light</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>com.apple.developer.nfc.readersession.iso7816.select-identifiers</key>
@@ -89,7 +94,5 @@
 		<string>D2760000850100</string>
 		<string>D2760000850101</string>
 	</array>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<key>NSCameraUsageDescription</key>
 </dict>
 </plist>
