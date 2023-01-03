@@ -1,5 +1,6 @@
+import { Dimensions, StyleSheet, ViewStyle } from 'react-native';
+import { scaleText } from 'react-native-text';
 import { ThemeColors } from '@/Theme/theme.type';
-import { StyleSheet, ViewStyle } from 'react-native';
 
 const generateRow = (colors: ThemeColors) =>
   ({
@@ -90,13 +91,13 @@ export const headerStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    height: 32,
     marginTop: 15,
     borderRadius: 3,
     borderWidth: 0.5,
     dropShadow,
   },
-  font: {
+  font: scaleText({
+    deviceBaseWidth: Dimensions.get('window').width,
     fontSize: 16,
-  },
+  }),
 });

@@ -1,11 +1,13 @@
 import React from 'react';
 import { View } from 'react-native-ui-lib';
-import { useTheme } from '@/Hooks';
-import { DatePeriod, getDatePeriod } from '@/Utils';
 import DatePicker from 'react-native-date-ranges';
 import moment from 'moment';
-
+import 'moment/locale/es';
+import { useTheme } from '@/Hooks';
+import { DatePeriod, getDatePeriod } from '@/Utils';
 import { headerStyles as styles } from './styles';
+
+moment.locale('es');
 
 export default ({ onDateChange }: { onDateChange: Function }) => {
   const { Colors } = useTheme();
@@ -26,14 +28,14 @@ export default ({ onDateChange }: { onDateChange: Function }) => {
       }}
     >
       <DatePicker
-        style={{ height: 32, borderWidth: 0 }}
+        style={{ borderWidth: 0 }}
         customStyles={{
           placeholderText: styles.font,
           headerStyle: { backgroundColor: Colors.red },
           headerDateTitle: styles.font,
           contentText: styles.font,
         }}
-        placeholder={`${placeHolder.startDate} → ${placeHolder.endDate}`}
+        placeholder={`${placeHolder.startDate} \u27a9 ${placeHolder.endDate}`}
         outFormat={dateFormat}
         headFormat={dateFormat}
         selectedBgColor={Colors.red}
