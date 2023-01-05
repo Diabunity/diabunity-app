@@ -133,9 +133,9 @@ const Ranking = ({ user }: { user: FirebaseAuthTypes.User | null }) => {
           <Card.Title
             style={[Layout.colCenter]}
             title="No hay informacion para mostrar"
+            titleStyle={{ textAlign: 'center' }}
             subtitle="¡Comienza a medirte para participar del ranking!"
             subtitleStyle={{
-              textAlign: 'center',
               fontSize: 14,
             }}
           />
