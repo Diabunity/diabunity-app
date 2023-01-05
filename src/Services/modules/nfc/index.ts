@@ -126,7 +126,7 @@ export class NFCReader {
           const FIVE_SECONDS = 5000;
           if (new Date().getTime() > time + FIVE_SECONDS) {
             this.handleException(
-              `Timeout: took more than 5 seconds to read nfctag - ${ex}`
+              'No se pudo leer el parche. Intente nuevamente'
             );
             return null;
           }
@@ -145,13 +145,13 @@ export class NFCReader {
     if (ex instanceof NfcError.UserCancel) {
       // bypass
     } else if (ex instanceof NfcError.Timeout) {
-      Alert.alert('NFC Session Timeout');
+      Alert.alert('No se pudo leer el parche. Intente nuevamente');
     } else {
       console.warn(ex);
       if (Platform.OS === 'ios') {
         NfcManager.invalidateSessionWithErrorIOS(`${ex}`);
       } else {
-        Alert.alert('NFC Error', `${ex}`);
+        Alert.alert('Error al leer el parche:', `${ex}`);
       }
     }
   };
