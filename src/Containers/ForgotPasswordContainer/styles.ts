@@ -20,4 +20,8 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(0, 0, 0, 0.42)',
   },
+  loading: {
+    fontSize: 16,
+    marginTop: 10,
+  },
 });
