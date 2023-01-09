@@ -3,10 +3,11 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
+    "android": "npm run copyAssets && react-native run-android",
     "ios": "react-native run-ios --simulator='iPhone 14'",
     "start": "react-native start",
     "devtools": "react-devtools",
+    "copyAssets": "node -e \"fs.copyFileSync('./src/Assets/Templates/mp_integration.html','./android/app/src/main/assets/mp_integration.html')\"",
     "create-appicon": "iconset create src/Assets/Images/app-icon.png",
     "test": "jest",
     "lint": "eslint .",
@@ -62,6 +63,7 @@
     "react-native-ui-lib": "^6.19.0",
     "react-native-vector-icons": "^9.2.0",
     "react-native-view-shot": "^3.4.0",
+    "react-native-webview": "^11.26.0",
     "react-redux": "^8.0.1",
     "redux-flipper": "^2.0.1",
     "redux-persist": "^6.0.0"

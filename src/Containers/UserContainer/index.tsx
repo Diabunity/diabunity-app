@@ -156,7 +156,7 @@ const UserContainer = ({ route, navigation }: Props) => {
                 <Icon name="award" size={24} color={styles.icon.color} />
                 <Text style={{ ...styles.text, marginLeft: 12 }}>Ranking</Text>
               </ListItem>
-              {/*<ListItem
+              <ListItem
                 onPress={() => setPage(PageSection.SETTINGS)}
                 style={[Layout.rowCenter]}
               >
@@ -164,7 +164,7 @@ const UserContainer = ({ route, navigation }: Props) => {
                 <Text style={{ ...styles.text, marginLeft: 12 }}>
                   Configuración
                 </Text>
-              </ListItem>*/}
+              </ListItem>
               <ListItem style={[Layout.rowCenter]} onPress={onShare}>
                 <Icon name="share-2" size={24} color={styles.icon.color} />
                 <Text style={{ ...styles.text, marginLeft: 12 }}>
