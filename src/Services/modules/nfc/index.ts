@@ -1,3 +1,4 @@
+import crashlytics from '@react-native-firebase/crashlytics';
 import { arraycopy, hexToBytes, uncomplement } from '@/Utils';
 import { Alert, Platform } from 'react-native';
 import LibreManagerTool from 'react-native-libre-manager/src';
@@ -145,8 +146,10 @@ export class NFCReader {
     if (ex instanceof NfcError.UserCancel) {
       // bypass
     } else if (ex instanceof NfcError.Timeout) {
+      crashlytics().recordError(ex);
       Alert.alert('No se pudo leer el parche. Intente nuevamente');
     } else {
+      crashlytics().recordError(ex);
       console.warn(ex);
       if (Platform.OS === 'ios') {
         NfcManager.invalidateSessionWithErrorIOS(`${ex}`);
