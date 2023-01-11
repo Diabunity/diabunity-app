@@ -29,6 +29,7 @@ export default ({ onDateChange }: { onDateChange: Function }) => {
     >
       <DatePicker
         style={{ borderWidth: 0 }}
+        dateSplitter={'\u27a9'}
         customStyles={{
           placeholderText: styles.font,
           headerStyle: { backgroundColor: Colors.red },

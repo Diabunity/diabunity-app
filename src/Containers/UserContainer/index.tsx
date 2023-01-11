@@ -38,7 +38,7 @@ type Props = NativeStackScreenProps<NavigatorParams> & {
 };
 
 const UserContainer = ({ route, navigation }: Props) => {
-  const { setParams } = navigation;
+  const { setParams, navigate } = navigation;
   const user = AuthService.getCurrentUser();
   const { section } = route?.params || { section: undefined };
   const isFocused = useIsFocused();
@@ -156,15 +156,15 @@ const UserContainer = ({ route, navigation }: Props) => {
                 <Icon name="award" size={24} color={styles.icon.color} />
                 <Text style={{ ...styles.text, marginLeft: 12 }}>Ranking</Text>
               </ListItem>
-              {/*<ListItem
-                onPress={() => setPage(PageSection.SETTINGS)}
+              <ListItem
+                onPress={() => navigate('WithoutPremium')}
                 style={[Layout.rowCenter]}
               >
-                <Icon name="settings" size={24} color={styles.icon.color} />
+                <Icon name="lock" size={24} color={styles.icon.color} />
                 <Text style={{ ...styles.text, marginLeft: 12 }}>
-                  Configuración
+                  Diabunity<Text style={{ fontWeight: '800' }}>PRO</Text>
                 </Text>
-              </ListItem>*/}
+              </ListItem>
               <ListItem style={[Layout.rowCenter]} onPress={onShare}>
                 <Icon name="share-2" size={24} color={styles.icon.color} />
                 <Text style={{ ...styles.text, marginLeft: 12 }}>

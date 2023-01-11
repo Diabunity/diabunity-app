@@ -1,8 +1,16 @@
 import React from 'react';
-import { ImageProps, StyleSheet, TextStyle, Dimensions } from 'react-native';
+import {
+  ImageProps,
+  StyleSheet,
+  TextStyle,
+  Dimensions,
+  Text,
+  View,
+} from 'react-native';
 import DropShadow from 'react-native-drop-shadow';
 import { scaleText } from 'react-native-text';
 import { Button } from 'react-native-ui-lib';
+import { Colors } from '@/Theme/Variables';
 
 interface FormButtonProps {
   label: string;
@@ -14,6 +22,8 @@ interface FormButtonProps {
   icon?: ImageProps['source'] | Function;
   activeOpacity?: number;
   style?: any;
+  centered?: boolean;
+  isProFeature?: boolean;
 }
 
 const FormButton = ({
@@ -25,22 +35,38 @@ const FormButton = ({
   backgroundColor = '#000', // TODO: This default color must be extracted from the theme or an upper scope
   ...rest
 }: FormButtonProps) => (
-  <DropShadow style={styles.dropShadow}>
-    <Button
-      style={rest.style}
-      label={label.toUpperCase()}
-      disabled={disabledCondition ?? false}
-      onPress={onPress}
-      iconSource={icon}
-      activeOpacity={rest.activeOpacity ?? 0.5}
-      backgroundColor={backgroundColor}
-      color="#fff"
-      borderRadius={4}
-      labelStyle={{ ...styles.label, ...rest.labelStyle }}
-      marginT-20
-      padding-28
-      marginB-20={!noMarginBottom}
-    />
+  <DropShadow
+    style={
+      rest.centered
+        ? {
+            ...styles.dropShadow,
+            alignItems: 'center',
+          }
+        : styles.dropShadow
+    }
+  >
+    <View>
+      {rest.isProFeature && (
+        <View style={styles.pro}>
+          <Text style={styles.proText}>PRO</Text>
+        </View>
+      )}
+      <Button
+        style={rest.style}
+        label={label.toUpperCase()}
+        disabled={disabledCondition ?? false}
+        onPress={onPress}
+        iconSource={icon}
+        activeOpacity={rest.activeOpacity ?? 0.5}
+        backgroundColor={backgroundColor}
+        color="#fff"
+        borderRadius={4}
+        labelStyle={{ ...styles.label, ...rest.labelStyle }}
+        marginT-20
+        padding-28
+        marginB-20={!noMarginBottom}
+      />
+    </View>
   </DropShadow>
 );
 
@@ -64,6 +90,21 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+  },
+  pro: {
+    position: 'absolute',
+    right: -15,
+    top: 7,
+    padding: 5,
+    paddingHorizontal: 7,
+    zIndex: 1,
+    backgroundColor: Colors.yellow,
+    borderRadius: 4,
+  },
+  proText: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: Colors.black,
   },
 });
 

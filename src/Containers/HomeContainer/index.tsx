@@ -136,6 +136,7 @@ const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
                   data={data}
                   name={user?.displayName}
                   user={userData}
+                  navigate={navigate}
                   sensorLife={sensorLife}
                 />
                 <Tips />

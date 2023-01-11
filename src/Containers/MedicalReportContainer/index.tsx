@@ -33,12 +33,14 @@ import { styles } from './styles';
 import { store } from '@/Store';
 import { setNotification } from '@/Store/Notification';
 import { Incubator } from 'react-native-ui-lib';
+import { navigate } from '@/Navigators/utils';
 
 type Props = {
   data?: Measurements;
   user?: User;
   name?: string | null;
   sensorLife?: number;
+  navigate: (route: string) => void;
 };
 const MedicalReportContainer = ({ data, user, name, sensorLife }: Props) => {
   const { Colors } = useTheme();
@@ -68,6 +70,11 @@ const MedicalReportContainer = ({ data, user, name, sensorLife }: Props) => {
   const tableRef = useRef<any>();
 
   const handleCapture = async () => {
+    const isUserPremium = false; // TODO: We have to make a backend call to check this.
+    if (!isUserPremium) {
+      navigate('WithoutPremium');
+      return;
+    }
     setLoading(true);
     await lastDayRef.current.capture();
     await periodRef.current.capture();
@@ -188,13 +195,17 @@ const MedicalReportContainer = ({ data, user, name, sensorLife }: Props) => {
             .build()}
         />
       </ViewShot>
-      <FormButton
-        label="Generar reporte médico"
-        onPress={handleCapture}
-        noMarginBottom
-        disabledCondition={loading}
-        backgroundColor={Colors.red}
-      />
+      <View style={{ marginTop: 10 }}>
+        <FormButton
+          label="Generar reporte médico"
+          onPress={handleCapture}
+          isProFeature
+          centered
+          noMarginBottom
+          disabledCondition={loading}
+          backgroundColor={Colors.red}
+        />
+      </View>
       {loading && (
         <ActivityIndicator
           style={styles.done}

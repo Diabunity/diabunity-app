@@ -20,5 +20,7 @@ export default function ({}: ThemeVariables): ThemeImages {
     checkmark: require('@/Assets/Images/checkmark.png'),
     addDrop: require('@/Assets/Images/add-drop.png'),
     cafecitoLogo: require('@/Assets/Images/cafecito-logo.png'),
+    diabunityPro: require('@/Assets/Images/diabunity-pro.png'),
+    proBackground: require('@/Assets/Images/pro-background.jpeg'),
   };
 }
