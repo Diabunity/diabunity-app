@@ -44,7 +44,7 @@ const NewPost = ({ setPage, setShouldRefetch }: PostProps) => {
       setShouldRefetch(false);
       setPage(PageSection.POSTS);
     } else if (isError) {
-      crashlytics().recordError(error);
+      crashlytics().recordError(error, 'Error trying to saving a post');
       store.dispatch(
         setNotification({
           preset: Incubator.ToastPresets.FAILURE,

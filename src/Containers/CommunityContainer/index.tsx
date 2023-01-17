@@ -179,7 +179,7 @@ const CommunitySection = ({
       setSelectedPost(undefined);
     }
     if (isError) {
-      crashlytics().recordError(error);
+      crashlytics().recordError(error, 'Error saving post');
       store.dispatch(
         setNotification({
           preset: Incubator.ToastPresets.FAILURE,

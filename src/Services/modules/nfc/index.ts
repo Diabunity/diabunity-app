@@ -146,10 +146,10 @@ export class NFCReader {
     if (ex instanceof NfcError.UserCancel) {
       // bypass
     } else if (ex instanceof NfcError.Timeout) {
-      crashlytics().recordError(ex);
+      crashlytics().recordError(ex, 'Timeout trying to readout');
       Alert.alert('No se pudo leer el parche. Intente nuevamente');
     } else {
-      crashlytics().recordError(ex);
+      crashlytics().recordError(ex, 'Error trying to readout');
       console.warn(ex);
       if (Platform.OS === 'ios') {
         NfcManager.invalidateSessionWithErrorIOS(`${ex}`);
