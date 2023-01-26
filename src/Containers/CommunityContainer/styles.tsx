@@ -40,8 +40,7 @@ export const styles = StyleSheet.create({
     marginTop: 10,
   },
   bottomView: {
-    width: '98%',
-    height: 70,
+    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
@@ -79,6 +78,7 @@ export const styles = StyleSheet.create({
     width: 25,
     position: 'relative',
     top: 5,
+    left: 5,
   },
   postActions: {
     position: 'relative',
@@ -104,7 +104,11 @@ export const styles = StyleSheet.create({
   },
   textIcon: {
     position: 'absolute',
-    right: '12%',
+    right: '7%',
+  },
+  commentLoadingIcon: {
+    position: 'absolute',
+    right: '15%',
   },
   done: {
     fontSize: 20,

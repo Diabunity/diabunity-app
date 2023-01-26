@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Avatar, SkeletonView, Incubator } from 'react-native-ui-lib';
-import { ActivityIndicator, Image, Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 import { Picker } from 'react-native-slack-emoji/src';
 import DropShadow from 'react-native-drop-shadow';
 import { Card } from 'react-native-paper';
@@ -119,7 +119,10 @@ const Comments = ({ post }: CommentProps) => {
                 animate
                 labelColor={Colors.white}
                 backgroundColor={Colors.red}
-                label={getNameInitials(post?.username || DIABUNITY_USER)}
+                source={{ uri: post?.user_info?.image_path }}
+                label={getNameInitials(
+                  post?.user_info?.display_name || DIABUNITY_USER
+                )}
               />
               <Text
                 style={[
@@ -128,8 +131,8 @@ const Comments = ({ post }: CommentProps) => {
                   { color: Colors.red },
                 ]}
               >
-                {post?.username || DIABUNITY_USER}
-                {post?.username === BRAND_NAME && (
+                {post?.user_info?.display_name || DIABUNITY_USER}
+                {post?.user_info?.verified && (
                   <View>
                     <Image style={styles.checkmark} source={Images.checkmark} />
                   </View>
@@ -240,8 +243,9 @@ const Comments = ({ post }: CommentProps) => {
                           animate
                           labelColor={Colors.white}
                           backgroundColor={Colors.red}
+                          source={{ uri: post.user_info?.image_path }}
                           label={getNameInitials(
-                            post.username || DIABUNITY_USER
+                            post.user_info?.display_name || DIABUNITY_USER
                           )}
                         />
                         <Text
@@ -251,8 +255,8 @@ const Comments = ({ post }: CommentProps) => {
                             { color: Colors.red },
                           ]}
                         >
-                          {post.username || DIABUNITY_USER}
-                          {post.username === BRAND_NAME && (
+                          {post.user_info?.display_name || DIABUNITY_USER}
+                          {post.user_info?.verified && (
                             <View>
                               <Image
                                 style={styles.checkmark}

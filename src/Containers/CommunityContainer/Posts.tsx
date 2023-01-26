@@ -272,8 +272,9 @@ const Posts = ({
                           animate
                           labelColor={Colors.white}
                           backgroundColor={Colors.red}
+                          source={{ uri: post.user_info?.image_path }}
                           label={getNameInitials(
-                            post.username || DIABUNITY_USER
+                            post.user_info.display_name || DIABUNITY_USER
                           )}
                         />
                         <Text
@@ -283,8 +284,8 @@ const Posts = ({
                             { color: Colors.red },
                           ]}
                         >
-                          {post.username || DIABUNITY_USER}
-                          {post.username === BRAND_NAME && (
+                          {post.user_info.display_name || DIABUNITY_USER}
+                          {post.user_info.verified && (
                             <View>
                               <Image
                                 style={styles.checkmark}

@@ -72,6 +72,7 @@ export type User = {
   height: number;
   glucose_min: number;
   glucose_max: number;
+  verified: boolean;
 };
 
 export type Measurements = {

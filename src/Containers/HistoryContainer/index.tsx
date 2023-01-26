@@ -61,6 +61,7 @@ const HistoryContainer = ({ navigation: { navigate } }: Props) => {
     const from = moment(dateRange.from);
     const to = moment(dateRange.to);
     const diffDays = to.diff(from, 'days');
+    // This is the limit of days to show. It should come from the backend
     if (diffDays > 7) {
       setUnmounted(true);
       navigate('WithoutPremium');

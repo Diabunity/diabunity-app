@@ -64,7 +64,7 @@ const WithoutPremiumContainer = ({
       <View style={[Layout.fill, { marginHorizontal: 20 }]}>
         <FormButton
           label="Muy pronto"
-          onPress={console.log}
+          onPress={() => undefined}
           noMarginBottom
           disabledCondition={true}
           backgroundColor={Colors.red}

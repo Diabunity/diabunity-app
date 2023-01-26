@@ -40,6 +40,9 @@ type Props = NativeStackScreenProps<NavigatorParams> & {
 const UserContainer = ({ route, navigation }: Props) => {
   const { setParams, navigate } = navigation;
   const user = AuthService.getCurrentUser();
+  const { data: userInfo } = userApi.useFetchUserQuery(user?.uid, {
+    refetchOnMountOrArgChange: true,
+  });
   const { section } = route?.params || { section: undefined };
   const isFocused = useIsFocused();
   const [page, setPage] = useState<PageSection | undefined>(section);
@@ -125,6 +128,11 @@ const UserContainer = ({ route, navigation }: Props) => {
               />
               {user && (
                 <Text style={Fonts.textRegular}>{user.displayName}</Text>
+              )}
+              {userInfo?.verified && (
+                <View>
+                  <Image style={styles.checkmark} source={Images.checkmark} />
+                </View>
               )}
             </View>
             <View style={styles.divider} />

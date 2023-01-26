@@ -10,6 +10,7 @@ import Divider from '@/Components/Divider';
 import { DIABUNITY_USER, BRAND_NAME } from '@/Constants';
 import { getNameInitials } from '@/Utils';
 import { Post, postApi } from '@/Services/modules/posts';
+import { userApi } from '@/Services/modules/users';
 import AuthService from '@/Services/modules/auth';
 import { store } from '@/Store';
 import { setNotification } from '@/Store/Notification';
@@ -23,6 +24,9 @@ type PostProps = {
 
 const NewPost = ({ setPage, setShouldRefetch }: PostProps) => {
   const user = AuthService.getCurrentUser();
+  const { data: userInfo } = userApi.useFetchUserQuery(user?.uid, {
+    refetchOnMountOrArgChange: true,
+  });
   const { Layout, Colors, Fonts, Images } = useTheme();
   const [image, setImage] = useState<{
     fileName?: string;
@@ -95,7 +99,7 @@ const NewPost = ({ setPage, setShouldRefetch }: PostProps) => {
             style={[Fonts.textRegular, styles.userName, { color: Colors.red }]}
           >
             {user?.displayName || DIABUNITY_USER}
-            {user?.displayName === BRAND_NAME && (
+            {userInfo?.verified && (
               <View>
                 <Image style={styles.checkmark} source={Images.checkmark} />
               </View>
