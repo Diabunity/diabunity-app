@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import crashlytics from '@react-native-firebase/crashlytics';
 import { ActivityIndicator, Image, View } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { Avatar, Incubator, Text, TextField } from 'react-native-ui-lib';
@@ -33,7 +34,7 @@ const NewPost = ({ setPage, setShouldRefetch }: PostProps) => {
     base64?: string;
   }>();
   const [postContent, setPostContent] = useState<string>();
-  const [savePost, { isLoading, isSuccess, isError }] =
+  const [savePost, { isLoading, isSuccess, isError, error }] =
     postApi.useSavePostMutation();
 
   useEffect(() => {
@@ -47,6 +48,7 @@ const NewPost = ({ setPage, setShouldRefetch }: PostProps) => {
       setShouldRefetch(false);
       setPage(PageSection.POSTS);
     } else if (isError) {
+      crashlytics().recordError(error, 'Error trying to saving a post');
       store.dispatch(
         setNotification({
           preset: Incubator.ToastPresets.FAILURE,

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import crashlytics from '@react-native-firebase/crashlytics';
 import {
   View,
   Image,
@@ -162,7 +163,7 @@ const CommunitySection = ({
   const [showSendIcon, setShowSendIcon] = useState<boolean>(false);
   const [selectedPost, setSelectedPost] = useState<Post>();
   const [comment, setComment] = useState<string>();
-  const [savePost, { isLoading, isSuccess, isError }] =
+  const [savePost, { isLoading, isSuccess, isError, error }] =
     postApi.useSavePostMutation();
 
   useEffect(() => {
@@ -178,6 +179,7 @@ const CommunitySection = ({
       setSelectedPost(undefined);
     }
     if (isError) {
+      crashlytics().recordError(error, 'Error saving post');
       store.dispatch(
         setNotification({
           preset: Incubator.ToastPresets.FAILURE,

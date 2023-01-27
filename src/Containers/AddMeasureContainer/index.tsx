@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import crashlytics from '@react-native-firebase/crashlytics';
 import { ActivityIndicator, Platform, ScrollView, View } from 'react-native';
 import {
   DateTimePicker,
@@ -26,7 +27,7 @@ type Props = NativeStackScreenProps<NavigatorParams>;
 
 const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
   const { Layout, Images, Colors } = useTheme();
-  const [saveMeasurement, { isLoading, isSuccess, isError, reset }] =
+  const [saveMeasurement, { isLoading, isSuccess, isError, error, reset }] =
     userApi.useSaveMeasurementMutation();
 
   const [supported, setSupported] = useState<boolean>(false);
@@ -75,6 +76,7 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
       }, TOAST_TIMEOUT);
     }
     if (isError) {
+      crashlytics().recordError(error, 'Error trying to save a measurement');
       store.dispatch(
         setNotification({
           preset: Incubator.ToastPresets.FAILURE,

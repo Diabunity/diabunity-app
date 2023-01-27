@@ -7,6 +7,7 @@ import {
   View,
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
+import crashlytics from '@react-native-firebase/crashlytics';
 import Onboarding from 'react-native-onboarding-swiper';
 import { Slider } from '@miblanchard/react-native-slider';
 import {
@@ -103,7 +104,12 @@ const OnboardingContainer = ({ navigation: { navigate } }: Props) => {
   ): void => setState(value);
 
   useEffect(() => {
+    crashlytics().log('Start Onboarding');
+  }, []);
+
+  useEffect(() => {
     if (isSuccess) {
+      crashlytics().log('Finish Onboarding');
       navigate('Main');
     }
   }, [isSuccess]);

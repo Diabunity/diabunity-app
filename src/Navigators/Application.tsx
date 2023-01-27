@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import crashlytics from '@react-native-firebase/crashlytics';
 import { SafeAreaView, StatusBar } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
@@ -52,8 +53,13 @@ const ApplicationNavigator = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { colors } = NavigationTheme;
 
-  const onAuthStateChanged = (sUser: FirebaseAuthTypes.User | null) =>
+  const onAuthStateChanged = async (sUser: FirebaseAuthTypes.User | null) => {
+    if (sUser) {
+      await crashlytics().setUserId(sUser.uid);
+    }
+
     setUser(sUser);
+  };
 
   useEffect(() => {
     if (user) {
