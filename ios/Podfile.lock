@@ -28,6 +28,9 @@ PODS:
     - FirebaseAnalytics (~> 8.15.0)
   - Firebase/CoreOnly (8.15.0):
     - FirebaseCore (= 8.15.0)
+  - Firebase/Crashlytics (8.15.0):
+    - Firebase/CoreOnly
+    - FirebaseCrashlytics (~> 8.15.0)
   - FirebaseAnalytics (8.15.0):
     - FirebaseAnalytics/AdIdSupport (= 8.15.0)
     - FirebaseCore (~> 8.0)
@@ -60,6 +63,13 @@ PODS:
     - GoogleUtilities/Environment (~> 7.7)
     - GoogleUtilities/Logger (~> 7.7)
     - nanopb (~> 2.30908.0)
+  - FirebaseCrashlytics (8.15.0):
+    - FirebaseCore (~> 8.0)
+    - FirebaseInstallations (~> 8.0)
+    - GoogleDataTransport (~> 9.1)
+    - GoogleUtilities/Environment (~> 7.7)
+    - nanopb (~> 2.30908.0)
+    - PromisesObjC (< 3.0, >= 1.2)
   - FirebaseInstallations (8.15.0):
     - FirebaseCore (~> 8.0)
     - GoogleUtilities/Environment (~> 7.7)
@@ -533,6 +543,10 @@ PODS:
     - Firebase/Auth (= 8.15.0)
     - React-Core
     - RNFBApp
+  - RNFBCrashlytics (14.12.0):
+    - Firebase/Crashlytics (= 8.15.0)
+    - React-Core
+    - RNFBApp
   - RNFileViewer (2.1.5):
     - React-Core
   - RNGestureHandler (2.8.0):
@@ -663,6 +677,7 @@ DEPENDENCIES:
   - "RNFBAnalytics (from `../node_modules/@react-native-firebase/analytics`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
+  - "RNFBCrashlytics (from `../node_modules/@react-native-firebase/crashlytics`)"
   - RNFileViewer (from `../node_modules/react-native-file-viewer`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "RNGoogleSignin (from `../node_modules/@react-native-google-signin/google-signin`)"
@@ -681,6 +696,7 @@ SPEC REPOS:
     - FirebaseAuth
     - FirebaseCore
     - FirebaseCoreDiagnostics
+    - FirebaseCrashlytics
     - FirebaseInstallations
     - Flipper
     - Flipper-Boost-iOSX
@@ -814,6 +830,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/app"
   RNFBAuth:
     :path: "../node_modules/@react-native-firebase/auth"
+  RNFBCrashlytics:
+    :path: "../node_modules/@react-native-firebase/crashlytics"
   RNFileViewer:
     :path: "../node_modules/react-native-file-viewer"
   RNGestureHandler:
@@ -844,6 +862,7 @@ SPEC CHECKSUMS:
   FirebaseAuth: 3e73bf8abf4fbb40f8b421f361f4cc48ee57388c
   FirebaseCore: 5743c5785c074a794d35f2fff7ecc254a91e08b1
   FirebaseCoreDiagnostics: 92e07a649aeb66352b319d43bdd2ee3942af84cb
+  FirebaseCrashlytics: feb07e4e9187be3c23c6a846cce4824e5ce2dd0b
   FirebaseInstallations: 40bd9054049b2eae9a2c38ef1c3dd213df3605cd
   Flipper: bf2cb2c4a64ec4fdd53feffd2e526794ed29c1a8
   Flipper-Boost-iOSX: fd1e2b8cbef7e662a122412d7ac5f5bea715403c
@@ -915,10 +934,11 @@ SPEC CHECKSUMS:
   RNFBAnalytics: a2c709ba43b294a63df5b6a807c8eb4600f3c9cb
   RNFBApp: 9646e09d041ea159b84584865212e4cf33acd179
   RNFBAuth: af943e3ba071b5f4d18896c31e6cba3a77b1fa08
+  RNFBCrashlytics: 94e1f78e2a9aa9e02edbfb0d3f1f0921ce00094b
   RNFileViewer: ce7ca3ac370e18554d35d6355cffd7c30437c592
   RNGestureHandler: 62232ba8f562f7dea5ba1b3383494eb5bf97a4d3
   RNGoogleSignin: ec96ded826fcdca71ab5f58b1d086e969cabe67b
-  RNReanimated: d4c00b2ee2d36938563c5deeeb0e8bc733ddbae3
+  RNReanimated: fd6d74898de7a12d69a6d5e9075a9c84f5cd396f
   RNScreens: 34cc502acf1b916c582c60003dc3089fa01dc66d
   RNSVG: ecd661f380a07ba690c9c5929c475a44f432d674
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
