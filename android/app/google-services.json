@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "870631938967-i16djqhuo74oq3umr0tjiieo86o6gbdb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.diabunity",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
           "client_id": "870631938967-ler96fhltv9apm41vj4d8de3im8h06c0.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,6 +37,13 @@
             {
               "client_id": "870631938967-ler96fhltv9apm41vj4d8de3im8h06c0.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "870631938967-2o3euj7onui0g0bh0nmnlgrmo8545pgv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "diabunity"
+              }
             }
           ]
         }

@@ -150,6 +150,14 @@ android {
         }
     }
     signingConfigs {
+        release {
+            if (project.hasProperty('DIABUNITY_UPLOAD_STORE_FILE')) {
+                storeFile file(DIABUNITY_UPLOAD_STORE_FILE)
+                storePassword DIABUNITY_UPLOAD_STORE_PASSWORD
+                keyAlias DIABUNITY_UPLOAD_KEY_ALIAS
+                keyPassword DIABUNITY_UPLOAD_KEY_PASSWORD
+            }
+        }
         debug {
             storeFile file('debug.keystore')
             storePassword 'android'
@@ -169,7 +177,7 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
@@ -198,6 +206,8 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+
+    implementation 'com.google.firebase:firebase-analytics:18.0.2'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'
