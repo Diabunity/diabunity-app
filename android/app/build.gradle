@@ -134,6 +134,8 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+    namespace "com.diabunity"
+
     defaultConfig {
         applicationId "com.diabunity"
         minSdkVersion rootProject.ext.minSdkVersion
