@@ -42,7 +42,13 @@ type Props = {
   sensorLife?: number;
   navigate: (route: string) => void;
 };
-const MedicalReportContainer = ({ data, user, name, sensorLife }: Props) => {
+const MedicalReportContainer = ({
+  data,
+  user,
+  name,
+  sensorLife,
+  navigate,
+}: Props) => {
   const { Colors } = useTheme();
   const [source, setSource] = useState<any>({});
   const [loading, setLoading] = useState<boolean>(false);
