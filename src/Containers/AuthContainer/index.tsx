@@ -9,6 +9,7 @@ import { styles, colors } from './styles';
 import type { NavigatorParams } from '../../Navigators/Application';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import analytics from '@react-native-firebase/analytics';
 
 const { Toast, TextField } = Incubator;
 
@@ -29,6 +30,7 @@ const AuthContainer = ({
 
   const handleGoogleButton = async (): Promise<void> => {
     try {
+      await analytics().logEvent('sign_in_with_google');
       await AuthService.signInWithGoogle();
     } catch {
       setError(true);
@@ -37,6 +39,7 @@ const AuthContainer = ({
 
   const handleSignIn = async (): Promise<void> => {
     try {
+      await analytics().logEvent('sign_in_with_email_and_password');
       await AuthService.signInWithEmailAndPassword(email, password);
     } catch (e) {
       setError(true);
@@ -45,6 +48,7 @@ const AuthContainer = ({
 
   const handleSignUp = async (): Promise<void> => {
     try {
+      await analytics().logEvent('sign_up_with_email_and_password');
       const { user } = (await AuthService.signUpWithEmailAndPassword(
         email,
         password

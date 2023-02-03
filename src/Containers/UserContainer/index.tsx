@@ -38,8 +38,11 @@ type Props = NativeStackScreenProps<NavigatorParams> & {
 };
 
 const UserContainer = ({ route, navigation }: Props) => {
-  const { setParams } = navigation;
+  const { setParams, navigate } = navigation;
   const user = AuthService.getCurrentUser();
+  const { data: userInfo } = userApi.useFetchUserQuery(user?.uid, {
+    refetchOnMountOrArgChange: true,
+  });
   const { section } = route?.params || { section: undefined };
   const isFocused = useIsFocused();
   const [page, setPage] = useState<PageSection | undefined>(section);
@@ -80,9 +83,10 @@ const UserContainer = ({ route, navigation }: Props) => {
     let text =
       'Te invito a formar parte de la communidad de Diabunity!\nDescarga la app del siguiente link:';
     if (Platform.OS === 'android')
-      text = text.concat('<PLAY store link>'); //TODO: change to playstore link
+      text = text.concat(
+        'https://play.google.com/store/apps/details?id=com.diabunity'
+      );
     else text = text.concat('<APP store link>'); //TODO: change to appstore link
-
     Share.share(
       {
         title: 'Descarga la app de Diabunity!',
@@ -126,6 +130,11 @@ const UserContainer = ({ route, navigation }: Props) => {
               {user && (
                 <Text style={Fonts.textRegular}>{user.displayName}</Text>
               )}
+              {userInfo?.verified && (
+                <View>
+                  <Image style={styles.checkmark} source={Images.checkmark} />
+                </View>
+              )}
             </View>
             <View style={styles.divider} />
             <View
@@ -156,15 +165,15 @@ const UserContainer = ({ route, navigation }: Props) => {
                 <Icon name="award" size={24} color={styles.icon.color} />
                 <Text style={{ ...styles.text, marginLeft: 12 }}>Ranking</Text>
               </ListItem>
-              {/*<ListItem
-                onPress={() => setPage(PageSection.SETTINGS)}
+              <ListItem
+                onPress={() => navigate('WithoutPremium')}
                 style={[Layout.rowCenter]}
               >
-                <Icon name="settings" size={24} color={styles.icon.color} />
+                <Icon name="lock" size={24} color={styles.icon.color} />
                 <Text style={{ ...styles.text, marginLeft: 12 }}>
-                  Configuración
+                  Diabunity<Text style={{ fontWeight: '800' }}>PRO</Text>
                 </Text>
-              </ListItem>*/}
+              </ListItem>
               <ListItem style={[Layout.rowCenter]} onPress={onShare}>
                 <Icon name="share-2" size={24} color={styles.icon.color} />
                 <Text style={{ ...styles.text, marginLeft: 12 }}>

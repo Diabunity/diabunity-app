@@ -142,7 +142,7 @@ const CommunityContainer = ({
   );
 };
 
-const keyboardVerticalOffset = Platform.OS === 'ios' ? 40 : 0;
+const keyboardVerticalOffset = Platform.OS === 'ios' ? 40 : -40;
 
 const CommunitySection = ({
   page,
@@ -242,7 +242,7 @@ const CommunitySection = ({
       <SafeAreaView style={{ flex: 1 }}>
         <View>
           <KeyboardAvoidingView
-            behavior="position"
+            behavior={Platform.OS === 'ios' ? 'position' : 'padding'}
             keyboardVerticalOffset={keyboardVerticalOffset}
           >
             <ScrollView
@@ -255,7 +255,9 @@ const CommunitySection = ({
                 }
               }}
               scrollEventThrottle={400}
-              contentContainerStyle={[{ paddingBottom: 140 }]}
+              contentContainerStyle={[
+                { paddingBottom: showSendIcon ? 0 : 140 },
+              ]}
             >
               {renderSection()}
             </ScrollView>
@@ -291,7 +293,7 @@ const CommunitySection = ({
                 )}
                 {isLoading && (
                   <ActivityIndicator
-                    style={{ position: 'absolute' }}
+                    style={styles.commentLoadingIcon}
                     size="small"
                     color={Colors.black}
                   />

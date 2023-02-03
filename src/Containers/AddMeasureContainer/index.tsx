@@ -15,9 +15,10 @@ import { FormButton, BackButton } from '@/Components';
 
 import { NavigatorParams } from '@/Navigators/Application';
 import { NFCReader } from '@/Services/modules/nfc';
+import AuthService from '@/Services/modules/auth';
 import { userApi, MeasurementMode } from '@/Services/modules/users';
 import { setNotification } from '@/Store/Notification';
-import { addMinutes, setByTimezone } from '@/Utils';
+import { addMinutes, DatePeriod, setByTimezone } from '@/Utils';
 import { TOAST_TIMEOUT } from '@/Constants';
 import { TENDENCY } from '../HomeContainer/Table';
 
@@ -27,12 +28,19 @@ type Props = NativeStackScreenProps<NavigatorParams>;
 
 const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
   const { Layout, Images, Colors } = useTheme();
+  const user = AuthService.getCurrentUser();
   const [saveMeasurement, { isLoading, isSuccess, isError, error, reset }] =
     userApi.useSaveMeasurementMutation();
-
+  const { data } = userApi.useFetchMeasurementQuery({
+    id: user?.uid,
+    dateFilter: DatePeriod.LAST_DAY,
+  });
+  const dailyMasurements = data?.measurements || [];
   const [supported, setSupported] = useState<boolean>(false);
   const [nfcInstance, setNFCInstance] = useState<NFCReader>();
   const [isScanning, setIsScanning] = useState(false);
+  const [hasPassedDailyMeasurements, setHasPassedDailyMeasurements] =
+    useState(false);
   const [manualEnabled, setManualEnabled] = useState<boolean>(false);
   const [measurement, setMeasurement] = useState<string>();
   const [sensorLife, setSensorLife] = useState<number | undefined>();
@@ -151,11 +159,23 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
           });
         }
         if (measurements.length > 0) {
-          const { data } = (await saveMeasurement({
-            measurements,
-            trend_history: trend_history.map((m: { value: number }) => m.value),
-          })) as { data: { tendency: TENDENCY } };
-          setTendency(data.tendency ?? TENDENCY.UNKNOWN);
+          const sensorDailyMeasurements = dailyMasurements?.filter(
+            (m) => m.source === MeasurementMode.SENSOR
+          );
+          // This number is the maximum number of measurements for the free plan. It should come from the backend
+          if (sensorDailyMeasurements.length >= 64) {
+            setHasPassedDailyMeasurements(true);
+            navigate('WithoutPremium');
+            return;
+          } else {
+            const { data } = (await saveMeasurement({
+              measurements,
+              trend_history: trend_history.map(
+                (m: { value: number }) => m.value
+              ),
+            })) as { data: { tendency: TENDENCY } };
+            setTendency(data.tendency ?? TENDENCY.UNKNOWN);
+          }
         }
       }
       clearTimeout(timer);
@@ -288,6 +308,7 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
             <FormButton
               label="Lectura nfc"
               onPress={handleNFCMeasure}
+              isProFeature={hasPassedDailyMeasurements}
               labelStyle={styles.button}
               noMarginBottom
               disabledCondition={isScanning || !supported}

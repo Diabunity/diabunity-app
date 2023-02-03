@@ -23,9 +23,9 @@ const Divider = ({ customStyles }: Props) => {
   return (
     <Text
       style={{
+        borderBottomColor: Colors.darkGray,
         ...styles.divider,
         ...customStyles,
-        borderBottomColor: Colors.darkGray,
       }}
     />
   );

@@ -34,7 +34,11 @@ export type Post = {
   timestamp: string;
   qty_comments: number;
   user_id: string;
-  username: string;
+  user_info: {
+    display_name: string;
+    image_path: string;
+    verified: boolean;
+  };
   image?: string;
   parent_id?: string;
   users_favorites: string[];

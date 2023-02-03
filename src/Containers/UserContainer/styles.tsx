@@ -98,6 +98,13 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
     paddingBottom: 20,
   },
+  checkmark: {
+    height: 25,
+    width: 25,
+    position: 'relative',
+    top: 2,
+    left: 5,
+  },
 });
 
 export const favoriteStyles = StyleSheet.create({

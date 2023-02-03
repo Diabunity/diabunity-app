@@ -6,10 +6,17 @@ type Props = {
   canGoBack?: () => boolean;
   goBack?: () => void;
   customBack?: () => void;
+  color?: string;
   customStyles?: ViewStyle;
 };
 
-const BackButton = ({ canGoBack, goBack, customBack, customStyles }: Props) => {
+const BackButton = ({
+  canGoBack,
+  goBack,
+  customBack,
+  customStyles,
+  color,
+}: Props) => {
   const hasGoBackPage = customBack || canGoBack?.();
   return (
     <>
@@ -19,7 +26,7 @@ const BackButton = ({ canGoBack, goBack, customBack, customStyles }: Props) => {
             onPress={customBack || goBack}
             name="chevron-left"
             size={35}
-            color={styles.icon.color}
+            color={color ?? styles.icon.color}
           />
         </View>
       )}

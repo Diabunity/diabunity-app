@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import crashlytics from '@react-native-firebase/crashlytics';
+import analytics from '@react-native-firebase/analytics';
 import Onboarding from 'react-native-onboarding-swiper';
 import { Slider } from '@miblanchard/react-native-slider';
 import {
@@ -104,6 +105,7 @@ const OnboardingContainer = ({ navigation: { navigate } }: Props) => {
   ): void => setState(value);
 
   useEffect(() => {
+    analytics().logEvent('onboarding_started');
     crashlytics().log('Start Onboarding');
   }, []);
 

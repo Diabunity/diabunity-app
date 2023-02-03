@@ -9,6 +9,7 @@ import {
   AuthContainer,
   ForgotPasswordContainer,
   OnboardingContainer,
+  WithoutPremiumContainer,
 } from '@/Containers';
 import { userApi } from '@/Services/modules/users';
 import { useTheme } from '@/Hooks';
@@ -21,10 +22,12 @@ export type NavigatorParams = {
   Main: undefined;
   Home: { refetch: string | null; sensorLife?: number; tendency?: TENDENCY };
   Add: undefined;
+  History: undefined;
   Profile: { section?: string } | undefined;
   SignIn: undefined;
   SignUp: undefined;
   Onboarding: undefined;
+  WithoutPremium: undefined;
   ForgotPassword: undefined;
 };
 
@@ -111,6 +114,10 @@ const ApplicationNavigator = () => {
                 />
               )}
               <Stack.Screen name="Main" component={MainNavigator} />
+              <Stack.Screen
+                name="WithoutPremium"
+                component={WithoutPremiumContainer}
+              />
             </>
           ) : (
             <>
