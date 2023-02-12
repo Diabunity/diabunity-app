@@ -22,6 +22,7 @@ import { DatePeriod, getSensorLifeTime } from '@/Utils';
 import { FormButton, Tips } from '@/Components';
 import MedicalReportContainer from '../MedicalReportContainer';
 import LastDayChart from '@/Components/LastDayChart';
+import LastMeasurement from '@/Components/LastMeasurement';
 
 type Props = NativeStackScreenProps<NavigatorParams> & {
   route: RouteProp<
@@ -116,15 +117,15 @@ const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
             template={SkeletonView.templates.TEXT_CONTENT}
             showContent={!isFetching}
             renderContent={() => (
-              <View>
+              <View style={{ marginTop: 10 }}>
+                <LastMeasurement
+                  measurement={currentGlucose.measurement}
+                  status={currentGlucose.status}
+                />
                 <Table
                   data={new TableBuilder()
                     .tendency(tendency ?? TENDENCY.UNKNOWN)
                     .periodInTarget(periodInTarget.value, periodInTarget.status)
-                    .lastScanMeasure(
-                      currentGlucose.measurement,
-                      currentGlucose.status || MeasurementStatus.OK
-                    )
                     .average(
                       Math.round(parseFloat(average.value.toString())),
                       average.status

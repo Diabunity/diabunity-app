@@ -44,7 +44,7 @@ const HistoryContainer = ({ navigation: { navigate } }: Props) => {
   const [dateRange, setDateRange] = useState<{ from: string; to: string }>();
   const [page, setPage] = useState<number>(0);
   const [unmount, setUnmounted] = useState<boolean>(false);
-  const { data, isFetching } = userApi.useFetchMeasurementQuery({
+  const { data, isFetching, refetch } = userApi.useFetchMeasurementQuery({
     page,
     dateRange,
     id: user?.uid,
@@ -54,6 +54,7 @@ const HistoryContainer = ({ navigation: { navigate } }: Props) => {
   useEffect(() => {
     if (isFocused) {
       setUnmounted(false);
+      refetch();
     }
   }, [isFocused]);
 

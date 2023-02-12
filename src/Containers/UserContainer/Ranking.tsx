@@ -43,28 +43,30 @@ const Ranking = ({ user }: { user: FirebaseAuthTypes.User | null }) => {
               {userData?.username}
             </Text>
             <View style={rankingStyles.currentUserStatsContainer}>
-              <View>
-                <Text style={rankingStyles.currentUserLabel}>Puesto</Text>
-                <Text style={rankingStyles.currentUserValue}>
-                  {userData?.position ?? 'N/A'}
-                </Text>
-              </View>
-              <Avatar
-                size={48}
-                containerStyle={rankingStyles.currentUserAvatar}
-                animate
-                isOnline
-                imageProps={{ animationDuration: 1000 }}
-                labelColor={Colors.white}
-                backgroundColor={Colors.red}
-                source={{ uri: userData?.picture }}
-                label={getNameInitials(userData?.username)}
-              />
-              <View>
-                <Text style={rankingStyles.currentUserLabel}>Objetivo</Text>
-                <Text style={rankingStyles.currentUserValue}>
-                  {userData?.percentage ?? '-'}%
-                </Text>
+              <View style={[Layout.rowCenter]}>
+                <View>
+                  <Text style={rankingStyles.currentUserLabel}>Puesto</Text>
+                  <Text style={rankingStyles.currentUserValue}>
+                    {userData?.position ?? 'N/A'}
+                  </Text>
+                </View>
+                <Avatar
+                  size={48}
+                  containerStyle={rankingStyles.currentUserAvatar}
+                  animate
+                  isOnline
+                  imageProps={{ animationDuration: 1000 }}
+                  labelColor={Colors.white}
+                  backgroundColor={Colors.red}
+                  source={{ uri: userData?.picture }}
+                  label={getNameInitials(userData?.username)}
+                />
+                <View>
+                  <Text style={rankingStyles.currentUserLabel}>Objetivo</Text>
+                  <Text style={rankingStyles.currentUserValue}>
+                    {userData?.percentage ?? '-'}%
+                  </Text>
+                </View>
               </View>
             </View>
           </View>

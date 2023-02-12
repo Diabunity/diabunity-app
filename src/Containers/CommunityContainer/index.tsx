@@ -9,6 +9,8 @@ import {
   Platform,
   ImageSourcePropType,
   ActivityIndicator,
+  RefreshControl,
+  Text,
 } from 'react-native';
 import { Avatar, Incubator, TextField } from 'react-native-ui-lib';
 import { FAB } from 'react-native-paper';
@@ -29,6 +31,7 @@ import NewPost from './NewPost';
 import Comments from './Comments';
 
 import { styles } from './styles';
+import { createNativeWrapper } from 'react-native-gesture-handler';
 
 export enum PageSection {
   POSTS = 'POSTS',
@@ -144,6 +147,11 @@ const CommunityContainer = ({
 
 const keyboardVerticalOffset = Platform.OS === 'ios' ? 40 : -40;
 
+const CustomRefreshControl = createNativeWrapper(RefreshControl, {
+  disallowInterruption: true,
+  shouldCancelWhenOutside: false,
+});
+
 const CommunitySection = ({
   page,
   setPage,
@@ -162,9 +170,15 @@ const CommunitySection = ({
   const { Colors } = useTheme();
   const [showSendIcon, setShowSendIcon] = useState<boolean>(false);
   const [selectedPost, setSelectedPost] = useState<Post>();
+  const [refreshing, setRefreshing] = useState(false);
   const [comment, setComment] = useState<string>();
   const [savePost, { isLoading, isSuccess, isError, error }] =
     postApi.useSavePostMutation();
+  const refreshRef = React.useRef(null);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+  }, []);
 
   useEffect(() => {
     if (isSuccess) {
@@ -229,6 +243,8 @@ const CommunitySection = ({
       default:
         return (
           <Posts
+            isUserRefetching={refreshing}
+            onRefreshEnd={() => setRefreshing(false)}
             favoriteSection={favoriteSection}
             shouldRefetch={refetch}
             handleSelected={handleSelected}
@@ -247,6 +263,17 @@ const CommunitySection = ({
           >
             <ScrollView
               ref={scrollViewRef}
+              refreshControl={
+                page === PageSection.POSTS && (
+                  <CustomRefreshControl
+                    refreshing={refreshing}
+                    ref={refreshRef}
+                    onRefresh={onRefresh}
+                    progressBackgroundColor={Colors.white}
+                    colors={[Colors.red]}
+                  />
+                )
+              }
               onScroll={({ nativeEvent }) => {
                 if (isCloseToBottom(nativeEvent)) {
                   setShouldRefetch(true);
@@ -259,6 +286,17 @@ const CommunitySection = ({
                 { paddingBottom: showSendIcon ? 0 : 140 },
               ]}
             >
+              {!refreshing && page === PageSection.POSTS && (
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Text>Desliza hacia arriba para refrescar</Text>
+                </View>
+              )}
               {renderSection()}
             </ScrollView>
 
@@ -272,6 +310,7 @@ const CommunitySection = ({
                   style={{
                     ...styles.input,
                     backgroundColor: Colors.inputBackgroundShadow,
+                    paddingRight: showSendIcon ? 40 : 10,
                   }}
                   placeholder="Escribe algo..."
                   onChangeText={(value: string) => setComment(value)}

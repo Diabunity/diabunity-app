@@ -8,7 +8,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import useTheme from '@/Hooks/useTheme';
 import FormButton from '@/Components/FormButton';
 import Divider from '@/Components/Divider';
-import { DIABUNITY_USER, BRAND_NAME } from '@/Constants';
+import { DIABUNITY_USER } from '@/Constants';
 import { getNameInitials } from '@/Utils';
 import { Post, postApi } from '@/Services/modules/posts';
 import { userApi } from '@/Services/modules/users';
@@ -113,7 +113,7 @@ const NewPost = ({ setPage, setShouldRefetch }: PostProps) => {
           onChangeText={(value: string) => setPostContent(value)}
           style={styles.postBox}
           multiline={true}
-          numberOfLines={10}
+          numberOfLines={20}
           placeholder="Escribe algo..."
         />
         {image && (

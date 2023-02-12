@@ -187,12 +187,8 @@ const MedicalReportContainer = ({
       >
         <Table
           data={new TableBuilder()
-            .tendency(TENDENCY.EQUAL)
+            .tendency(TENDENCY.UNKNOWN)
             .periodInTarget(periodInTarget.value, periodInTarget.status)
-            .lastScanMeasure(
-              currentGlucose.measurement,
-              currentGlucose.status || MeasurementStatus.OK
-            )
             .average(
               Math.round(parseFloat(average.value.toString())),
               average.status

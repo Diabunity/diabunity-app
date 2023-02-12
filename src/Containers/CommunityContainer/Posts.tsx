@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Avatar, Incubator, SkeletonView } from 'react-native-ui-lib';
-import { ActivityIndicator, Image, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  View,
+} from 'react-native';
 import { Card } from 'react-native-paper';
 import DropShadow from 'react-native-drop-shadow';
 import FastImage from 'react-native-fast-image';
@@ -13,7 +20,7 @@ import { Post, postApi } from '@/Services/modules/posts';
 import { setNotification } from '@/Store/Notification';
 import { store } from '@/Store';
 import { getNameInitials, getRelativeTime } from '@/Utils';
-import { DIABUNITY_USER, BRAND_NAME, emojiI18N } from '@/Constants';
+import { DIABUNITY_USER, emojiI18N } from '@/Constants';
 import Divider from '@/Components/Divider';
 
 import { styles } from './styles';
@@ -22,6 +29,8 @@ type PostsProps = {
   handleSelected: (post: Post) => void;
   shouldRefetch: boolean;
   favoriteSection: boolean;
+  isUserRefetching: boolean;
+  onRefreshEnd: () => void;
 };
 
 const parseEmojis = (posts?: Post[]) => {
@@ -44,6 +53,8 @@ const Posts = ({
   handleSelected,
   shouldRefetch,
   favoriteSection,
+  isUserRefetching,
+  onRefreshEnd,
 }: PostsProps) => {
   const { Layout, Colors, Fonts, Images } = useTheme();
   const user = AuthService.getCurrentUser();
@@ -52,10 +63,14 @@ const Posts = ({
     data = null,
     isFetching,
     refetch: refetchFn,
-  } = postApi.useFetchPostsQuery({
-    page: postPage,
-    favoriteSection,
-  });
+  } = postApi.useFetchPostsQuery(
+    {
+      page: postPage,
+      favoriteSection,
+    },
+    { refetchOnMountOrArgChange: true }
+  );
+
   const [saveFavorite] = postApi.useSaveFavoriteMutation();
   const [removeFavorite] = postApi.useRemoveFavoriteMutation();
   const [saveEmoji] = postApi.useSaveEmojiMutation();
@@ -75,6 +90,14 @@ const Posts = ({
     refetchFn();
   }, []);
   useEffect(() => {
+    if (isUserRefetching) {
+      setIsFetchingState(true);
+      refetchFn();
+    }
+  }, [isUserRefetching, refetchFn]);
+
+  useEffect(() => {
+    onRefreshEnd();
     if (posts && !isFetching) {
       if (loading) {
         setPostData((prevState) => [
@@ -231,7 +254,7 @@ const Posts = ({
     }
   };
   return (
-    <>
+    <SafeAreaView style={{ flex: 1 }}>
       {!isFetchingState && !postData?.length ? (
         <View
           style={[
@@ -395,10 +418,10 @@ const Posts = ({
       <View style={styles.done}>
         {loading && <ActivityIndicator size="small" color={Colors.black} />}
         {!loading && !isFetchingState && postPage + 1 === totalPages && (
-          <Text>No hay mas publicaciones.</Text>
+          <Text>No hay más publicaciones.</Text>
         )}
       </View>
-    </>
+    </SafeAreaView>
   );
 };
 

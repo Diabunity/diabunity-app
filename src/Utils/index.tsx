@@ -224,7 +224,7 @@ export const getRelativeTime = (timestamp: string) => {
   // If there are days
   else if (time > DAY_TO_SECONDS) {
     humanTime = time / DAY_TO_SECONDS;
-    units = Math.round(humanTime) >= 2 ? 'dias' : 'dia';
+    units = Math.round(humanTime) >= 2 ? 'días' : 'día';
   }
 
   // If there are hours

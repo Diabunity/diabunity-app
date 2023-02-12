@@ -4,6 +4,7 @@ import crashlytics from '@react-native-firebase/crashlytics';
 import { SafeAreaView, StatusBar } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
+import { isEqual } from 'lodash';
 import {
   StartupContainer,
   AuthContainer,
@@ -17,6 +18,7 @@ import { TENDENCY } from '@/Containers/HomeContainer/Table';
 import MainNavigator from './Main';
 import { navigationRef } from './utils';
 import { NfcPromptAndroid } from '@/Components';
+import { Colors } from '@/Theme/Variables';
 
 export type NavigatorParams = {
   Main: undefined;
@@ -45,12 +47,13 @@ const ApplicationNavigator = () => {
     data = null,
     error,
     refetch,
+    isFetching,
   } = userApi.useFetchUserQuery(user?.uid, {
     skip,
     refetchOnMountOrArgChange: true,
   });
-
   const [isLoading, setIsLoading] = useState(true);
+
   const { colors } = NavigationTheme;
 
   const onAuthStateChanged = async (sUser: FirebaseAuthTypes.User | null) => {
@@ -64,6 +67,7 @@ const ApplicationNavigator = () => {
   useEffect(() => {
     if (user) {
       setSkip(false);
+      refetch();
     } else {
       if (user === null) {
         setIsLoading(false);
@@ -85,7 +89,7 @@ const ApplicationNavigator = () => {
         setHasCompletedOnboarding(false);
       }
     }
-  }, [data, error]);
+  }, [data, error, isFetching]);
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
@@ -103,7 +107,10 @@ const ApplicationNavigator = () => {
   return (
     <SafeAreaView style={[Layout.fill, { backgroundColor: colors.card }]}>
       <NavigationContainer theme={NavigationTheme} ref={navigationRef}>
-        <StatusBar barStyle={darkMode ? 'light-content' : 'dark-content'} />
+        <StatusBar
+          backgroundColor={Colors.red}
+          barStyle={darkMode ? 'light-content' : 'dark-content'}
+        />
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {user ? (
             <>

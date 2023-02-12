@@ -42,7 +42,7 @@ const Tips = () => {
               size={32}
               color={Colors.red}
             />
-            <Text>
+            <Text style={styles.textContainer}>
               {tip.initial}{' '}
               <Text style={styles.importantText}>{tip.important}</Text>{' '}
               {tip.end}
@@ -61,6 +61,9 @@ const Tips = () => {
 };
 
 const styles = StyleSheet.create({
+  textContainer: {
+    textAlign: 'center',
+  },
   title: {
     fontSize: 16,
     lineHeight: 24,

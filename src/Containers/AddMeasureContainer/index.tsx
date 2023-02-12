@@ -9,6 +9,7 @@ import {
   TextField,
 } from 'react-native-ui-lib';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useIsFocused } from '@react-navigation/native';
 import { useTheme } from '@/Hooks';
 import { store } from '@/Store';
 import { FormButton, BackButton } from '@/Components';
@@ -49,6 +50,14 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
   const [date, setDate] = useState<Date>(new Date());
   const [time, setTime] = useState<Date>(new Date());
   const [comments, setComments] = useState<string>();
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (isFocused) {
+      reset();
+      resetFields();
+    }
+  }, [isFocused]);
 
   useEffect(() => {
     const init = async () => {
