@@ -276,7 +276,9 @@ const OnboardingContainer = ({ navigation: { navigate } }: Props) => {
           title: 'Rango de glucosa',
           subtitle: (
             <View style={[Layout.fill, Layout.colCenter]}>
-              <View style={{ marginBottom: 200 }}>
+              <View
+                style={[styles.glucoseRangeContainer, Layout.justifyContent]}
+              >
                 <SliderContainer
                   onValueChange={(value: number[]): void => {
                     const [min, max] = value;
@@ -287,7 +289,6 @@ const OnboardingContainer = ({ navigation: { navigate } }: Props) => {
                   <Slider maximumValue={200} minimumValue={0} step={1} />
                 </SliderContainer>
               </View>
-
               <View style={[Layout.fill, Layout.justifyContent]}>
                 <View style={styles.checkboxContainer}>
                   <Checkbox

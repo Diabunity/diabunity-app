@@ -4,7 +4,6 @@ import crashlytics from '@react-native-firebase/crashlytics';
 import { SafeAreaView, StatusBar } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
-import { isEqual } from 'lodash';
 import {
   StartupContainer,
   AuthContainer,
@@ -79,7 +78,7 @@ const ApplicationNavigator = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    if (data && !error) {
+    if (data && !error && !isFetching) {
       setHasCompletedOnboarding(!!data?.on_boarding);
       setSkip(true);
       setIsLoading(false);

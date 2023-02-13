@@ -72,7 +72,7 @@ const UserContainer = ({ route, navigation }: Props) => {
       store.dispatch(
         setNotification({
           preset: Incubator.ToastPresets.FAILURE,
-          message: 'Hubo un error al cerrar sesión.',
+          message: 'Hubo un error al abrir la aplicación de correo.',
         })
       );
     }
@@ -116,7 +116,12 @@ const UserContainer = ({ route, navigation }: Props) => {
         `mailto:${emailData.to}?subject=${emailData.subject}&body=${emailData.body}`
       );
     } catch (e) {
-      console.log(e);
+      store.dispatch(
+        setNotification({
+          preset: Incubator.ToastPresets.FAILURE,
+          message: 'Hubo un error al crear el comentario. Intente nuevamente',
+        })
+      );
     }
   };
 
