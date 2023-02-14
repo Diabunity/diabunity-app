@@ -68,7 +68,7 @@ export const styles = StyleSheet.create({
     borderTopLeftRadius: 4,
   },
   postBox: {
-    height: 50,
+    height: 150,
   },
   button: {
     width: 80,

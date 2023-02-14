@@ -25,7 +25,10 @@ import Settings from './Settings';
 import Ranking from './Ranking';
 import Favorites from './Favorites';
 
+import { version as appVersion } from '../../../package.json';
+
 import { styles } from './styles';
+import { ScrollView } from 'react-native-gesture-handler';
 
 export enum PageSection {
   SETTINGS = 'SETTINGS',
@@ -69,7 +72,7 @@ const UserContainer = ({ route, navigation }: Props) => {
       store.dispatch(
         setNotification({
           preset: Incubator.ToastPresets.FAILURE,
-          message: 'Hubo un error al cerrar sesión.',
+          message: 'Hubo un error al abrir la aplicación de correo.',
         })
       );
     }
@@ -81,7 +84,7 @@ const UserContainer = ({ route, navigation }: Props) => {
 
   const onShare = () => {
     let text =
-      'Te invito a formar parte de la communidad de Diabunity!\nDescarga la app del siguiente link:';
+      'Te invito a formar parte de la comunidad de Diabunity!\nDescarga la app del siguiente link:';
     if (Platform.OS === 'android')
       text = text.concat(
         'https://play.google.com/store/apps/details?id=com.diabunity'
@@ -100,6 +103,26 @@ const UserContainer = ({ route, navigation }: Props) => {
         excludedActivityTypes: [],
       }
     );
+  };
+
+  const onReportIssue = async () => {
+    const emailData = {
+      to: 'hola@diabunity.com',
+      subject: `Reporte de problema - Versión ${appVersion}`,
+      body: '(explícanos el problema que encontraste)',
+    };
+    try {
+      await Linking.openURL(
+        `mailto:${emailData.to}?subject=${emailData.subject}&body=${emailData.body}`
+      );
+    } catch (e) {
+      store.dispatch(
+        setNotification({
+          preset: Incubator.ToastPresets.FAILURE,
+          message: 'Hubo un error al crear el comentario. Intente nuevamente',
+        })
+      );
+    }
   };
 
   return (
@@ -137,8 +160,12 @@ const UserContainer = ({ route, navigation }: Props) => {
               )}
             </View>
             <View style={styles.divider} />
-            <View
-              style={[Layout.colCenter, Layout.alignItemsStart, { margin: 20 }]}
+            <ScrollView
+              contentContainerStyle={[
+                Layout.colCenter,
+                Layout.alignItemsStart,
+                { margin: 20 },
+              ]}
             >
               <ListItem
                 style={[Layout.rowCenter]}
@@ -189,15 +216,21 @@ const UserContainer = ({ route, navigation }: Props) => {
                   <Text>Sobre Diabunity</Text>
                 </ExternalLink>
               </ListItem>
+              <ListItem style={[Layout.rowCenter]} onPress={onReportIssue}>
+                <Icon name="x-octagon" size={24} color={styles.icon.color} />
+                <Text style={{ ...styles.text, marginLeft: 12 }}>
+                  Reportar un problema
+                </Text>
+              </ListItem>
               <ListItem style={[Layout.rowCenter]} onPress={handleLogOut}>
                 <Icon name="log-out" size={24} color={styles.icon.color} />
                 <Text style={{ ...styles.text, marginLeft: 12 }}>
                   Cerrar sesión
                 </Text>
               </ListItem>
-            </View>
+            </ScrollView>
           </View>
-          <View style={[Layout.colHCenter]}>
+          <View style={[Layout.colHCenter, { marginTop: 20 }]}>
             <TouchableOpacity
               style={{
                 ...styles.donation,

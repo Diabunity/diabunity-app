@@ -8,12 +8,13 @@
     "jsx": "react",
     "lib": ["es6"],
     "moduleResolution": "node",
+    "resolveJsonModule": true,
     "noEmit": true,
     "strict": true,
     "target": "esnext",
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["./*"],
+      "@/*": ["./*"]
     }
   },
   "exclude": [

@@ -16,6 +16,10 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(0, 0, 0, 0.42)',
   },
+  glucoseRangeContainer: {
+    flexDirection: 'column',
+    flex: 0.5,
+  },
   mask: {
     position: 'relative',
     top: 5,
@@ -67,8 +71,9 @@ export const styles = StyleSheet.create({
     top: 50,
   },
   checkboxContainer: {
+    position: 'relative',
+    bottom: 20,
     flexDirection: 'row',
-    marginBottom: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },

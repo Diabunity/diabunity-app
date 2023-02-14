@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, StyleSheet } from 'react-native';
+import { Text, StyleSheet, Platform } from 'react-native';
 import { Hint, View } from 'react-native-ui-lib';
 import Icon from 'react-native-vector-icons/Feather';
 import { SensorLifeStatus } from '@/Services/modules/nfc';
@@ -65,7 +65,7 @@ const SENSOR_LIFE_COLORS: { [key in SensorLifeStatus]: string } = {
   [SensorLifeStatus.ALMOST_NEW]: '#0EB500',
 };
 
-const STATUS_COLORS: { [key in MeasurementStatus]: string } = {
+export const STATUS_COLORS: { [key in MeasurementStatus]: string } = {
   [MeasurementStatus.LOW]: '#0060B9',
   [MeasurementStatus.OK]: '#0EB500',
   [MeasurementStatus.HIGH]: '#DB7600',
@@ -140,8 +140,8 @@ const tableStyles = StyleSheet.create({
   },
   hintIcon: {
     position: 'relative',
-    left: 5,
-    top: 5,
+    left: Platform.OS === 'ios' ? 15 : 5,
+    top: Platform.OS === 'ios' ? 15 : 5,
   },
   dropShadow: {
     shadowColor: '#000',
@@ -186,7 +186,6 @@ export class TableBuilder {
     this._data = [
       { label: 'TENDENCIA', value: '' },
       { label: 'Periodo en objetivo', value: '' },
-      { label: 'Último escaneo', value: '' },
       { label: 'Promedio', value: '' },
       { label: 'Vida útil del sensor', value: '' },
     ];
@@ -218,22 +217,16 @@ export class TableBuilder {
     return this;
   }
 
-  lastScanMeasure(value: number, status: MeasurementStatus): TableBuilder {
-    this._data[2].value = value + ' mg/dL';
+  average(value: number, status: MeasurementStatus): TableBuilder {
+    this._data[2].value = Math.round(value) + ' mg/dL';
     this._data[2].styles = { color: STATUS_COLORS[status] };
     return this;
   }
 
-  average(value: number, status: MeasurementStatus): TableBuilder {
-    this._data[3].value = Math.round(value) + ' mg/dL';
-    this._data[3].styles = { color: STATUS_COLORS[status] };
-    return this;
-  }
-
   sensorLife(days: string, status: SensorLifeStatus): TableBuilder {
-    this._data[4].value = days;
-    this._data[4].styles = { color: SENSOR_LIFE_COLORS[status] };
-    this._data[4].hint =
+    this._data[3].value = days;
+    this._data[3].styles = { color: SENSOR_LIFE_COLORS[status] };
+    this._data[3].hint =
       status === SensorLifeStatus.UNKNOWN
         ? 'Vuelve a medirte para conocer la vida útil del sensor'
         : undefined;

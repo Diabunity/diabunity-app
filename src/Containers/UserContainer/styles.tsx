@@ -17,6 +17,7 @@ export const styles = StyleSheet.create({
   },
   text: {
     color: Colors.black,
+    marginVertical: 5,
     fontSize: 14,
   },
   divider: {
@@ -119,6 +120,8 @@ export const rankingStyles = StyleSheet.create({
   currentUserContainer: {
     marginHorizontal: 21,
     marginBottom: 20,
+    flexDirection: 'column',
+    alignItems: 'center',
 
     // Shadow stuff
     borderRadius: 3,
@@ -182,8 +185,10 @@ export const rankingStyles = StyleSheet.create({
     borderColor: Colors.gray,
   },
   rowNumber: {
+    width: 30,
     fontSize: 20,
     fontWeight: '700',
+    textAlign: 'center',
   },
   rowName: {
     fontSize: 16,

@@ -259,7 +259,7 @@ const Comments = ({ post }: CommentProps) => {
                           {post.user_info?.verified && (
                             <View>
                               <Image
-                                style={styles.checkmark}
+                                style={{ ...styles.checkmark, height: 20 }}
                                 source={Images.checkmark}
                               />
                             </View>
