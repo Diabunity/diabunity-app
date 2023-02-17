@@ -20,6 +20,10 @@ export const styles = StyleSheet.create({
     marginVertical: 5,
     fontSize: 14,
   },
+  scrollViewContainer: {
+    width: 400,
+    margin: 20,
+  },
   divider: {
     width: '90%',
     height: 0.1,

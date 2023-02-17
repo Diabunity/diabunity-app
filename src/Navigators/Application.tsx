@@ -12,7 +12,9 @@ import {
   WithoutPremiumContainer,
 } from '@/Containers';
 import { userApi } from '@/Services/modules/users';
-import { useTheme } from '@/Hooks';
+import { store } from '@/Store';
+import { setUser as storeUser } from '@/Store/User';
+import { useTheme, useUser } from '@/Hooks';
 import { TENDENCY } from '@/Containers/HomeContainer/Table';
 import MainNavigator from './Main';
 import { navigationRef } from './utils';
@@ -37,6 +39,7 @@ const Stack = createStackNavigator<NavigatorParams>();
 // @refresh reset
 const ApplicationNavigator = () => {
   const { Layout, darkMode, NavigationTheme } = useTheme();
+  const { on_boarding: savedOnobarding } = useUser();
   const [skip, setSkip] = useState<boolean>(true);
   const [user, setUser] = useState<FirebaseAuthTypes.User | null | undefined>();
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState<
@@ -54,7 +57,6 @@ const ApplicationNavigator = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const { colors } = NavigationTheme;
-
   const onAuthStateChanged = async (sUser: FirebaseAuthTypes.User | null) => {
     if (sUser) {
       await crashlytics().setUserId(sUser.uid);
@@ -79,6 +81,7 @@ const ApplicationNavigator = () => {
   useEffect(() => {
     setIsLoading(true);
     if (data && !error && !isFetching) {
+      store.dispatch(storeUser(data));
       setHasCompletedOnboarding(!!data?.on_boarding);
       setSkip(true);
       setIsLoading(false);
@@ -113,7 +116,7 @@ const ApplicationNavigator = () => {
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {user ? (
             <>
-              {hasCompletedOnboarding === false && (
+              {hasCompletedOnboarding === false && !savedOnobarding && (
                 <Stack.Screen
                   name="Onboarding"
                   component={OnboardingContainer}

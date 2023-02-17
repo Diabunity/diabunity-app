@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Share, Platform, Linking, Image } from 'react-native';
+import {
+  View,
+  Share,
+  Platform,
+  Linking,
+  Image,
+  ScrollView,
+} from 'react-native';
 import { useIsFocused, RouteProp } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
@@ -28,7 +35,6 @@ import Favorites from './Favorites';
 import { version as appVersion } from '../../../package.json';
 
 import { styles } from './styles';
-import { ScrollView } from 'react-native-gesture-handler';
 
 export enum PageSection {
   SETTINGS = 'SETTINGS',
@@ -164,7 +170,7 @@ const UserContainer = ({ route, navigation }: Props) => {
               contentContainerStyle={[
                 Layout.colCenter,
                 Layout.alignItemsStart,
-                { margin: 20 },
+                styles.scrollViewContainer,
               ]}
             >
               <ListItem
@@ -230,7 +236,7 @@ const UserContainer = ({ route, navigation }: Props) => {
               </ListItem>
             </ScrollView>
           </View>
-          <View style={[Layout.colHCenter, { marginTop: 20 }]}>
+          <View style={[Layout.colHCenter, Layout.fill, { maxHeight: 150 }]}>
             <TouchableOpacity
               style={{
                 ...styles.donation,

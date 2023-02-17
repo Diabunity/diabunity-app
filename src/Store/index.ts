@@ -16,10 +16,12 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import * as modules from '@/Services/modules';
 import theme from './Theme';
 import notification from './Notification';
+import user from './User';
 
 const reducers = combineReducers({
   theme,
   notification,
+  user,
   ...Object.values(modules).reduce(
     (acc, module) => ({
       ...acc,
@@ -32,7 +34,7 @@ const reducers = combineReducers({
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['theme'],
+  whitelist: ['theme', 'user'],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);
