@@ -9,9 +9,14 @@
             https://github.com/facebook/react-native/issues/31059
         -->
         <item name="android:editTextBackground">@android:color/transparent</item>
+        <item name="android:alertDialogTheme">@style/ThemeAlert</item>
     </style>
     <style name="SplashTheme" parent="AppTheme">
         <item name="android:forceDarkAllowed">false</item> 
         <item name="android:windowBackground">@drawable/splash_screen</item>
+    </style>
+    <style name="ThemeAlert" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <!-- This one changes buttons text color -->
+        <item name="colorAccent">#C1272D</item>
     </style>
 </resources>
