@@ -4,6 +4,7 @@ import { useTheme } from '@/Hooks';
 import { generateFooterStyles } from './styles';
 import { MAX_AMOUNT_OF_ELEMENTS_PER_PAGE } from '@/Services/modules/users/fetchMeasurement';
 import { PAGE_DIRECTION } from '@/Constants';
+import { Alert } from 'react-native';
 
 export default ({
   pages,
@@ -42,7 +43,11 @@ export default ({
         onPress={
           isLeftChevronEnabled
             ? () => onPageChangeSelected(PAGE_DIRECTION.PREV)
-            : undefined
+            : () =>
+                Alert.alert(
+                  'No hay más mediciones',
+                  'Intente nuevamente seleccionando otro período de fechas.'
+                )
         }
       >
         &#10094;
@@ -59,7 +64,11 @@ export default ({
         onPress={
           isRightChevronEnabled
             ? () => onPageChangeSelected(PAGE_DIRECTION.NEXT)
-            : undefined
+            : () =>
+                Alert.alert(
+                  'No hay más mediciones',
+                  'Intente nuevamente seleccionando otro período de fechas'
+                )
         }
       >
         &#10095;
