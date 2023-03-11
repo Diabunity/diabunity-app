@@ -9,3 +9,4 @@ export { default as OnboardingContainer } from './OnboardingContainer';
 export { default as MedicalReportContainer } from './MedicalReportContainer';
 export { default as CommunityContainer } from './CommunityContainer';
 export { default as WithoutPremiumContainer } from './WithoutPremiumContainer';
+export { default as NoNetworkContainer } from './NoNetworkContainer';

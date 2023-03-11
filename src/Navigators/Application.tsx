@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import { useNetInfo } from '@react-native-community/netinfo';
 import crashlytics from '@react-native-firebase/crashlytics';
 import { SafeAreaView, StatusBar } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainerRef } from '@react-navigation/core';
 import { NavigationContainer } from '@react-navigation/native';
 import {
   StartupContainer,
@@ -10,6 +12,7 @@ import {
   ForgotPasswordContainer,
   OnboardingContainer,
   WithoutPremiumContainer,
+  NoNetworkContainer,
 } from '@/Containers';
 import { userApi } from '@/Services/modules/users';
 import { store } from '@/Store';
@@ -17,7 +20,6 @@ import { setUser as storeUser } from '@/Store/User';
 import { useTheme, useUser } from '@/Hooks';
 import { TENDENCY } from '@/Containers/HomeContainer/Table';
 import MainNavigator from './Main';
-import { navigationRef } from './utils';
 import { NfcPromptAndroid } from '@/Components';
 import { Colors } from '@/Theme/Variables';
 
@@ -29,6 +31,7 @@ export type NavigatorParams = {
   Profile: { section?: string } | undefined;
   SignIn: undefined;
   SignUp: undefined;
+  NoNetwork: undefined;
   Onboarding: undefined;
   WithoutPremium: undefined;
   ForgotPassword: undefined;
@@ -39,6 +42,7 @@ const Stack = createStackNavigator<NavigatorParams>();
 // @refresh reset
 const ApplicationNavigator = () => {
   const { Layout, darkMode, NavigationTheme } = useTheme();
+  const netInfo = useNetInfo();
   const { on_boarding: savedOnobarding } = useUser();
   const [skip, setSkip] = useState<boolean>(true);
   const [user, setUser] = useState<FirebaseAuthTypes.User | null | undefined>();
@@ -55,6 +59,7 @@ const ApplicationNavigator = () => {
     refetchOnMountOrArgChange: true,
   });
   const [isLoading, setIsLoading] = useState(true);
+  const navigationRef = useRef<NavigationContainerRef<NavigatorParams>>(null);
 
   const { colors } = NavigationTheme;
   const onAuthStateChanged = async (sUser: FirebaseAuthTypes.User | null) => {
@@ -64,6 +69,14 @@ const ApplicationNavigator = () => {
 
     setUser(sUser);
   };
+
+  useEffect(() => {
+    if (netInfo.isConnected !== null) {
+      if (!netInfo.isConnected) {
+        navigationRef.current?.navigate('NoNetwork');
+      }
+    }
+  }, [netInfo, navigationRef.current]);
 
   useEffect(() => {
     if (user) {
@@ -138,6 +151,7 @@ const ApplicationNavigator = () => {
               />
             </>
           )}
+          <Stack.Screen name="NoNetwork" component={NoNetworkContainer} />
         </Stack.Navigator>
         <NfcPromptAndroid />
       </NavigationContainer>
