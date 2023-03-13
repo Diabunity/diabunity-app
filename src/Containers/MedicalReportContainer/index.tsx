@@ -9,6 +9,8 @@ import {
 import FileViewer from 'react-native-file-viewer';
 import ViewShot from 'react-native-view-shot';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
+// @ts-ignore
+import Handlebars from 'react-native-handlebars/dist/handlebars';
 import { useTheme } from '@/Hooks';
 import { SensorLifeStatus } from '@/Services/modules/nfc';
 import { formatDate, getSensorLifeTime } from '@/Utils';
@@ -34,7 +36,9 @@ import { styles } from './styles';
 import { store } from '@/Store';
 import { setNotification } from '@/Store/Notification';
 import { Incubator } from 'react-native-ui-lib';
-import { navigate } from '@/Navigators/utils';
+
+// @ts-ignore
+import templateHtml from '@/Templates/report.html';
 
 type Props = {
   data?: Measurements;
@@ -107,8 +111,18 @@ const MedicalReportContainer = ({
       user?.diabetes_type === DiabetesType.TYPE_1 ? 'Tipo 1' : 'Tipo 2';
     const glucoseRange = `${user?.glucose_min}mg/dl - ${user?.glucose_max}mg/dl`;
     const today = new Date();
+    const template = Handlebars.compile(templateHtml);
     const options = {
-      html: `<img src=${base64Logo} width=400 /><h1>Datos personales</h1><h2>Paciente: ${name} </h2><h2>Fecha de nacimiento: ${date} </h2><h2>Altura: ${height} </h2><h2>Peso: ${weight} </h2><h2>Tipo de diabetes: ${diabetesType} </h2><h2>Rango de glucosa: ${glucoseRange} </h2><h1>Reporte</h1><h2>Últimas 24 horas</h2><p><img src="data:image/png;base64,${source.daily}" height=900 /></p><div><br><br><h2>Periodo en objetivo</h2><img src="data:image/png;base64,${source.period}" height=400 /></div><p><h2>Datos Estadísticos</h2><img src="data:image/png;base64, ${source.table}" /></p>`,
+      html: template({
+        base64Logo,
+        source,
+        name,
+        date,
+        height,
+        weight,
+        diabetesType,
+        glucoseRange,
+      }),
       fileName: `reporte-medico-${Math.floor(
         today.getTime() + today.getSeconds() / 2
       )}`,

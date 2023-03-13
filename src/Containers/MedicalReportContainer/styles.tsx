@@ -5,4 +5,7 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 10,
   },
+  body: {
+    backgroundColor: 'blue',
+  },
 });

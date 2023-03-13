@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat"
+      rel="stylesheet"
+    />
+
+    <style>
+       body {
+        font-family: 'Montserrat';
+        font-size: 22px;
+        color:#000;
+      }
+      h1 {
+        background-color: red;
+      }
+    </style>  
+  </head>
+
+  <body>
+    <img src={{base64Logo}} width=400 />
+    <h1>Datos personales</h1>
+    <h2>Paciente: {{name}} </h2>
+    <h2>Fecha de nacimiento: {{date}} </h2>
+    <h2>Altura: {{height}} </h2>
+    <h2>Peso: {{weight}} </h2>
+    <h2>Tipo de diabetes: {{diabetesType}} </h2>
+    <h2>Rango de glucosa: {{glucoseRange}} </h2>
+    <h1>Reporte</h1><h2>Últimas 24 horas</h2>
+    <p>
+      <img src="data:image/png;base64,{{source.daily}}" height=900 />
+    </p>
+    <div>
+      <br>
+      <br>
+      <h2>Periodo en objetivo</h2>
+      <img src="data:image/png;base64,{{source.period}}" height=400 />
+    </div>
+    <p>
+      <h2>Datos Estadísticos</h2>
+      <img src="data:image/png;base64, {{source.table}}" />
+    </p>
+  </body>
+</html>
