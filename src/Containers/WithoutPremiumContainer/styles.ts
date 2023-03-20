@@ -51,4 +51,7 @@ export const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 5,
   },
+  scrollViewContainer: {
+    height: 660,
+  },
 });

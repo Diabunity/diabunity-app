@@ -16,7 +16,7 @@ import { Avatar, Incubator, TextField } from 'react-native-ui-lib';
 import { FAB } from 'react-native-paper';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/Feather';
-import { useTheme } from '@/Hooks';
+import { useTheme, useUser } from '@/Hooks';
 import { Post, postApi } from '@/Services/modules/posts';
 import { setNotification } from '@/Store/Notification';
 import { store } from '@/Store';
@@ -24,7 +24,7 @@ import AuthService from '@/Services/modules/auth';
 import { getNameInitials } from '@/Utils';
 import { PageSection as ProfileSection } from '@/Containers/UserContainer';
 import { NavigatorParams } from '@/Navigators/Application';
-import { User } from '@/Services/modules/users';
+import { SubscriptionType, User } from '@/Services/modules/users';
 import BackButton from '@/Components/BackButton';
 import Posts from './Posts';
 import NewPost from './NewPost';
@@ -57,9 +57,29 @@ const CommunityContainer = ({
   favoriteSection,
 }: Props) => {
   const user = AuthService.getCurrentUser();
+  const { subscription } = useUser();
   const [page, setPage] = useState<PageSection | undefined>(PageSection.POSTS);
   const [shouldRefetch, setShouldRefetch] = useState<boolean>(false);
+  const { data: userPostsInfo, refetch } = postApi.useFetchPostsQuery({
+    count: true,
+  });
   const { Layout, Images, Colors } = useTheme();
+
+  useEffect(() => {
+    refetch();
+  }, [page]);
+
+  const handlePostCreation = () => {
+    const { qty_posts } = userPostsInfo as { qty_posts: number };
+    const metadata = subscription?.metadata as Record<string, number>;
+    if (subscription.subscription_type === SubscriptionType.FREE) {
+      if (qty_posts >= metadata.maxPostPerDay) {
+        navigate('WithoutPremium');
+        return;
+      }
+    }
+    setPage(PageSection.NEW_POST);
+  };
 
   const getLeftComponent = () => {
     switch (page) {
@@ -110,7 +130,7 @@ const CommunityContainer = ({
         <FAB
           icon="plus"
           style={[styles.fab, { backgroundColor: Colors.red }]}
-          onPress={() => setPage(PageSection.NEW_POST)}
+          onPress={handlePostCreation}
         />
       )}
       {!favoriteSection && (

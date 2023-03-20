@@ -25,6 +25,7 @@ import {
   Measurements,
   MeasurementStatus,
   PeriodInTargetStatus,
+  SubscriptionType,
   User,
 } from '@/Services/modules/users';
 import PeriodChart from '@/Components/PeriodChart';
@@ -76,7 +77,8 @@ const MedicalReportContainer = ({
   const tableRef = useRef<any>();
 
   const handleCapture = async () => {
-    const isUserPremium = false; // TODO: We have to make a backend call to check this.
+    const { subscription_type } = user?.subscription || {};
+    const isUserPremium = subscription_type === SubscriptionType.PREMIUM;
     if (!isUserPremium) {
       navigate('WithoutPremium');
       return;

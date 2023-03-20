@@ -44,3 +44,11 @@ export type Post = {
   users_favorites: string[];
   emojis: Emoji[];
 };
+
+export interface PostResponse {
+  posts: Post[];
+  paging: {
+    total_pages: number;
+    total_elements: number;
+  };
+}

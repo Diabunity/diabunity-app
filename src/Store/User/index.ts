@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { User } from '@/Services/modules/users';
+import { Metadata, User } from '@/Services/modules/users';
+import { convertToCamelCase } from '@/Utils';
 
 const slice = createSlice({
   name: 'user',
@@ -14,6 +15,12 @@ const slice = createSlice({
       state.glucose_min = payload.glucose_min;
       state.glucose_max = payload.glucose_max;
       state.verified = payload.verified;
+      state.subscription = {
+        ...payload.subscription,
+        metadata: convertToCamelCase(
+          payload.subscription.metadata as Metadata[]
+        ),
+      };
     },
   },
 });

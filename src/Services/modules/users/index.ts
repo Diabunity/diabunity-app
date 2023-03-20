@@ -53,6 +53,11 @@ export enum DiabetesType {
   TYPE_2 = 1,
 }
 
+export enum SubscriptionType {
+  FREE = 0,
+  PREMIUM = 1,
+}
+
 export type Measurement = {
   measurement: number;
   timestamp: Date | string;
@@ -73,6 +78,7 @@ export type User = {
   glucose_min: number;
   glucose_max: number;
   verified: boolean;
+  subscription: Subscription;
 };
 
 export type Measurements = {
@@ -81,8 +87,23 @@ export type Measurements = {
   periodInTarget: PeriodEntry;
   totalPages: number;
   totalElements: number;
+  measurementTracing: MeasurementTracing[];
 };
 
+export type MeasurementTracing = {
+  count: number;
+  source: MeasurementMode;
+};
+
+export type Metadata = {
+  key: string;
+  value: number;
+};
+
+export interface Subscription {
+  metadata: Metadata[] | Record<string, number>;
+  subscription_type: SubscriptionType;
+}
 export interface UserRanking {
   username: string;
   picture?: string;

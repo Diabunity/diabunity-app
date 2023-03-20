@@ -16,7 +16,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import { Config } from '@/Config';
 import useTheme from '@/Hooks/useTheme';
 import AuthService from '@/Services/modules/auth';
-import { Post, postApi } from '@/Services/modules/posts';
+import { Post, postApi, PostResponse } from '@/Services/modules/posts';
 import { setNotification } from '@/Store/Notification';
 import { store } from '@/Store';
 import { getNameInitials, getRelativeTime } from '@/Utils';
@@ -70,7 +70,7 @@ const Posts = ({
     },
     { refetchOnMountOrArgChange: true }
   );
-
+  const postResponse = data as PostResponse;
   const [saveFavorite] = postApi.useSaveFavoriteMutation();
   const [removeFavorite] = postApi.useRemoveFavoriteMutation();
   const [saveEmoji] = postApi.useSaveEmojiMutation();
@@ -79,13 +79,13 @@ const Posts = ({
   const [postData, setPostData] = useState<Post[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [endReached, setEndReached] = useState<boolean>(shouldRefetch);
-  const posts = data?.posts;
+  const posts = postResponse?.posts;
   const [localEmojis, setLocalEmojis] = useState<{ [key: string]: any }>({});
   const [localFavs, setLocalFavs] = useState<{ [key: string]: any }>({});
   const isEmojiClicked = React.useRef(false);
   const isFavClicked = React.useRef(false);
 
-  const totalPages = data?.paging.total_pages || 0;
+  const totalPages = postResponse?.paging.total_pages || 0;
   useEffect(() => {
     refetchFn();
   }, []);
