@@ -70,8 +70,9 @@ const CommunityContainer = ({
   }, [page]);
 
   const handlePostCreation = () => {
-    const { qty_posts } = userPostsInfo as { qty_posts: number };
-    const metadata = subscription?.metadata as Record<string, number>;
+    let { qty_posts } = userPostsInfo as { qty_posts: number };
+    qty_posts = qty_posts ?? 0;
+    const metadata = subscription.metadata as Record<string, number>;
     if (subscription.subscription_type === SubscriptionType.FREE) {
       if (qty_posts >= metadata.maxPostPerDay) {
         navigate('WithoutPremium');

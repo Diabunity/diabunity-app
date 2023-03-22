@@ -63,7 +63,7 @@ const HistoryContainer = ({ navigation: { navigate } }: Props) => {
     const from = moment(dateRange.from);
     const to = moment(dateRange.to);
     const diffDays = to.diff(from, 'days');
-    const metadata = subscription?.metadata as Record<string, number>;
+    const metadata = subscription.metadata as Record<string, number>;
     if (
       metadata.subscription_type !== SubscriptionType.PREMIUM &&
       diffDays > metadata.maxHistoryMeasurementDays

@@ -122,7 +122,7 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
   };
 
   const handleNFCMeasure = async () => {
-    const { maxMeasurementSensor } = subscription?.metadata as Record<
+    const { maxMeasurementSensor } = subscription.metadata as Record<
       string,
       number
     >;
@@ -209,7 +209,7 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
   };
 
   const handleManualMeasure = async (isAdd = false) => {
-    const { maxMeasurementManual } = subscription?.metadata as Record<
+    const { maxMeasurementManual } = subscription.metadata as Record<
       string,
       number
     >;
