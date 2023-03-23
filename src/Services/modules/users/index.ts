@@ -93,6 +93,8 @@ export interface UserInfo {
   position: number;
 }
 
-export interface DeviceId {
+export interface DeviceData {
   deviceId: string;
+  osVersion: string; // e.g "iOS 14.4.2" or "Android 10"
+  brand: string; // e.g "Apple" or "xiaomi"
 }

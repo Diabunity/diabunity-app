@@ -1,12 +1,12 @@
 import { EndpointBuilder } from '@reduxjs/toolkit/dist/query/endpointDefinitions';
 import AuthService from '@/Services/modules/auth';
-import { DeviceId } from '.';
+import { DeviceData } from '.';
 
 export default (build: EndpointBuilder<any, any, any>) =>
-  build.mutation<void, DeviceId>({
+  build.mutation<void, DeviceData>({
     query: (data) => {
       return {
-        url: `/users/${AuthService.getCurrentUser()?.uid}/device_id`,
+        url: `/users/${AuthService.getCurrentUser()?.uid}/devices`,
         method: 'POST',
         body: data,
       };
