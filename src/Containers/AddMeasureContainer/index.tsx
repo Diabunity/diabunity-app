@@ -10,14 +10,18 @@ import {
 } from 'react-native-ui-lib';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useIsFocused } from '@react-navigation/native';
-import { useTheme } from '@/Hooks';
+import { useTheme, useUser } from '@/Hooks';
 import { store } from '@/Store';
 import { FormButton, BackButton } from '@/Components';
 
 import { NavigatorParams } from '@/Navigators/Application';
 import { NFCReader } from '@/Services/modules/nfc';
 import AuthService from '@/Services/modules/auth';
-import { userApi, MeasurementMode } from '@/Services/modules/users';
+import {
+  userApi,
+  MeasurementMode,
+  SubscriptionType,
+} from '@/Services/modules/users';
 import { setNotification } from '@/Store/Notification';
 import { addMinutes, DatePeriod, setByTimezone } from '@/Utils';
 import { TOAST_TIMEOUT } from '@/Constants';
@@ -30,6 +34,7 @@ type Props = NativeStackScreenProps<NavigatorParams>;
 const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
   const { Layout, Images, Colors } = useTheme();
   const user = AuthService.getCurrentUser();
+  const { subscription } = useUser();
   const [saveMeasurement, { isLoading, isSuccess, isError, error, reset }] =
     userApi.useSaveMeasurementMutation();
   const { data } = userApi.useFetchMeasurementQuery({
@@ -40,8 +45,10 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
   const [supported, setSupported] = useState<boolean>(false);
   const [nfcInstance, setNFCInstance] = useState<NFCReader>();
   const [isScanning, setIsScanning] = useState(false);
-  const [hasPassedDailyMeasurements, setHasPassedDailyMeasurements] =
-    useState(false);
+  const [hasPassedDailyMeasurements, setHasPassedDailyMeasurements] = useState({
+    manual: false,
+    sensor: false,
+  });
   const [manualEnabled, setManualEnabled] = useState<boolean>(false);
   const [measurement, setMeasurement] = useState<string>();
   const [sensorLife, setSensorLife] = useState<number | undefined>();
@@ -115,6 +122,10 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
   };
 
   const handleNFCMeasure = async () => {
+    const { maxMeasurementSensor } = subscription.metadata as Record<
+      string,
+      number
+    >;
     const isIOS = Platform.OS === 'ios';
     let timer;
     let glucoseData;
@@ -168,12 +179,17 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
           });
         }
         if (measurements.length > 0) {
-          const sensorDailyMeasurements = dailyMasurements?.filter(
+          const sensorDailyMeasurements = data?.measurementTracing.find(
             (m) => m.source === MeasurementMode.SENSOR
-          );
-          // This number is the maximum number of measurements for the free plan. It should come from the backend
-          if (sensorDailyMeasurements.length >= 64) {
-            setHasPassedDailyMeasurements(true);
+          ) || { count: 0 };
+          if (
+            subscription.subscription_type !== SubscriptionType.PREMIUM &&
+            sensorDailyMeasurements.count >= maxMeasurementSensor
+          ) {
+            setHasPassedDailyMeasurements((prev) => ({
+              ...prev,
+              sensor: true,
+            }));
             navigate('WithoutPremium');
             return;
           } else {
@@ -193,6 +209,10 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
   };
 
   const handleManualMeasure = async (isAdd = false) => {
+    const { maxMeasurementManual } = subscription.metadata as Record<
+      string,
+      number
+    >;
     if (isAdd) {
       const newDate = setByTimezone(date);
       const newTime = setByTimezone(time);
@@ -213,11 +233,26 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
         },
       ];
 
-      const { data } = (await saveMeasurement({
-        measurements,
-        trend_history: [],
-      })) as { data: { tendency: TENDENCY } };
-      setTendency(data.tendency ?? TENDENCY.UNKNOWN);
+      const manualDailyMeasurements = data?.measurementTracing.find(
+        (m) => m.source === MeasurementMode.MANUAL
+      ) || { count: 0 };
+      if (
+        subscription.subscription_type !== SubscriptionType.PREMIUM &&
+        manualDailyMeasurements.count >= maxMeasurementManual
+      ) {
+        setHasPassedDailyMeasurements((prev) => ({
+          ...prev,
+          manual: true,
+        }));
+        navigate('WithoutPremium');
+        return;
+      } else {
+        const { data } = (await saveMeasurement({
+          measurements,
+          trend_history: [],
+        })) as { data: { tendency: TENDENCY } };
+        setTendency(data.tendency ?? TENDENCY.UNKNOWN);
+      }
     } else {
       setManualEnabled(true);
     }
@@ -317,7 +352,7 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
             <FormButton
               label="Lectura nfc"
               onPress={handleNFCMeasure}
-              isProFeature={hasPassedDailyMeasurements}
+              isProFeature={hasPassedDailyMeasurements.sensor}
               labelStyle={styles.button}
               noMarginBottom
               disabledCondition={isScanning || !supported}
@@ -333,6 +368,7 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
               label="Lectura manual"
               labelStyle={styles.button}
               noMarginBottom
+              isProFeature={hasPassedDailyMeasurements.manual}
               onPress={() => handleManualMeasure(false)}
             />
           </>

@@ -6,7 +6,7 @@ import { Card } from 'react-native-paper';
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { useTheme } from '@/Hooks';
+import { useTheme, useUser } from '@/Hooks';
 import Table, { TableBuilder, TENDENCY } from './Table';
 import { styles, COLORS } from './styles';
 
@@ -40,9 +40,7 @@ type Props = NativeStackScreenProps<NavigatorParams> & {
 const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
   const { Layout, Colors } = useTheme();
   const user = AuthService.getCurrentUser();
-  const { data: userData } = userApi.useFetchUserQuery(user?.uid, {
-    refetchOnMountOrArgChange: true,
-  });
+  const userData = useUser();
 
   const { refetch, sensorLife, tendency } = route?.params || { refetch: null };
 

@@ -1,5 +1,5 @@
 import { SensorLifeStatus } from '@/Services/modules/nfc';
-import { Measurement } from '@/Services/modules/users';
+import { Measurement, Metadata } from '@/Services/modules/users';
 import { LineChartData } from 'react-native-chart-kit/dist/line-chart/LineChart';
 
 const hexToInt = (hex: string): number => {
@@ -246,4 +246,20 @@ export const getRelativeTime = (timestamp: string) => {
   }
 
   return `${humanTime.toFixed(0)} ${units}`;
+};
+
+interface ArrayItem {
+  key: string;
+  value: any;
+}
+export const convertToCamelCase = (
+  arr: ArrayItem[]
+): { [key: string]: any } => {
+  const obj = arr.reduce((acc: { [key: string]: any }, cur: ArrayItem) => {
+    const key = cur.key.replace(/_([a-z])/g, (_, p1) => p1.toUpperCase());
+    acc[key] = cur.value;
+    return acc;
+  }, {});
+
+  return obj;
 };

@@ -5,8 +5,8 @@ import { Card } from 'react-native-paper';
 import moment from 'moment';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import AuthService from '@/Services/modules/auth';
-import { useTheme } from '@/Hooks';
-import { userApi } from '@/Services/modules/users';
+import { useTheme, useUser } from '@/Hooks';
+import { SubscriptionType, userApi } from '@/Services/modules/users';
 import { DatePeriod } from '@/Utils';
 import HeaderDatePicker from './HeaderDatePicker';
 import Table from './Table';
@@ -41,6 +41,7 @@ const HistoryContainer = ({ navigation: { navigate } }: Props) => {
   const { Layout } = useTheme();
   const isFocused = useIsFocused();
   const user = AuthService.getCurrentUser();
+  const { subscription } = useUser();
   const [dateRange, setDateRange] = useState<{ from: string; to: string }>();
   const [page, setPage] = useState<number>(0);
   const [unmount, setUnmounted] = useState<boolean>(false);
@@ -62,8 +63,11 @@ const HistoryContainer = ({ navigation: { navigate } }: Props) => {
     const from = moment(dateRange.from);
     const to = moment(dateRange.to);
     const diffDays = to.diff(from, 'days');
-    // This is the limit of days to show. It should come from the backend
-    if (diffDays > 7) {
+    const metadata = subscription.metadata as Record<string, number>;
+    if (
+      metadata.subscription_type !== SubscriptionType.PREMIUM &&
+      diffDays > metadata.maxHistoryMeasurementDays
+    ) {
       setUnmounted(true);
       navigate('WithoutPremium');
     } else {

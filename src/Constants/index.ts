@@ -1,3 +1,5 @@
+import { Subscription, SubscriptionType } from '@/Services/modules/users';
+
 export const MOCKED_DATA = [
   -42, 97, 16, 25, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   -38, 70, 8, 12, 120, 5, -120, -34, -102, 0, 112, 5, -56, -80, -38, 0, 100, 5,
@@ -30,6 +32,15 @@ export enum PAGE_DIRECTION {
 export const DIABUNITY_USER = 'Diabunity User';
 export const BRAND_NAME = 'Diabunity';
 
+export const DEFAULT_SUBSCRIPTION: Subscription = {
+  subscription_type: SubscriptionType.FREE,
+  metadata: {
+    maxPostPerDay: 2,
+    maxHistoryMeasurementDays: 3,
+    maxMeasurementSensor: 3,
+    maxMeasurementManual: 3,
+  },
+};
 export const DIABETES_TIPS = [
   {
     initial: 'Debes de',

@@ -22,4 +22,9 @@ export const premiumFeatures = [
     title: 'Historial extendido',
     description: 'Visualización de mas de una semana de tus mediciones.',
   },
+  {
+    id: 5,
+    title: 'Publicaciones ilimitadas',
+    description: 'Posteos en la comunidad sin límite diario.',
+  },
 ];

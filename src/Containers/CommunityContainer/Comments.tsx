@@ -11,7 +11,7 @@ import { setNotification } from '@/Store/Notification';
 import { store } from '@/Store';
 import useTheme from '@/Hooks/useTheme';
 import { getNameInitials, getRelativeTime } from '@/Utils';
-import { DIABUNITY_USER, BRAND_NAME, emojiI18N } from '@/Constants';
+import { DIABUNITY_USER, emojiI18N } from '@/Constants';
 import { Post, postApi } from '@/Services/modules/posts';
 import Divider from '@/Components/Divider';
 
