@@ -61,7 +61,7 @@ const ApplicationNavigator = () => {
     skip,
     refetchOnMountOrArgChange: true,
   });
-  const [saveDeviceId] = userApi.useSaveDeviceIdMutation();
+  const [saveDeviceData] = userApi.useSaveDeviceDataMutation();
   const [isLoading, setIsLoading] = useState(true);
   const navigationRef = useRef<NavigationContainerRef<NavigatorParams>>(null);
 
@@ -123,7 +123,7 @@ const ApplicationNavigator = () => {
           brand: DeviceInfo.getBrand(),
         };
 
-        await saveDeviceId(deviceBody);
+        await saveDeviceData(deviceBody);
       } catch (error) {
         analytics().logEvent('error_registering_device', { error });
       }
