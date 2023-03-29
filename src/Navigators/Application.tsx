@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { useNetInfo } from '@react-native-community/netinfo';
 import crashlytics from '@react-native-firebase/crashlytics';
-import { SafeAreaView, StatusBar } from 'react-native';
+import messaging from '@react-native-firebase/messaging';
+import { SafeAreaView, StatusBar, Platform } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainerRef } from '@react-navigation/core';
 import { NavigationContainer } from '@react-navigation/native';
@@ -14,7 +15,7 @@ import {
   WithoutPremiumContainer,
   NoNetworkContainer,
 } from '@/Containers';
-import { userApi } from '@/Services/modules/users';
+import { DeviceData, userApi } from '@/Services/modules/users';
 import { store } from '@/Store';
 import { setUser as storeUser } from '@/Store/User';
 import { useTheme, useUser } from '@/Hooks';
@@ -22,6 +23,8 @@ import { TENDENCY } from '@/Containers/HomeContainer/Table';
 import MainNavigator from './Main';
 import { NfcPromptAndroid } from '@/Components';
 import { Colors } from '@/Theme/Variables';
+import DeviceInfo from 'react-native-device-info';
+import analytics from '@react-native-firebase/analytics';
 
 export type NavigatorParams = {
   Main: undefined;
@@ -58,6 +61,7 @@ const ApplicationNavigator = () => {
     skip,
     refetchOnMountOrArgChange: true,
   });
+  const [saveDeviceData] = userApi.useSaveDeviceDataMutation();
   const [isLoading, setIsLoading] = useState(true);
   const navigationRef = useRef<NavigationContainerRef<NavigatorParams>>(null);
 
@@ -89,6 +93,45 @@ const ApplicationNavigator = () => {
     }
     setHasCompletedOnboarding(undefined);
     refetch();
+  }, [user]);
+
+  useEffect(() => {
+    // If the user is not yet authenticated, do not register the device ID
+    if (!user) {
+      return;
+    }
+
+    async function registerDevice() {
+      try {
+        // Request permission to access FCM token on Android
+        const authStatus = await messaging().requestPermission();
+        const enabled =
+          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+          authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+        if (!enabled) {
+          analytics().logEvent('error_FCM_permission_denied');
+          return;
+        }
+
+        // Get the FCM token and device ID
+        const token = await messaging().getToken();
+
+        const deviceBody: DeviceData = {
+          deviceId: token,
+          osVersion: DeviceInfo.getSystemVersion(),
+          brand: DeviceInfo.getBrand(),
+        };
+
+        await saveDeviceData(deviceBody);
+      } catch (error) {
+        analytics().logEvent('error_registering_device', { error });
+      }
+    }
+
+    if (Platform.OS === 'android') {
+      registerDevice();
+    }
   }, [user]);
 
   useEffect(() => {

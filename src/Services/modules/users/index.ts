@@ -5,7 +5,7 @@ import updateUser from './updateUser';
 import fetchMeasurement from './fetchMeasurement';
 import saveMeasurement from './saveMeasurement';
 import fetchRanking from './fetchRanking';
-import saveDeviceId from './saveDeviceId';
+import saveDeviceData from './saveDeviceData';
 
 export const userApi = api.injectEndpoints({
   endpoints: (build) => ({
@@ -15,7 +15,7 @@ export const userApi = api.injectEndpoints({
     fetchMeasurement: fetchMeasurement(build),
     saveMeasurement: saveMeasurement(build),
     fetchRanking: fetchRanking(build),
-    saveDeviceId: saveDeviceId(build),
+    saveDeviceData: saveDeviceData(build),
   }),
   overrideExisting: true,
 });
@@ -114,6 +114,8 @@ export interface UserInfo {
   position: number;
 }
 
-export interface DeviceId {
+export interface DeviceData {
   deviceId: string;
+  osVersion: string; // e.g "iOS 14.4.2" or "Android 10"
+  brand: string; // e.g "Apple" or "xiaomi"
 }
