@@ -13,7 +13,7 @@ import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import Handlebars from 'react-native-handlebars/dist/handlebars';
 import { useTheme } from '@/Hooks';
 import { SensorLifeStatus } from '@/Services/modules/nfc';
-import { formatDate, getSensorLifeTime } from '@/Utils';
+import { DatePeriod, formatDate, getSensorLifeTime } from '@/Utils';
 import Table, {
   TableBuilder,
   TENDENCY,
@@ -35,7 +35,7 @@ import PeriodChart from '@/Components/PeriodChart';
 import { styles } from './styles';
 import { store } from '@/Store';
 import { setNotification } from '@/Store/Notification';
-import { Incubator } from 'react-native-ui-lib';
+import { ActionSheet, Incubator } from 'react-native-ui-lib';
 
 // @ts-ignore
 import templateHtml from '@/Templates/report.html';
@@ -57,6 +57,7 @@ const MedicalReportContainer = ({
   const { Colors } = useTheme();
   const [source, setSource] = useState<any>({});
   const [loading, setLoading] = useState<boolean>(false);
+  const [reportVisible, setReportVisible] = useState<boolean>(false);
   const average = data?.avg || { value: 0, status: MeasurementStatus.OK };
   const periodInTarget = data?.periodInTarget || {
     value: 0,
@@ -80,7 +81,7 @@ const MedicalReportContainer = ({
   const periodRef = useRef<any>();
   const tableRef = useRef<any>();
 
-  const handleCapture = async () => {
+  const handleCapture = async (period: DatePeriod) => {
     const { subscription_type } = user?.subscription || {};
     const isUserPremium = subscription_type === SubscriptionType.PREMIUM;
     if (!isUserPremium) {
@@ -216,12 +217,30 @@ const MedicalReportContainer = ({
       <View style={{ marginTop: 10 }}>
         <FormButton
           label="Generar reporte médico"
-          onPress={handleCapture}
+          onPress={() => setReportVisible(true)}
           isProFeature
           centered
           noMarginBottom
           disabledCondition={loading}
           backgroundColor={Colors.red}
+        />
+        <ActionSheet
+          title={'Elije el tipo de reporte'}
+          destructiveButtonIndex={0}
+          useNativeIOS
+          migrateDialog
+          options={[
+            {
+              label: 'Reporte diario',
+              onPress: () => handleCapture(DatePeriod.LAST_DAY),
+            },
+            {
+              label: 'Reporte semanal',
+              onPress: () => handleCapture(DatePeriod.LAST_WEEK),
+            },
+          ]}
+          visible={reportVisible}
+          onDismiss={() => setReportVisible(false)}
         />
       </View>
       {loading && (

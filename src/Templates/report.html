@@ -11,39 +11,62 @@
     />
 
     <style>
-       body {
+      body {
         font-family: 'Montserrat';
         font-size: 22px;
-        color:#000;
+        color: #000;
       }
       h1 {
-        background-color: red;
+        background-color: blue;
       }
-    </style>  
+    </style>
   </head>
 
   <body>
-    <img src={{base64Logo}} width=400 />
+    <img src="{{base64Logo}}" width="400" />
     <h1>Datos personales</h1>
-    <h2>Paciente: {{name}} </h2>
-    <h2>Fecha de nacimiento: {{date}} </h2>
-    <h2>Altura: {{height}} </h2>
-    <h2>Peso: {{weight}} </h2>
-    <h2>Tipo de diabetes: {{diabetesType}} </h2>
-    <h2>Rango de glucosa: {{glucoseRange}} </h2>
-    <h1>Reporte</h1><h2>Últimas 24 horas</h2>
+    <h2>Paciente: {{name}}</h2>
+    <h2>Fecha de nacimiento: {{date}}</h2>
+    <h2>Altura: {{height}}</h2>
+    <h2>Peso: {{weight}}</h2>
+    <h2>Tipo de diabetes: {{diabetesType}}</h2>
+    <h2>Rango de glucosa: {{glucoseRange}}</h2>
+    <h1>Reporte</h1>
+    <h2>Últimas 24 horas</h2>
     <p>
-      <img src="data:image/png;base64,{{source.daily}}" height=900 />
+      <img src="data:image/png;base64,{{source.daily}}" height="900" />
     </p>
     <div>
-      <br>
-      <br>
+      <br />
+      <br />
       <h2>Periodo en objetivo</h2>
-      <img src="data:image/png;base64,{{source.period}}" height=400 />
+      <img src="data:image/png;base64,{{source.period}}" height="400" />
     </div>
-    <p>
-      <h2>Datos Estadísticos</h2>
-      <img src="data:image/png;base64, {{source.table}}" />
-    </p>
+    <canvas id="myChart"></canvas>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      const ctx = document.getElementById('myChart');
+
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+          datasets: [
+            {
+              label: '# of Votes',
+              data: [12, 19, 3, 5, 2, 3],
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+    </script>
   </body>
 </html>
