@@ -14,6 +14,7 @@ import {
   OnboardingContainer,
   WithoutPremiumContainer,
   NoNetworkContainer,
+  MedicalReportContainer,
 } from '@/Containers';
 import { DeviceData, userApi } from '@/Services/modules/users';
 import { store } from '@/Store';
@@ -37,6 +38,7 @@ export type NavigatorParams = {
   NoNetwork: undefined;
   Onboarding: undefined;
   WithoutPremium: undefined;
+  MedicalReport: undefined;
   ForgotPassword: undefined;
 };
 
@@ -182,6 +184,10 @@ const ApplicationNavigator = () => {
               <Stack.Screen
                 name="WithoutPremium"
                 component={WithoutPremiumContainer}
+              />
+              <Stack.Screen
+                name="MedicalReport"
+                component={MedicalReportContainer}
               />
             </>
           ) : (

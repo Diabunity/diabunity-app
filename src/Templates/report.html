@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html>
   <head>
     <meta
@@ -6,67 +5,126 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0"
     />
     <link
-      href="https://fonts.googleapis.com/css?family=Montserrat"
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700"
       rel="stylesheet"
     />
 
     <style>
-      body {
-        font-family: 'Montserrat';
-        font-size: 22px;
-        color: #000;
+      @media print {
+        .pagebreak {
+          page-break-before: always;
+        }
       }
-      h1 {
-        background-color: blue;
+      body {
+        font-family: 'Roboto';
+        font-size: 28px;
+        color: #000;
+        margin: 0;
+      }
+      .report-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+      }
+      .report-header img {
+        width: 280px;
+      }
+      .report-header p {
+        font-size: 28px;
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.5);
+        margin: 0;
+        margin-bottom: 10px;
+        font-weight: 400;
+      }
+      .range-time-chart-container h6,
+      .line-chart-container h6 {
+        font-weight: bold;
+        margin: 0;
+        font-size: 28px;
+        margin: 10px 15px;
+        text-transform: uppercase;
+      }
+      .report-info-container {
+        margin: 30px 15px 10px 15px;
+      }
+      .report-info-container h6 {
+        font-weight: bold;
+        margin: 0;
+        font-size: 28px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+      }
+      .report-info-container p {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 400;
+        margin-top: 5px;
+        margin-bottom: 5px;
+      }
+      .info-item {
+        margin-bottom: 20px;
       }
     </style>
   </head>
-
   <body>
-    <img src="{{base64Logo}}" width="400" />
-    <h1>Datos personales</h1>
-    <h2>Paciente: {{name}}</h2>
-    <h2>Fecha de nacimiento: {{date}}</h2>
-    <h2>Altura: {{height}}</h2>
-    <h2>Peso: {{weight}}</h2>
-    <h2>Tipo de diabetes: {{diabetesType}}</h2>
-    <h2>Rango de glucosa: {{glucoseRange}}</h2>
-    <h1>Reporte</h1>
-    <h2>Últimas 24 horas</h2>
-    <p>
-      <img src="data:image/png;base64,{{source.daily}}" height="900" />
-    </p>
-    <div>
-      <br />
-      <br />
-      <h2>Periodo en objetivo</h2>
-      <img src="data:image/png;base64,{{source.period}}" height="400" />
+    <div class="report-header">
+      <img src="{{logo}}" />
+      <p>{{title}}</p>
     </div>
-    <canvas id="myChart"></canvas>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-      const ctx = document.getElementById('myChart');
-
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-          datasets: [
-            {
-              label: '# of Votes',
-              data: [12, 19, 3, 5, 2, 3],
-              borderWidth: 1,
-            },
-          ],
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true,
-            },
-          },
-        },
-      });
-    </script>
+    <br />
+    <br />
+    <div class="report-info-container">
+      <div class="info-item">
+        <h6>DATOS</h6>
+        <p>Nombre: {{user_info.name}}</p>
+        <p>Edad: {{user_info.age}} a&ntilde;os</p>
+        <p>Peso: {{user_info.weight}} KG</p>
+        <p>Estatuta: {{user_info.height}} m</p>
+        <p>Tipo de diabetes: {{user_info.diabetes_type}}</p>
+      </div>
+      <div class="info-item">
+        <h6>UMBRAL DEL PACIENTE</h6>
+        <p>Rango objetivo: {{user_info.glucose_info.range}}</p>
+        <p>Bajo: {{user_info.glucose_info.low}}</p>
+        <p>Alto: {{user_info.glucose_info.high}}</p>
+        <p>Hiperglucemia: {{user_info.glucose_info.hyper}}</p>
+      </div>
+      <div class="info-item">
+        <h6>CANTIDAD DE MEDICIONES</h6>
+        <p>
+          Por {{type}}: {{user_info.measurements_info.metadata.quantity.total}}
+        </p>
+        <p>
+          Dentro del rango objetivo:
+          {{user_info.measurements_info.metadata.quantity.in_range}}
+        </p>
+        <p>
+          Fuera del rango objetivo:
+          {{user_info.measurements_info.metadata.quantity.out_of_range}}
+        </p>
+      </div>
+    </div>
+    <div class="pagebreak"></div>
+    <br />
+    <br />
+    <div class="range-time-chart-container">
+      <h6>TIEMPO EN RANGOS</h6>
+      {{#each rangeChartData}}
+      <img src="{{this}}" width="100%" />
+      <br />
+      {{/each}}
+    </div>
+    <div class="pagebreak"></div>
+    <br />
+    <br />
+    <div class="line-chart-container">
+      {{#each lineChartData}}
+      <h6>{{lookup ../measurementTimestamps @index}}</h6>
+      <img src="{{this}}" width="100%" />
+      <br />
+      {{/each}}
+    </div>
   </body>
 </html>

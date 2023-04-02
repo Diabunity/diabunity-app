@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, ScrollView, View } from 'react-native';
-import { SkeletonView } from 'react-native-ui-lib';
+import { ActionSheet, SkeletonView } from 'react-native-ui-lib';
 import Icon from 'react-native-vector-icons/Feather';
 import { Card } from 'react-native-paper';
 import { RouteProp } from '@react-navigation/native';
@@ -20,7 +20,6 @@ import { SensorLifeStatus } from '@/Services/modules/nfc';
 import { NavigatorParams } from '@/Navigators/Application';
 import { DatePeriod, getSensorLifeTime } from '@/Utils';
 import { FormButton, Tips } from '@/Components';
-import MedicalReportContainer from '../MedicalReportContainer';
 import LastDayChart from '@/Components/LastDayChart';
 import LastMeasurement from '@/Components/LastMeasurement';
 
@@ -39,6 +38,7 @@ type Props = NativeStackScreenProps<NavigatorParams> & {
 
 const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
   const { Layout, Colors } = useTheme();
+  const [reportVisible, setReportVisible] = useState<boolean>(false);
   const user = AuthService.getCurrentUser();
   const userData = useUser();
 
@@ -131,17 +131,36 @@ const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
                     .sensorLife(age, status)
                     .build()}
                 />
-                <MedicalReportContainer
-                  data={data}
-                  name={user?.displayName}
-                  user={userData}
-                  navigate={navigate}
-                  sensorLife={sensorLife}
+                <FormButton
+                  label="Generar reporte médico"
+                  onPress={() => setReportVisible(true)}
+                  isProFeature
+                  centered
+                  noMarginBottom
+                  backgroundColor={Colors.red}
                 />
                 <Tips />
               </View>
             )}
             times={2}
+          />
+          <ActionSheet
+            title={'Elije el tipo de reporte'}
+            destructiveButtonIndex={0}
+            useNativeIOS
+            migrateDialog
+            options={[
+              {
+                label: 'Reporte diario',
+                onPress: () => navigate('MedicalReport'),
+              },
+              {
+                label: 'Reporte semanal',
+                onPress: () => navigate('MedicalReport'),
+              },
+            ]}
+            visible={reportVisible}
+            onDismiss={() => setReportVisible(false)}
           />
         </ScrollView>
       )}
