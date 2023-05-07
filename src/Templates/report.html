@@ -121,7 +121,11 @@
     <br />
     <div class="line-chart-container">
       {{#each lineChartData}}
-      <h6>{{lookup ../measurementTimestamps @index}}</h6>
+      <h6
+        style="{{#if (and (eq ../type 'semana') (eq @index (length ../lineChartData 1)))}}color: #c1272d;{{/if}}"
+      >
+        {{lookup ../measurementTimestamps @index}}
+      </h6>
       <img src="{{this}}" width="100%" />
       <br />
       {{/each}}

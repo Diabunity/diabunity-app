@@ -38,7 +38,7 @@ export type NavigatorParams = {
   NoNetwork: undefined;
   Onboarding: undefined;
   WithoutPremium: undefined;
-  MedicalReport: undefined;
+  MedicalReport: { filter: string };
   ForgotPassword: undefined;
 };
 
@@ -87,14 +87,12 @@ const ApplicationNavigator = () => {
   useEffect(() => {
     if (user) {
       setSkip(false);
-      refetch();
     } else {
       if (user === null) {
         setIsLoading(false);
       }
     }
     setHasCompletedOnboarding(undefined);
-    refetch();
   }, [user]);
 
   useEffect(() => {

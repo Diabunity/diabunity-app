@@ -152,11 +152,13 @@ const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
             options={[
               {
                 label: 'Reporte diario',
-                onPress: () => navigate('MedicalReport'),
+                onPress: () =>
+                  navigate('MedicalReport', { filter: DatePeriod.LAST_DAY }),
               },
               {
                 label: 'Reporte semanal',
-                onPress: () => navigate('MedicalReport'),
+                onPress: () =>
+                  navigate('MedicalReport', { filter: DatePeriod.LAST_WEEK }),
               },
             ]}
             visible={reportVisible}

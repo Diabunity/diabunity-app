@@ -414,9 +414,15 @@
           min: Number(glucose_info.range.match(/\d+(\.\d+)?/g)[0]),
           max: Number(glucose_info.range.match(/\d+(\.\d+)?/g)[1]),
         };
-        measurements_info.results.forEach((result) => {
+        measurements_info.results.forEach((result, index) => {
           const title = document.createElement('h6');
           title.innerHTML = result.timestamp;
+          if (
+            index === measurements_info.results.length - 1 &&
+            data.type[0] === 'semanal'
+          ) {
+            title.style.color = '#c1272d';
+          }
           document.querySelector('.line-chart-container').appendChild(title);
           const chartData = {
             labels: result.data.labels,
