@@ -115,7 +115,7 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
       }, TOAST_TIMEOUT);
     }
     return () => clearTimeout(timer);
-  }, [isSuccess, isError, tendency]);
+  }, [isSuccess, isError, tendency, navigate, sensorLife, reset, error]);
 
   const resetFields = () => {
     setDate(new Date());

@@ -5,7 +5,7 @@ import { useTheme } from '@/Hooks';
 import { DIABETES_TIPS } from '@/Constants';
 
 const Tips = () => {
-  const { Layout, Images, Colors } = useTheme();
+  const { Layout, Colors } = useTheme();
   const [tip, setTip] = useState<
     | { initial: string; important: string; end: string; icon: string }
     | undefined

@@ -1,5 +1,5 @@
-import { StyleSheet } from 'react-native'
-import { ThemeGutters, ThemeVariables } from '@/Theme/theme.type'
+import { StyleSheet } from 'react-native';
+import { ThemeGutters, ThemeVariables } from '@/Theme/theme.type';
 
 /**
  * Generate Styles depending on MetricsSizes vars availabled at ./Theme/Variables
@@ -63,7 +63,7 @@ export default function ({ MetricsSizes }: ThemeVariables): ThemeGutters {
           paddingHorizontal: value,
         },
       }),
-      {},
+      {}
     ),
-  })
+  });
 }

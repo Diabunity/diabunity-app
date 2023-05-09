@@ -1,5 +1,5 @@
 import { EndpointBuilder } from '@reduxjs/toolkit/dist/query/endpointDefinitions';
-import { DatePeriod, formatDatePeriod, setByTimezone } from '@/Utils';
+import { DatePeriod, formatDatePeriod } from '@/Utils';
 
 import { Measurements } from '.';
 

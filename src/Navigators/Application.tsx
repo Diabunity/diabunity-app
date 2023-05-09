@@ -57,7 +57,6 @@ const ApplicationNavigator = () => {
   const {
     data = null,
     error,
-    refetch,
     isFetching,
   } = userApi.useFetchUserQuery(user?.uid, {
     skip,
@@ -82,6 +81,7 @@ const ApplicationNavigator = () => {
         navigationRef.current?.navigate('NoNetwork');
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [netInfo, navigationRef.current]);
 
   useEffect(() => {
@@ -132,7 +132,7 @@ const ApplicationNavigator = () => {
     if (Platform.OS === 'android') {
       registerDevice();
     }
-  }, [user]);
+  }, [saveDeviceData, user]);
 
   useEffect(() => {
     setIsLoading(true);

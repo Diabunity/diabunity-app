@@ -13,7 +13,7 @@ export default (build: EndpointBuilder<any, any, any>) =>
       return {
         url: favoriteSection
           ? `/users/${AuthService.getCurrentUser()?.uid}/posts/favs`
-          : `/posts`,
+          : '/posts',
         method: 'GET',
         params: {
           page,

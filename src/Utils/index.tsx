@@ -1,5 +1,5 @@
 import { SensorLifeStatus } from '@/Services/modules/nfc';
-import { Measurement, Metadata } from '@/Services/modules/users';
+import { Measurement } from '@/Services/modules/users';
 import { LineChartData } from 'react-native-chart-kit/dist/line-chart/LineChart';
 
 const hexToInt = (hex: string): number => {
@@ -15,9 +15,12 @@ const hexToInt = (hex: string): number => {
 };
 
 export const hexToBytes = (hex?: string): Array<number> => {
-  if (!hex) return [];
-  for (var bytes = [], c = 0; c < hex.length; c += 2)
+  if (!hex) {
+    return [];
+  }
+  for (var bytes = [], c = 0; c < hex.length; c += 2) {
     bytes.push(hexToInt(hex.substr(c, 2)));
+  }
   return bytes;
 };
 
@@ -103,7 +106,9 @@ export const addMinutes = (date: Date, minutes: number): Date => {
 export const getChartDataset = (
   measurements: Array<Measurement> | undefined
 ): LineChartData => {
-  if (!measurements) return { datasets: [{ data: [] }], labels: [] };
+  if (!measurements) {
+    return { datasets: [{ data: [] }], labels: [] };
+  }
   const orderedArray = measurements.slice().reverse();
   const labels = orderedArray.map((m) => formatHour(new Date(m.timestamp)));
   const data = orderedArray.map((m) => m.measurement);
@@ -117,7 +122,9 @@ export const handleHiddenPoints = (
   originalLength: number | undefined,
   maxPoints: number = 8
 ): Array<number> => {
-  if (!originalLength || originalLength <= maxPoints) return [];
+  if (!originalLength || originalLength <= maxPoints) {
+    return [];
+  }
 
   return Array.from(Array(originalLength).keys()).filter(
     (num) => num % 3 !== 0
@@ -127,13 +134,17 @@ export const handleHiddenPoints = (
 export const getSensorLifeTime = (
   sensorLife?: number
 ): { age: string; status?: number } => {
-  if (sensorLife === undefined)
+  if (sensorLife === undefined) {
     return { age: 'Desconocido', status: SensorLifeStatus.UNKNOWN };
+  }
   const days = sensorLife;
-  if (days === 0) return { age: 'Expirado', status: SensorLifeStatus.EXPIRED };
+  if (days === 0) {
+    return { age: 'Expirado', status: SensorLifeStatus.EXPIRED };
+  }
 
-  if (days > 0 && days < 1)
+  if (days > 0 && days < 1) {
     return { age: 'Menos de 1 dia', status: SensorLifeStatus.ABOUT_TO_EXPIRE };
+  }
   return {
     age: `${Math.floor(days)} ${Math.floor(days) === 1 ? 'dia' : 'dias'}`,
     status: days <= 5 ? SensorLifeStatus.GOOD : SensorLifeStatus.ALMOST_NEW,
@@ -150,7 +161,9 @@ export const setByTimezone = (time: Date): Date => {
 export const getNameInitials = (
   fullName: string | undefined | null
 ): string => {
-  if (!fullName) return '';
+  if (!fullName) {
+    return '';
+  }
   const names = fullName.split(' ');
   let initials = names[0].substring(0, 1).toUpperCase();
 

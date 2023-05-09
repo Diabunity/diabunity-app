@@ -6,7 +6,7 @@ import { Card } from 'react-native-paper';
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { useTheme, useUser } from '@/Hooks';
+import { useTheme } from '@/Hooks';
 import Table, { TableBuilder, TENDENCY } from './Table';
 import { styles, COLORS } from './styles';
 
@@ -40,7 +40,6 @@ const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
   const { Layout, Colors } = useTheme();
   const [reportVisible, setReportVisible] = useState<boolean>(false);
   const user = AuthService.getCurrentUser();
-  const userData = useUser();
 
   const { refetch, sensorLife, tendency } = route?.params || { refetch: null };
 
@@ -73,7 +72,7 @@ const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
     if (refetch) {
       refetchFn();
     }
-  }, [refetch]);
+  }, [refetch, refetchFn]);
 
   return (
     <>

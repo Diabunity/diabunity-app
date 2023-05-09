@@ -56,7 +56,7 @@ const NewPost = ({ setPage, setShouldRefetch }: PostProps) => {
         })
       );
     }
-  }, [isSuccess, isError]);
+  }, [isSuccess, isError, setShouldRefetch, setPage, error]);
 
   const handleImage = async (type: string = 'gallery') => {
     const imageFn = type === 'gallery' ? launchImageLibrary : launchCamera;

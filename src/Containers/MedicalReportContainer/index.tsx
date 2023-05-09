@@ -21,6 +21,19 @@ import mockReportData from '@/Mocks/reports';
 import { base64Logo } from '@/Constants';
 import { handleReportData } from '@/Utils/reports';
 
+// Custom helper: isSame
+Handlebars.registerHelper('isSame', function (a: any, b: any): boolean {
+  return a === b;
+});
+
+// Custom helper: isLast
+Handlebars.registerHelper(
+  'isLast',
+  function (index: number, array: any[]): boolean {
+    return index === array.length - 1;
+  }
+);
+
 type Props = NativeStackScreenProps<NavigatorParams> & {
   route: RouteProp<
     {

@@ -4,7 +4,6 @@ import {
   ActivityIndicator,
   Image,
   SafeAreaView,
-  ScrollView,
   Text,
   View,
 } from 'react-native';
@@ -34,7 +33,9 @@ type PostsProps = {
 };
 
 const parseEmojis = (posts?: Post[]) => {
-  if (!posts) return {};
+  if (!posts) {
+    return {};
+  }
   return posts.reduce(
     (prev, post) => ({ ...prev, [post.id]: post.emojis }),
     {}
@@ -42,7 +43,9 @@ const parseEmojis = (posts?: Post[]) => {
 };
 
 const parseFavs = (posts?: Post[]) => {
-  if (!posts) return {};
+  if (!posts) {
+    return {};
+  }
   return posts.reduce(
     (prev, post) => ({ ...prev, [post.id]: post.users_favorites }),
     {}
@@ -88,7 +91,7 @@ const Posts = ({
   const totalPages = postResponse?.paging.total_pages || 0;
   useEffect(() => {
     refetchFn();
-  }, []);
+  }, [refetchFn]);
   useEffect(() => {
     if (isUserRefetching) {
       setIsFetchingState(true);
@@ -121,23 +124,27 @@ const Posts = ({
         setLoading(false);
       }
     }
-  }, [postPage, posts, isFetching]);
+  }, [postPage, posts, isFetching, onRefreshEnd, loading]);
 
   useEffect(() => {
-    if (!endReached) return;
+    if (!endReached) {
+      return;
+    }
     const nextPage = postPage + 1;
     if (nextPage <= totalPages - 1) {
       setPostPage(nextPage);
       setLoading(true);
     }
-  }, [endReached]);
+  }, [endReached, postPage, totalPages]);
 
   useEffect(() => {
     setEndReached(shouldRefetch);
   }, [shouldRefetch]);
 
   const handleFavorite = async (postId: string, isRemove: boolean) => {
-    if (isFavClicked.current) return;
+    if (isFavClicked.current) {
+      return;
+    }
     try {
       isFavClicked.current = true;
       const currentFavs = localFavs[postId];
@@ -206,13 +213,17 @@ const Posts = ({
   };
 
   const updateEmoji = async (emoji: any, name: string, post: Post) => {
-    if (isEmojiClicked.current) return;
+    if (isEmojiClicked.current) {
+      return;
+    }
     const { id } = post;
     const currentEmojis = localEmojis[id];
     const selectedEmoji = currentEmojis.find(
       (item: { name: string }) => item.name === name
     );
-    if (!selectedEmoji) return;
+    if (!selectedEmoji) {
+      return;
+    }
     try {
       isEmojiClicked.current = true;
       const INDEX_VALUE = selectedEmoji?.selected ? -1 : 1;
@@ -222,7 +233,9 @@ const Posts = ({
             emoji.name === selectedEmoji?.name
               ? emoji.index + INDEX_VALUE
               : emoji.index;
-          if (index === 0) return null;
+          if (index === 0) {
+            return null;
+          }
           return {
             ...emoji,
             index,

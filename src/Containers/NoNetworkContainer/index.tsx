@@ -18,7 +18,9 @@ const NoNetworkContainer = ({ navigation: { navigate } }: Props) => {
   const navigationState = useNavigationState((state) => state);
 
   const handleRetry = () => {
-    if (netInfo.isConnected === false) return;
+    if (netInfo.isConnected === false) {
+      return;
+    }
     const { index, routes } = navigationState;
     const lastPage = routes[index - 1];
     if (lastPage) {

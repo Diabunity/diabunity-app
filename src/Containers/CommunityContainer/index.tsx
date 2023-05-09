@@ -67,7 +67,7 @@ const CommunityContainer = ({
 
   useEffect(() => {
     refetch();
-  }, [page]);
+  }, [page, refetch]);
 
   const handlePostCreation = () => {
     let { qty_posts } = userPostsInfo as { qty_posts: number };
@@ -222,7 +222,7 @@ const CommunitySection = ({
         })
       );
     }
-  }, [isSuccess, isError]);
+  }, [isSuccess, isError, setShouldRefetch, setPage, error]);
 
   const handleSelected = (post: Post) => {
     setSelectedPost(post);
