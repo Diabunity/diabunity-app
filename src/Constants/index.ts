@@ -29,8 +29,14 @@ export enum PAGE_DIRECTION {
   PREV = 'PREV',
 }
 
+export const ANDROID_REPORT_WEBVIEW_DATA = {
+  uri: 'file:///android_asset/charts.html',
+  baseUrl: 'file:///android_asset/',
+};
+
 export const DIABUNITY_USER = 'Diabunity User';
 export const BRAND_NAME = 'Diabunity';
+export const DEFAULT_NO_VALUE_SET = 'No especificado';
 
 export const DEFAULT_SUBSCRIPTION: Subscription = {
   subscription_type: SubscriptionType.FREE,

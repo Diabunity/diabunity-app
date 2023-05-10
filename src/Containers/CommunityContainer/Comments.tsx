@@ -37,7 +37,9 @@ const Comments = ({ post }: CommentProps) => {
     data: any,
     post?: Post
   ) => {
-    if (!post) return;
+    if (!post) {
+      return;
+    }
     const { emojis, id } = post;
     const selectedEmoji = emojis.find((item) => item.name === emojiName);
     if (!selectedEmoji?.selected) {
@@ -65,7 +67,9 @@ const Comments = ({ post }: CommentProps) => {
   };
 
   const updateEmoji = async (emoji: any, name: string, post?: Post) => {
-    if (!post) return;
+    if (!post) {
+      return;
+    }
     const { emojis, id } = post;
     const selectedEmoji = emojis.find((item) => item.name === name);
     try {
@@ -76,7 +80,9 @@ const Comments = ({ post }: CommentProps) => {
             emoji.name === selectedEmoji?.name
               ? emoji.index + INDEX_VALUE
               : emoji.index;
-          if (index === 0) return null;
+          if (index === 0) {
+            return null;
+          }
           return {
             ...emoji,
             index,

@@ -1,0 +1,136 @@
+<html>
+  <head>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700"
+      rel="stylesheet"
+    />
+
+    <style>
+      @media print {
+        .pagebreak {
+          page-break-before: always;
+        }
+      }
+      body {
+        font-family: 'Roboto';
+        font-size: 28px;
+        color: #000;
+        margin: 0;
+      }
+      .report-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+      }
+      .report-header img {
+        width: 280px;
+      }
+      .report-header p {
+        font-size: 28px;
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.5);
+        margin: 0;
+        margin-bottom: 10px;
+        font-weight: 400;
+      }
+      .range-time-chart-container h6,
+      .line-chart-container h6 {
+        font-weight: bold;
+        margin: 0;
+        font-size: 28px;
+        margin: 10px 15px;
+        text-transform: uppercase;
+      }
+      .report-info-container {
+        margin: 30px 15px 10px 15px;
+      }
+      .report-info-container h6 {
+        font-weight: bold;
+        margin: 0;
+        font-size: 28px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+      }
+      .report-info-container p {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 400;
+        margin-top: 5px;
+        margin-bottom: 5px;
+      }
+      .info-item {
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="report-header">
+      <img src="{{logo}}" />
+      <p>{{title}}</p>
+    </div>
+    <br />
+    <br />
+    <div class="report-info-container">
+      <div class="info-item">
+        <h6>DATOS</h6>
+        <p>Nombre: {{user_info.name}}</p>
+        <p>Edad: {{user_info.age}} a&ntilde;os</p>
+        <p>Peso: {{user_info.weight}} KG</p>
+        <p>Estatura: {{user_info.height}} m</p>
+        <p>Tipo de diabetes: {{user_info.diabetes_type}}</p>
+      </div>
+      <div class="info-item">
+        <h6>UMBRAL DEL PACIENTE</h6>
+        <p>Rango objetivo: {{user_info.glucose_info.range}}</p>
+        <p>Bajo: {{user_info.glucose_info.low}}</p>
+        <p>Alto: {{user_info.glucose_info.high}}</p>
+        <p>Hiperglucemia: {{user_info.glucose_info.hyper}}</p>
+      </div>
+      <div class="info-item">
+        <h6>CANTIDAD DE MEDICIONES</h6>
+        <p>
+          Por {{type}}: {{user_info.measurements_info.metadata.quantity.total}}
+        </p>
+        <p>
+          Dentro del rango objetivo:
+          {{user_info.measurements_info.metadata.quantity.in_range}}
+        </p>
+        <p>
+          Fuera del rango objetivo:
+          {{user_info.measurements_info.metadata.quantity.out_of_range}}
+        </p>
+      </div>
+    </div>
+    <div class="pagebreak"></div>
+    <br />
+    <br />
+    <div class="range-time-chart-container">
+      <h6>TIEMPO EN RANGOS</h6>
+      {{#each rangeChartData}}
+      <img src="{{this}}" width="100%" />
+      <br />
+      {{/each}}
+    </div>
+    <div class="pagebreak"></div>
+    <br />
+    <br />
+    <div class="line-chart-container">
+      {{#each lineChartData}} {{#if (isLast @index lineChartData)}} {{#if
+      (isSame ../type 'semana')}}
+      <h6 style="color: #c1272d">{{lookup ../measurementTimestamps @index}}</h6>
+      {{else}}
+      <h6>{{lookup ../measurementTimestamps @index}}</h6>
+      {{/if}} {{else}}
+      <h6>{{lookup ../measurementTimestamps @index}}</h6>
+      {{/if}}
+      <img src="{{this}}" width="100%" />
+      <br />
+      {{/each}}
+    </div>
+  </body>
+</html>

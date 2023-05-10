@@ -1,0 +1,540 @@
+<html>
+  <head>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700"
+      rel="stylesheet"
+    />
+
+    <style>
+      .report-title-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .report-title-container p {
+        font-size: 16px;
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.5);
+        margin: 0;
+        margin-bottom: 10px;
+        font-weight: 400;
+      }
+      .report-info-container {
+        margin: 10px 15px;
+      }
+      .report-info-container h6 {
+        font-weight: bold;
+        margin: 0;
+        font-size: 16px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+      }
+      .report-info-container p {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 400;
+        margin-top: 5px;
+        margin-bottom: 5px;
+      }
+      .range-time-chart-container h6,
+      .line-chart-container h6 {
+        font-weight: bold;
+        margin: 0;
+        font-size: 16px;
+        margin: 10px 15px;
+        text-transform: uppercase;
+      }
+      body {
+        font-family: 'Roboto';
+        font-size: 22px;
+        color: #000;
+        margin: 0;
+      }
+      .wrapper {
+        width: '100%';
+        padding-bottom: 30px;
+      }
+      #generate-button {
+        font-weight: 500;
+        background: white;
+        padding: 10px;
+        font-family: 'Roboto';
+        background: #c1272d;
+        text-align: center;
+        margin: 0;
+        color: white;
+        font-size: 16px;
+        width: auto;
+        box-shadow: 0px 1px 1px rgb(0 0 0 / 20%), 0px 2px 2px rgb(0 0 0 / 14%),
+          0px 1px 5px rgb(0 0 0 / 12%);
+        border-radius: 4px;
+        text-transform: uppercase;
+        margin: 0 10px;
+        width: 85vw;
+      }
+      #button-container {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        height: 73px;
+        background: white;
+        display: flex;
+        flex: 1;
+        align-items: center;
+        box-shadow: 0px 3px 9px #666, 0px 5px 5px #666;
+        justify-content: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="report-title-container"></div>
+    <div class="report-info-container"></div>
+    <div class="wrapper">
+      <div class="range-time-chart-container">
+        <h6>TIEMPO EN RANGOS</h6>
+      </div>
+      <div class="line-chart-container"></div>
+    </div>
+    <div id="button-container">
+      <div id="generate-button">Descargar reporte</div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
+
+    <script>
+      Chart.plugins.register({
+        afterDatasetsDraw: function (chart) {
+          if (chart.config.type !== 'bar') return;
+          chart.data.datasets.forEach(function (dataset, i) {
+            var meta = chart.getDatasetMeta(i);
+            if (!meta.hidden) {
+              meta.data.forEach(function (element, index) {
+                const x = element._model.x;
+                const y = element._model.y;
+                const value = dataset.data[index];
+                const ctx = chart.ctx;
+                ctx.fillStyle = 'white';
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${value}%`, x, y + 10);
+              });
+            }
+          });
+        },
+      });
+      const generateReportButton = document.querySelector('#generate-button');
+      const sendMessage = (message) => {
+        window.ReactNativeWebView.postMessage(JSON.stringify(message));
+      };
+      generateReportButton.addEventListener('click', (event) => {
+        generateReportButton.style.opacity = 0.5;
+
+        const images = { range: [], line: [] };
+        const rangeTimeChartCanvas = document.querySelectorAll(
+          '.range-time-chart-container canvas'
+        );
+
+        rangeTimeChartCanvas.forEach((canvas) => {
+          const url = canvas.toDataURL('image/png', 1.0);
+          images.range.push(url);
+        });
+
+        const lineChartCanvas = document.querySelectorAll(
+          '.line-chart-container canvas'
+        );
+
+        lineChartCanvas.forEach((canvas) => {
+          const url = canvas.toDataURL('image/png', 1.0);
+          images.line.push(url);
+        });
+        sendMessage({ images });
+        setTimeout(() => {
+          generateReportButton.style.opacity = 1;
+        }, 1000);
+      });
+      document.addEventListener('message', function ({ data }) {
+        const parsedData = data;
+        getPersonalInfo(parsedData);
+        getPacientThresholds(parsedData);
+        getMeasurements(parsedData);
+        getStackedBarChart(parsedData);
+        getPieChart(parsedData);
+        getLineCharts(parsedData);
+      });
+
+      const getPersonalInfo = (data) => {
+        const reportTitleContainer = document.querySelector(
+          '.report-title-container'
+        );
+
+        const p = document.createElement('p');
+        p.innerHTML = `Reporte ${data.type[0]}: ${data.dateRange}`;
+        reportTitleContainer.appendChild(p);
+
+        const reportInfoContainer = document.querySelector(
+          '.report-info-container'
+        );
+        const personalInfo = document.createElement('div');
+        personalInfo.style.marginBottom = '20px';
+        reportInfoContainer.appendChild(personalInfo);
+
+        const dataTitle = document.createElement('h6');
+        dataTitle.innerHTML = 'DATOS';
+        personalInfo.appendChild(dataTitle);
+
+        const name = document.createElement('p');
+        name.innerHTML = `Nombre: ${data.user_info.name}`;
+        personalInfo.appendChild(name);
+
+        const age = document.createElement('p');
+        age.innerHTML = `Edad: ${data.user_info.age} años`;
+        personalInfo.appendChild(age);
+
+        const weight = document.createElement('p');
+        weight.innerHTML = `Peso: ${data.user_info.weight} KG`;
+        personalInfo.appendChild(weight);
+
+        const height = document.createElement('p');
+        height.innerHTML = `Estatura: ${data.user_info.height} m`;
+        personalInfo.appendChild(height);
+
+        const diabetesType = document.createElement('p');
+        diabetesType.innerHTML = `Tipo de diabetes: ${data.user_info.diabetes_type}`;
+        personalInfo.appendChild(diabetesType);
+      };
+
+      const getPacientThresholds = (data) => {
+        const { glucose_info } = data.user_info;
+        const reportInfoContainer = document.querySelector(
+          '.report-info-container'
+        );
+        const pacientThreshold = document.createElement('div');
+        pacientThreshold.style.marginBottom = '20px';
+        reportInfoContainer.appendChild(pacientThreshold);
+
+        const dataTitle = document.createElement('h6');
+        dataTitle.innerHTML = 'UMBRAL DEL PACIENTE';
+        pacientThreshold.appendChild(dataTitle);
+
+        const range = document.createElement('p');
+        range.innerHTML = `Rango objetivo: ${glucose_info.range}`;
+        pacientThreshold.appendChild(range);
+
+        const low = document.createElement('p');
+        low.innerHTML = `Bajo: ${glucose_info.low}`;
+        pacientThreshold.appendChild(low);
+
+        const high = document.createElement('p');
+        high.innerHTML = `Alto: ${glucose_info.high}`;
+        pacientThreshold.appendChild(high);
+
+        const hyper = document.createElement('p');
+        hyper.innerHTML = `Hiperglucemia: ${glucose_info.hyper}`;
+        pacientThreshold.appendChild(hyper);
+      };
+
+      const getMeasurements = (data) => {
+        const { measurements_info } = data.user_info;
+        const reportInfoContainer = document.querySelector(
+          '.report-info-container'
+        );
+        const quantityMeasurements = document.createElement('div');
+        quantityMeasurements.style.marginBottom = '20px';
+        reportInfoContainer.appendChild(quantityMeasurements);
+
+        const dataTitle = document.createElement('h6');
+        dataTitle.innerHTML = 'CANTIDAD DE MEDICIONES';
+        quantityMeasurements.appendChild(dataTitle);
+
+        const total = document.createElement('p');
+        total.innerHTML = `Por ${data.type[1]}: ${measurements_info.metadata.quantity.total}`;
+        quantityMeasurements.appendChild(total);
+
+        const inRange = document.createElement('p');
+        inRange.innerHTML = `Dentro del rango objetivo: ${measurements_info.metadata.quantity.in_range}`;
+        quantityMeasurements.appendChild(inRange);
+
+        const outOfRange = document.createElement('p');
+        outOfRange.innerHTML = `Fuera del rango objetivo: ${measurements_info.metadata.quantity.out_of_range}`;
+        quantityMeasurements.appendChild(outOfRange);
+      };
+
+      const getStackedBarChart = (data) => {
+        const { measurements_info } = data.user_info;
+        const hyperPercentage = (
+          (measurements_info.metadata.quantity.hyper * 100) /
+          measurements_info.metadata.quantity.total
+        ).toFixed(2);
+        const highPercentage = (
+          (measurements_info.metadata.quantity.high * 100) /
+          measurements_info.metadata.quantity.total
+        ).toFixed(2);
+        const inRangePercentage = (
+          (measurements_info.metadata.quantity.in_range * 100) /
+          measurements_info.metadata.quantity.total
+        ).toFixed(2);
+        const lowPercentage = (
+          (measurements_info.metadata.quantity.low * 100) /
+          measurements_info.metadata.quantity.total
+        ).toFixed(2);
+
+        const chartData = {
+          labels: [''],
+          datasets: [
+            {
+              label: 'Hiper Glucemia',
+              data: [hyperPercentage],
+              backgroundColor: '#C1272D',
+              barThickness: 50,
+            },
+            {
+              label: 'Alto',
+              data: [highPercentage],
+              backgroundColor: '#DB7600',
+              barThickness: 50,
+            },
+            {
+              label: 'Rango objetivo',
+              data: [inRangePercentage],
+              backgroundColor: '#0EB500',
+              barThickness: 50,
+            },
+            {
+              label: 'Bajo',
+              data: [lowPercentage],
+              backgroundColor: '#0060B9',
+              barThickness: 50,
+            },
+          ],
+        };
+
+        const chartOptions = {
+          responsive: true,
+          legend: {
+            position: 'right',
+          },
+          layout: {
+            padding: 10,
+          },
+          scales: {
+            xAxes: [
+              {
+                stacked: true,
+              },
+            ],
+            yAxes: [
+              {
+                ticks: {
+                  stepSize: 20,
+                  beginAtZero: true,
+                  max: 100,
+                },
+                stacked: true,
+              },
+            ],
+          },
+          plugins: {
+            labels: false,
+          },
+        };
+
+        const ctx = document.createElement('canvas');
+        ctx.id = 'stackedBarChart';
+
+        new Chart(ctx, {
+          type: 'bar',
+          data: chartData,
+          options: chartOptions,
+        });
+
+        document.querySelector('.range-time-chart-container').appendChild(ctx);
+        document
+          .querySelector('.wrapper')
+          .appendChild(document.createElement('br'));
+      };
+      const getPieChart = (data) => {
+        const { measurements_info } = data.user_info;
+        const inRangePercentage = (
+          (measurements_info.metadata.quantity.in_range * 100) /
+          measurements_info.metadata.quantity.total
+        ).toFixed(2);
+        const outOfRangePercentage = 100 - inRangePercentage;
+
+        const chartData = {
+          labels: ['Rango objetivo', 'Fuera de rango'],
+          datasets: [
+            {
+              label: '',
+              data: [inRangePercentage, outOfRangePercentage],
+              backgroundColor: ['#0EB500', '#C1272D'],
+            },
+          ],
+        };
+
+        const chartOptions = {
+          responsive: true,
+          rotation: -Math.PI,
+          layout: {
+            padding: 10,
+          },
+          legend: {
+            position: 'right',
+          },
+          plugins: {
+            labels: {
+              render: 'percentage',
+              fontColor: 'white',
+              precision: 2,
+            },
+          },
+        };
+
+        const ctx = document.createElement('canvas');
+        ctx.id = 'pieChart';
+
+        new Chart(ctx, {
+          type: 'pie',
+          data: chartData,
+          options: chartOptions,
+        });
+
+        document.querySelector('.range-time-chart-container').appendChild(ctx);
+        document
+          .querySelector('.range-time-chart-container')
+          .appendChild(document.createElement('br'));
+      };
+      const getLineCharts = (data) => {
+        const { measurements_info, glucose_info } = data.user_info;
+        const range = {
+          min: Number(glucose_info.range.match(/\d+(\.\d+)?/g)[0]),
+          max: Number(glucose_info.range.match(/\d+(\.\d+)?/g)[1]),
+        };
+        measurements_info.results.forEach((result, index) => {
+          const title = document.createElement('h6');
+          title.innerHTML = result.timestamp;
+          if (
+            index === measurements_info.results.length - 1 &&
+            data.type[0] === 'semanal'
+          ) {
+            title.style.color = '#c1272d';
+          }
+          document.querySelector('.line-chart-container').appendChild(title);
+          const chartData = {
+            labels: result.data.labels,
+            datasets: [
+              {
+                id: 'mgdl',
+                label: 'mg/dL',
+                data: result.data.values,
+                fill: false,
+                borderColor: '#C1272D',
+                borderWidth: 1,
+              },
+              {
+                id: 'periodo-max',
+                label: 'Rango en objetivo',
+                data: Array(result.data.labels.length).fill(range.max),
+                fill: '+1',
+                borderColor: '#0EB500',
+                pointRadius: 0,
+                backgroundColor: 'rgba(0, 255, 0, 0.2)',
+              },
+              {
+                id: 'periodo-min',
+                label: 'Rango en objetivo',
+                data: Array(result.data.labels.length).fill(range.min),
+                fill: false,
+                borderColor: '#0EB500',
+                pointRadius: 0,
+                backgroundColor: 'rgba(0, 255, 0, 0.2)',
+              },
+            ],
+          };
+
+          const chartOptions = {
+            scales: {
+              yAxes: [
+                {
+                  display: true,
+                  ticks: {
+                    beginAtZero: true,
+                    max: result.data.max_value,
+                    stepSize: 50,
+                  },
+                },
+              ],
+            },
+            responsive: true,
+            layout: {
+              padding: 10,
+            },
+            legend: {
+              display: true,
+              position: 'bottom',
+              align: 'start',
+              labels: {
+                generateLabels: function (chart) {
+                  const labelsAdded = [];
+                  const labels = Chart.defaults.global.legend.labels
+                    .generateLabels(chart)
+                    .filter((l) => {
+                      const { text } = l;
+                      if (labelsAdded.includes(text)) {
+                        return false;
+                      }
+                      labelsAdded.push(text);
+                      return true;
+                    });
+                  labels.forEach(function (label) {
+                    label.text += '    ';
+                  });
+                  return labels;
+                },
+                boxWidth: 1,
+              },
+              onClick: function (e, legendItem) {
+                const chart = this.chart;
+                const datasetIndex = legendItem.datasetIndex;
+                const dataset = chart.data.datasets[datasetIndex];
+                const datasetsToToggle = chart.data.datasets.filter(
+                  (d) => d.id !== dataset.id && d.label === dataset.label
+                );
+
+                // Toggle the visibility of the other datasets with the same label
+                [...datasetsToToggle, dataset].forEach((d) => {
+                  d.hidden = !d.hidden;
+                });
+
+                chart.update();
+              },
+            },
+            options: {
+              layout: {
+                padding: 5,
+                margin: 5,
+              },
+            },
+          };
+          const ctx = document.createElement('canvas');
+          ctx.id = 'lineChart';
+
+          new Chart(ctx, {
+            type: 'line',
+            data: chartData,
+            options: chartOptions,
+          });
+
+          document.querySelector('.line-chart-container').appendChild(ctx);
+          document
+            .querySelector('.line-chart-container')
+            .appendChild(document.createElement('br'));
+        });
+      };
+    </script>
+  </body>
+</html>

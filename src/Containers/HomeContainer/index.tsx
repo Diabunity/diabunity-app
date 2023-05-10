@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, ScrollView, View } from 'react-native';
-import { SkeletonView } from 'react-native-ui-lib';
+import { ActionSheet, SkeletonView } from 'react-native-ui-lib';
 import Icon from 'react-native-vector-icons/Feather';
 import { Card } from 'react-native-paper';
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { useTheme, useUser } from '@/Hooks';
+import { useTheme } from '@/Hooks';
 import Table, { TableBuilder, TENDENCY } from './Table';
 import { styles, COLORS } from './styles';
 
@@ -20,7 +20,6 @@ import { SensorLifeStatus } from '@/Services/modules/nfc';
 import { NavigatorParams } from '@/Navigators/Application';
 import { DatePeriod, getSensorLifeTime } from '@/Utils';
 import { FormButton, Tips } from '@/Components';
-import MedicalReportContainer from '../MedicalReportContainer';
 import LastDayChart from '@/Components/LastDayChart';
 import LastMeasurement from '@/Components/LastMeasurement';
 
@@ -39,8 +38,9 @@ type Props = NativeStackScreenProps<NavigatorParams> & {
 
 const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
   const { Layout, Colors } = useTheme();
+  const [reportPickerVisible, setReportPickerVisible] =
+    useState<boolean>(false);
   const user = AuthService.getCurrentUser();
-  const userData = useUser();
 
   const { refetch, sensorLife, tendency } = route?.params || { refetch: null };
 
@@ -73,7 +73,7 @@ const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
     if (refetch) {
       refetchFn();
     }
-  }, [refetch]);
+  }, [refetch, refetchFn]);
 
   return (
     <>
@@ -131,17 +131,38 @@ const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
                     .sensorLife(age, status)
                     .build()}
                 />
-                <MedicalReportContainer
-                  data={data}
-                  name={user?.displayName}
-                  user={userData}
-                  navigate={navigate}
-                  sensorLife={sensorLife}
+                <FormButton
+                  label="Generar reporte médico"
+                  onPress={() => setReportPickerVisible(true)}
+                  isProFeature
+                  centered
+                  noMarginBottom
+                  backgroundColor={Colors.red}
                 />
                 <Tips />
               </View>
             )}
             times={2}
+          />
+          <ActionSheet
+            title={'Elije el tipo de reporte'}
+            destructiveButtonIndex={0}
+            useNativeIOS
+            migrateDialog
+            options={[
+              {
+                label: 'Reporte diario',
+                onPress: () =>
+                  navigate('MedicalReport', { filter: DatePeriod.LAST_DAY }),
+              },
+              {
+                label: 'Reporte semanal',
+                onPress: () =>
+                  navigate('MedicalReport', { filter: DatePeriod.LAST_WEEK }),
+              },
+            ]}
+            visible={reportPickerVisible}
+            onDismiss={() => setReportPickerVisible(false)}
           />
         </ScrollView>
       )}

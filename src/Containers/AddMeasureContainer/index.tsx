@@ -37,11 +37,13 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
   const { subscription } = useUser();
   const [saveMeasurement, { isLoading, isSuccess, isError, error, reset }] =
     userApi.useSaveMeasurementMutation();
-  const { data } = userApi.useFetchMeasurementQuery({
-    id: user?.uid,
-    dateFilter: DatePeriod.LAST_DAY,
-  });
-  const dailyMasurements = data?.measurements || [];
+  const { data, refetch } = userApi.useFetchMeasurementQuery(
+    {
+      id: user?.uid,
+      dateFilter: DatePeriod.LAST_DAY,
+    },
+    { refetchOnMountOrArgChange: true }
+  );
   const [supported, setSupported] = useState<boolean>(false);
   const [nfcInstance, setNFCInstance] = useState<NFCReader>();
   const [isScanning, setIsScanning] = useState(false);
@@ -63,6 +65,7 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
     if (isFocused) {
       reset();
       resetFields();
+      refetch();
     }
   }, [isFocused]);
 
@@ -112,7 +115,7 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
       }, TOAST_TIMEOUT);
     }
     return () => clearTimeout(timer);
-  }, [isSuccess, isError, tendency]);
+  }, [isSuccess, isError, tendency, navigate, sensorLife, reset, error]);
 
   const resetFields = () => {
     setDate(new Date());
@@ -179,7 +182,7 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
           });
         }
         if (measurements.length > 0) {
-          const sensorDailyMeasurements = data?.measurementTracing.find(
+          const sensorDailyMeasurements = data?.measurementTracing?.find(
             (m) => m.source === MeasurementMode.SENSOR
           ) || { count: 0 };
           if (
@@ -232,10 +235,9 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
           comments,
         },
       ];
-
-      const manualDailyMeasurements = data?.measurementTracing.find(
+      const manualDailyMeasurements = data?.measurementTracing?.find(
         (m) => m.source === MeasurementMode.MANUAL
-      ) || { count: 0 };
+      ) || { count: 2 };
       if (
         subscription.subscription_type !== SubscriptionType.PREMIUM &&
         manualDailyMeasurements.count >= maxMeasurementManual

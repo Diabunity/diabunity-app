@@ -114,7 +114,7 @@ const OnboardingContainer = ({ navigation: { navigate } }: Props) => {
       crashlytics().log('Finish Onboarding');
       navigate('Main');
     }
-  }, [isSuccess]);
+  }, [isSuccess, navigate]);
 
   const handleOnDone = async (): Promise<void> => {
     const user: User = {

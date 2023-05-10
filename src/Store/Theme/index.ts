@@ -1,7 +1,7 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const slice = createSlice({
-  name: "theme",
+  name: 'theme',
   initialState: {
     theme: null,
     darkMode: null,
@@ -9,10 +9,10 @@ const slice = createSlice({
   } as ThemeState,
   reducers: {
     changeTheme: (state, { payload: { theme, darkMode } }: ThemePayload) => {
-      if (typeof theme !== "undefined") {
+      if (typeof theme !== 'undefined') {
         state.theme = theme;
       }
-      if (typeof darkMode !== "undefined") {
+      if (typeof darkMode !== 'undefined') {
         state.darkMode = darkMode;
       }
     },
@@ -39,14 +39,14 @@ export const { changeTheme, setDefaultTheme, setShowNfcPrompt } = slice.actions;
 export default slice.reducer;
 
 export type ThemeState = {
-  theme: "default" | null | undefined;
+  theme: 'default' | null | undefined;
   darkMode: boolean | null | undefined;
   showNfcPrompt: boolean;
 };
 
 type ThemePayload = {
   payload: {
-    theme?: "default" | null | undefined;
+    theme?: 'default' | null | undefined;
     darkMode?: boolean | null | undefined;
     showNfcPrompt?: boolean;
   };

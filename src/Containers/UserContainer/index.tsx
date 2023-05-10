@@ -91,11 +91,13 @@ const UserContainer = ({ route, navigation }: Props) => {
   const onShare = () => {
     let text =
       'Te invito a formar parte de la comunidad de Diabunity!\nDescarga la app del siguiente link:';
-    if (Platform.OS === 'android')
+    if (Platform.OS === 'android') {
       text = text.concat(
         'https://play.google.com/store/apps/details?id=com.diabunity'
       );
-    else text = text.concat('<APP store link>'); //TODO: change to appstore link
+    } else {
+      text = text.concat('<APP store link>');
+    } //TODO: change to appstore link
     Share.share(
       {
         title: 'Descarga la app de Diabunity!',

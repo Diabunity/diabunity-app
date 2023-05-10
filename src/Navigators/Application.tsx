@@ -14,6 +14,7 @@ import {
   OnboardingContainer,
   WithoutPremiumContainer,
   NoNetworkContainer,
+  MedicalReportContainer,
 } from '@/Containers';
 import { DeviceData, userApi } from '@/Services/modules/users';
 import { store } from '@/Store';
@@ -37,6 +38,7 @@ export type NavigatorParams = {
   NoNetwork: undefined;
   Onboarding: undefined;
   WithoutPremium: undefined;
+  MedicalReport: { filter: string };
   ForgotPassword: undefined;
 };
 
@@ -55,7 +57,6 @@ const ApplicationNavigator = () => {
   const {
     data = null,
     error,
-    refetch,
     isFetching,
   } = userApi.useFetchUserQuery(user?.uid, {
     skip,
@@ -80,19 +81,18 @@ const ApplicationNavigator = () => {
         navigationRef.current?.navigate('NoNetwork');
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [netInfo, navigationRef.current]);
 
   useEffect(() => {
     if (user) {
       setSkip(false);
-      refetch();
     } else {
       if (user === null) {
         setIsLoading(false);
       }
     }
     setHasCompletedOnboarding(undefined);
-    refetch();
   }, [user]);
 
   useEffect(() => {
@@ -132,7 +132,7 @@ const ApplicationNavigator = () => {
     if (Platform.OS === 'android') {
       registerDevice();
     }
-  }, [user]);
+  }, [saveDeviceData, user]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -182,6 +182,10 @@ const ApplicationNavigator = () => {
               <Stack.Screen
                 name="WithoutPremium"
                 component={WithoutPremiumContainer}
+              />
+              <Stack.Screen
+                name="MedicalReport"
+                component={MedicalReportContainer}
               />
             </>
           ) : (
