@@ -38,7 +38,8 @@ type Props = NativeStackScreenProps<NavigatorParams> & {
 
 const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
   const { Layout, Colors } = useTheme();
-  const [reportVisible, setReportVisible] = useState<boolean>(false);
+  const [reportPickerVisible, setReportPickerVisible] =
+    useState<boolean>(false);
   const user = AuthService.getCurrentUser();
 
   const { refetch, sensorLife, tendency } = route?.params || { refetch: null };
@@ -132,7 +133,7 @@ const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
                 />
                 <FormButton
                   label="Generar reporte médico"
-                  onPress={() => setReportVisible(true)}
+                  onPress={() => setReportPickerVisible(true)}
                   isProFeature
                   centered
                   noMarginBottom
@@ -160,8 +161,8 @@ const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
                   navigate('MedicalReport', { filter: DatePeriod.LAST_WEEK }),
               },
             ]}
-            visible={reportVisible}
-            onDismiss={() => setReportVisible(false)}
+            visible={reportPickerVisible}
+            onDismiss={() => setReportPickerVisible(false)}
           />
         </ScrollView>
       )}

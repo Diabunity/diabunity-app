@@ -18,7 +18,7 @@ import { DatePeriod } from '@/Utils';
 // @ts-ignore
 import reportTemplate from '@/Templates/report.html';
 import mockReportData from '@/Mocks/reports';
-import { base64Logo } from '@/Constants';
+import { ANDROID_REPORT_WEBVIEW_DATA, base64Logo } from '@/Constants';
 import { handleReportData } from '@/Utils/reports';
 
 // Custom helper: isSame
@@ -65,10 +65,7 @@ const MedicalReportContainer = ({
   const webViewSource =
     Platform.OS === 'ios'
       ? require('@/Templates/webviews/charts.html')
-      : {
-          uri: 'file:///android_asset/charts.html',
-          baseUrl: 'file:///android_asset/',
-        };
+      : ANDROID_REPORT_WEBVIEW_DATA;
 
   const handleCapture = async (data: any) => {
     const today = moment(new Date());

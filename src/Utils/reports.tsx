@@ -1,8 +1,18 @@
 import moment from 'moment';
 import 'moment/locale/es';
 import { capitalizeString, DatePeriod } from '.';
+import { DEFAULT_NO_VALUE_SET } from '@/Constants';
 
 moment.locale('es');
+
+const defaultAvg = {
+  timestamp: 'RESUMEN PROMEDIO - SEMANA COMPLETA',
+  data: {
+    values: [] as number[],
+    max_value: 0,
+    labels: ['L', 'M', 'M', 'J', 'V', 'S', 'D'],
+  },
+};
 
 export const handleReportData = (data: any, filter: DatePeriod): any => {
   const clonedObj = JSON.parse(JSON.stringify(data));
@@ -18,9 +28,9 @@ export const handleReportData = (data: any, filter: DatePeriod): any => {
     dateRange: getDateRange(filter),
     user_info: {
       ...user_info,
-      age: user_info.age ? user_info.age : 'No especificado',
-      weight: user_info.weight ? user_info.weight : 'No especificado',
-      height: user_info.height ? user_info.height / 100 : 'No especificado',
+      age: user_info.age ?? DEFAULT_NO_VALUE_SET,
+      weight: user_info.weight ?? DEFAULT_NO_VALUE_SET,
+      height: user_info.height ? user_info.height / 100 : DEFAULT_NO_VALUE_SET,
       glucose_info: {
         ...user_info.glucose_info,
         ...handleGlucoseInfo(user_info.glucose_info),
@@ -58,6 +68,7 @@ export const handleReportData = (data: any, filter: DatePeriod): any => {
       },
     },
   };
+  // For weekly reports, we need to calculate the average of the last week to show it in a new chart
   let resultsWithAvg = [];
   defaultAvg.data.max_value = Number(
     dataWithUserInfoUpdated.user_info.glucose_info.range.match(
@@ -97,15 +108,6 @@ export const handleReportData = (data: any, filter: DatePeriod): any => {
 const calculateAvg = (values: number[]) => {
   const sum = values.reduce((acc, val) => acc + val, 0);
   return sum / values.length;
-};
-
-const defaultAvg = {
-  timestamp: 'RESUMEN PROMEDIO - SEMANA COMPLETA',
-  data: {
-    values: [] as number[],
-    max_value: 0,
-    labels: ['L', 'M', 'M', 'J', 'V', 'S', 'D'],
-  },
 };
 
 const handleGlucoseInfo = (glucoseInfo: any) => {
