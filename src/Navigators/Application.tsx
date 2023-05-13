@@ -3,6 +3,8 @@ import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { useNetInfo } from '@react-native-community/netinfo';
 import crashlytics from '@react-native-firebase/crashlytics';
 import messaging from '@react-native-firebase/messaging';
+import DeviceInfo from 'react-native-device-info';
+import analytics from '@react-native-firebase/analytics';
 import { SafeAreaView, StatusBar, Platform } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainerRef } from '@react-navigation/core';
@@ -17,6 +19,9 @@ import {
   MedicalReportContainer,
 } from '@/Containers';
 import { DeviceData, userApi } from '@/Services/modules/users';
+import Notification, {
+  NotificationState,
+} from '@/Services/modules/notification';
 import { store } from '@/Store';
 import { setUser as storeUser } from '@/Store/User';
 import { useTheme, useUser } from '@/Hooks';
@@ -24,8 +29,6 @@ import { TENDENCY } from '@/Containers/HomeContainer/Table';
 import MainNavigator from './Main';
 import { NfcPromptAndroid } from '@/Components';
 import { Colors } from '@/Theme/Variables';
-import DeviceInfo from 'react-native-device-info';
-import analytics from '@react-native-firebase/analytics';
 
 export type NavigatorParams = {
   Main: undefined;
@@ -76,6 +79,25 @@ const ApplicationNavigator = () => {
   };
 
   useEffect(() => {
+    // Foreground Notifications
+    messaging().onMessage((remoteMessage) =>
+      Notification.handleMessageReceived(
+        remoteMessage,
+        NotificationState.FOREGROUND
+      )
+    );
+    // Background Notifications
+    messaging().setBackgroundMessageHandler((remoteMessage) =>
+      Notification.handleMessageReceived(
+        remoteMessage,
+        NotificationState.BACKGROUND
+      )
+    );
+
+    return Notification.handleForegroundEvent();
+  }, []);
+
+  useEffect(() => {
     if (netInfo.isConnected !== null) {
       if (!netInfo.isConnected) {
         navigationRef.current?.navigate('NoNetwork');
@@ -116,7 +138,6 @@ const ApplicationNavigator = () => {
 
         // Get the FCM token and device ID
         const token = await messaging().getToken();
-
         const deviceBody: DeviceData = {
           deviceId: token,
           osVersion: DeviceInfo.getSystemVersion(),

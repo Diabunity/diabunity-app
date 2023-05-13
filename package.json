@@ -6,6 +6,7 @@
     "android": "npm run copyAssets && react-native run-android",
     "ios": "react-native run-ios --simulator='iPhone 14'",
     "start": "react-native start",
+    "android:build": "cd android && ./gradlew clean && cd .. && npm run android",
     "devtools": "react-devtools",
     "copyAssets": "rm -rf ./android/app/src/main/assets/*.html && npx copyfiles --flat ./src/Templates/webviews/*.html ./android/app/src/main/assets",
     "create-appicon": "iconset create src/Assets/Images/app-icon.png",
@@ -16,6 +17,7 @@
   "dependencies": {
     "@babel/plugin-proposal-export-namespace-from": "^7.18.6",
     "@miblanchard/react-native-slider": "^2.1.0",
+    "@notifee/react-native": "^7.7.1",
     "@react-native-async-storage/async-storage": "^1.17.3",
     "@react-native-community/blur": "^3.6.0",
     "@react-native-community/clipboard": "^1.5.1",
