@@ -1,38 +1,41 @@
 import { VIEW_NAMES } from '@/Constants/views';
-import { FirebaseResponseData, ParsedObject } from '@/index';
+import { NotificationType, FirebaseResponseData, ParsedObject } from '@/index';
 import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
 import { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 
+export enum NotificationState {
+  FOREGROUND = 'foreground',
+  BACKGROUND = 'background',
+  QUIT = 'quit',
+}
+
 const handleNotification = (notificationData: ParsedObject) => {
   const { type } = notificationData;
-
-  if (type === 'navigate') {
-    const { goTo, navigationRef } = notificationData;
-    const hasValidGoTo = goTo ? Object.keys(VIEW_NAMES).includes(goTo) : null;
-
-    if (hasValidGoTo) {
-      const viewName = VIEW_NAMES[goTo as keyof typeof VIEW_NAMES];
-
-      // TODO: send data to view
-      // const viewData = notificationData.viewData;
-      navigationRef.current?.navigate(viewName);
-    }
+  if (NotificationType.NAVIGATE === type) {
+    const { goTo, viewData, navigationRef } = notificationData;
+    navigationRef.current?.navigate(goTo, viewData);
   }
 };
 
 const parseResponse = (response: FirebaseResponseData): ParsedObject | null => {
   const type = response.type;
 
-  if (type === 'navigate') {
+  if (NotificationType.NAVIGATE === type) {
     if (response.go_to) {
-      const { go_to: goTo } = response;
+      const { go_to: goTo, view_data: viewData } = response;
+
+      const hasValidGoTo = goTo && Object.keys(VIEW_NAMES).includes(goTo);
+      if (!hasValidGoTo) {
+        return null;
+      }
 
       return {
         type,
-        goTo,
+        viewData: JSON.parse(viewData),
+        goTo: VIEW_NAMES[goTo as keyof typeof VIEW_NAMES],
       };
     }
-  } else if (type === 'static') {
+  } else if (NotificationType.STATIC === type) {
     if (response.staticPropExample) {
       const { staticPropExample } = response;
 
@@ -45,12 +48,6 @@ const parseResponse = (response: FirebaseResponseData): ParsedObject | null => {
 
   return null; // Return null if the type is unknown or properties are missing
 };
-
-export enum NotificationState {
-  FOREGROUND = 'foreground',
-  BACKGROUND = 'background',
-  QUIT = 'quit',
-}
 
 const Notification = class Notification {
   CHANNEL_OPTIONS = {

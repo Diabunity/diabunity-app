@@ -1,20 +1,25 @@
-import { type ViewName } from '@/Constants/views';
+import { type ViewName, type NavigationViewName } from '@/Constants/views';
 
 declare module 'react-native-slack-emoji/src';
 
-type NotificationType = 'navigate' | 'static';
+export enum NotificationType {
+  NAVIGATE = 'navigate',
+  STATIC = 'static',
+}
 
 /**
  * Data received within data property of Firebase notification
  * this is the data received from the server
  * @type {NotificationType} type of notification
- * @go_to {string} name of the view to navigate
+ * @go_to {string} property used to match the name of the view to navigate
+ * @view_data {any} data to be sent to the view
  * @staticPropExample {string} TODO:// this is an example
  */
 interface FirebaseResponseData {
   type: NotificationType;
-  go_to?: string;
-  staticPropExample?: string; // This is just an example, you can add more properties
+  go_to?: ViewName;
+  view_data?: any;
+  staticPropExample?: any; // This is just an example, you can add more properties
 }
 
 /**
@@ -22,26 +27,17 @@ interface FirebaseResponseData {
  * This object may contain new properties depending on the type of notification
  *
  * @type {NotificationType} type of notification
- * @goTo {string} name of the view to navigate
+ * @goTo {NavigationViewName} name of the view to navigate
+ * @view_data {any} data to be sent to the view
  * @staticProp {string} TODO:// this is an example
  * @navigationRef {React.RefObject} navigation reference
  */
 interface ParsedObject {
   type: NotificationType;
-  goTo?: viewName;
+  goTo?: NavigationViewName;
+  viewData?: any;
   staticProp?: string;
   navigationRef?: any;
-}
-
-/**
- * Data received within data property of Firebase notification
- *
- * @type {NotificationType} type of notification
- * @go_to {string} name of the view to navigate
- */
-interface NotificationData {
-  type: NotificationType;
-  go_to?: ViewName;
 }
 
 export declare global {

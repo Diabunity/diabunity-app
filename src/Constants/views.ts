@@ -20,3 +20,4 @@ export enum VIEW_NAMES {
 }
 
 export type ViewName = keyof typeof VIEW_NAMES;
+export type NavigationViewName = (typeof VIEW_NAMES)[keyof typeof VIEW_NAMES];
