@@ -18,6 +18,7 @@ import {
   NoNetworkContainer,
   MedicalReportContainer,
 } from '@/Containers';
+import { VIEW_NAMES } from '@/Constants/views';
 import { DeviceData, userApi } from '@/Services/modules/users';
 import Notification, {
   NotificationState,
@@ -145,8 +146,8 @@ const ApplicationNavigator = () => {
         };
 
         await saveDeviceData(deviceBody);
-      } catch (error) {
-        analytics().logEvent('error_registering_device', { error });
+      } catch (err) {
+        analytics().logEvent('error_registering_device', { err });
       }
     }
 
@@ -175,6 +176,12 @@ const ApplicationNavigator = () => {
     return subscriber; // unsubscribe on unmount
   }, []);
 
+  useEffect(() => {
+    if (!isLoading) {
+      Notification.checkForNotification(navigationRef);
+    }
+  }, [isLoading]);
+
   if (
     isLoading ||
     (hasCompletedOnboarding === undefined && user !== null) || //We use null and undefined to differentiate between initial state and api response
@@ -195,31 +202,40 @@ const ApplicationNavigator = () => {
             <>
               {hasCompletedOnboarding === false && !savedOnobarding && (
                 <Stack.Screen
-                  name="Onboarding"
+                  name={VIEW_NAMES.ONBOARDING}
                   component={OnboardingContainer}
                 />
               )}
-              <Stack.Screen name="Main" component={MainNavigator} />
+              <Stack.Screen name={VIEW_NAMES.MAIN} component={MainNavigator} />
               <Stack.Screen
-                name="WithoutPremium"
+                name={VIEW_NAMES.WITHOUT_PREMIUM}
                 component={WithoutPremiumContainer}
               />
               <Stack.Screen
-                name="MedicalReport"
+                name={VIEW_NAMES.MEDICAL_REPORT}
                 component={MedicalReportContainer}
               />
             </>
           ) : (
             <>
-              <Stack.Screen name="SignIn" component={AuthContainer} />
-              <Stack.Screen name="SignUp" component={AuthContainer} />
               <Stack.Screen
-                name="ForgotPassword"
+                name={VIEW_NAMES.SIGN_IN}
+                component={AuthContainer}
+              />
+              <Stack.Screen
+                name={VIEW_NAMES.SIGN_UP}
+                component={AuthContainer}
+              />
+              <Stack.Screen
+                name={VIEW_NAMES.FORGOT_PASSWORD}
                 component={ForgotPasswordContainer}
               />
             </>
           )}
-          <Stack.Screen name="NoNetwork" component={NoNetworkContainer} />
+          <Stack.Screen
+            name={VIEW_NAMES.NO_NETWORK}
+            component={NoNetworkContainer}
+          />
         </Stack.Navigator>
         <NfcPromptAndroid />
       </NavigationContainer>
