@@ -9,6 +9,7 @@ import {
   AddMeasureContainer,
   CommunityContainer,
 } from '@/Containers';
+import { VIEW_NAMES } from '@/Constants/views';
 import { useNotification } from '@/Hooks';
 import { toggleNotification } from '@/Store/Notification';
 import { store } from '@/Store';
@@ -23,13 +24,7 @@ const MainNavigator = () => {
 
   return (
     <>
-      <View
-        style={{
-          zIndex: 3,
-          elevation: 3,
-          position: 'relative',
-        }}
-      >
+      <View style={styles.view}>
         <Toast
           visible={visible}
           autoDismiss={TOAST_TIMEOUT}
@@ -52,7 +47,7 @@ const MainNavigator = () => {
         }}
       >
         <Tab.Screen
-          name="Home"
+          name={VIEW_NAMES.HOME}
           component={HomeContainer}
           options={{
             title: 'Inicio',
@@ -62,7 +57,7 @@ const MainNavigator = () => {
           }}
         />
         <Tab.Screen
-          name="Add"
+          name={VIEW_NAMES.ADD_MEASUREMENT}
           component={AddMeasureContainer}
           options={{
             title: 'Agregar',
@@ -72,7 +67,7 @@ const MainNavigator = () => {
           }}
         />
         <Tab.Screen
-          name="History"
+          name={VIEW_NAMES.HISTORY}
           component={HistoryContainer}
           options={{
             title: 'Historial',
@@ -82,7 +77,7 @@ const MainNavigator = () => {
           }}
         />
         <Tab.Screen
-          name="Community"
+          name={VIEW_NAMES.COMMUNITY}
           component={CommunityContainer}
           options={{
             title: 'Comunidad',
@@ -92,7 +87,7 @@ const MainNavigator = () => {
           }}
         />
         <Tab.Screen
-          name="Profile"
+          name={VIEW_NAMES.PROFILE}
           component={UserContainer}
           options={{
             title: 'Perfil',
@@ -125,6 +120,11 @@ const styles = StyleSheet.create({
     zIndex: 0,
     paddingBottom: 3,
     height: 55,
+  },
+  view: {
+    zIndex: 3,
+    elevation: 3,
+    position: 'relative',
   },
 });
 
