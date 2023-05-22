@@ -1,5 +1,6 @@
 <manifest
   xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
   package="com.diabunity"
 >
     <uses-permission android:name="android.permission.INTERNET" />
@@ -16,6 +17,12 @@
       android:allowBackup="false"
       android:theme="@style/AppTheme"
     >
+     <meta-data android:name="com.google.firebase.messaging.default_notification_icon"
+    android:resource="@drawable/ic_small_icon" />
+    <meta-data
+        android:name="com.google.firebase.messaging.default_notification_color"
+        android:resource="@color/notification_color"
+        tools:replace="android:resource" />
       <activity
         android:name=".SplashActivity"
         android:theme="@style/SplashTheme"

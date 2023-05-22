@@ -40,6 +40,6 @@ interface ParsedObject {
   navigationRef?: any;
 }
 
-export declare global {
+declare global {
   var notificationData: ParsedObject | null;
 }
