@@ -4,6 +4,7 @@ import notifee, {
   EventType,
 } from '@notifee/react-native';
 import { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
+import analytics from '@react-native-firebase/analytics';
 import { VIEW_NAMES } from '@/Constants/views';
 import { Colors } from '@/Theme/Variables';
 import {
@@ -115,10 +116,14 @@ const Notification = class Notification {
       ({ type, detail }: { type: EventType; detail: EventDetail }) => {
         switch (type) {
           case EventType.DISMISSED:
-            console.log('User dismissed notification', detail.notification);
+            analytics().logEvent('notification_dismissed', {
+              ...detail.notification,
+            });
             break;
           case EventType.PRESS:
-            console.log('User pressed notification', detail.notification);
+            analytics().logEvent('notification_pressed', {
+              ...detail.notification,
+            });
             const notificationData = parseResponse(
               detail.notification?.data as unknown as FirebaseResponseData
             );
@@ -138,7 +143,6 @@ const Notification = class Notification {
     message: FirebaseMessagingTypes.RemoteMessage,
     notificationId: string
   ) => {
-    console.log('Background notification message:', message);
     const notificationData = parseResponse(
       message.data as unknown as FirebaseResponseData
     );
@@ -154,7 +158,6 @@ const Notification = class Notification {
   handleQuitEvent = async (
     remoteMessage: FirebaseMessagingTypes.RemoteMessage
   ) => {
-    console.log('Message handled in quit state!', remoteMessage);
     global.notificationData = parseResponse(
       remoteMessage.data as unknown as FirebaseResponseData
     );
