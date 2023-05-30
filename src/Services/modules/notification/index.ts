@@ -1,7 +1,17 @@
-import { VIEW_NAMES } from '@/Constants/views';
-import { NotificationType, FirebaseResponseData, ParsedObject } from '@/index';
-import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
+import notifee, {
+  AndroidImportance,
+  EventDetail,
+  EventType,
+} from '@notifee/react-native';
 import { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
+import analytics from '@react-native-firebase/analytics';
+import { VIEW_NAMES } from '@/Constants/views';
+import { Colors } from '@/Theme/Variables';
+import {
+  NotificationType,
+  FirebaseResponseData,
+  ParsedObject,
+} from '@/index.d';
 
 export enum NotificationState {
   FOREGROUND = 'foreground',
@@ -53,31 +63,46 @@ const Notification = class Notification {
   CHANNEL_OPTIONS = {
     id: 'diabunity_channel',
     name: 'Diabunity Channel',
-    importance: AndroidImportance.DEFAULT,
+    importance: AndroidImportance.HIGH,
+    lights: true,
+    vibration: true,
+    lightColor: Colors.red,
   };
+
+  navigationRef: any = null;
+  channelId: string | undefined = undefined;
+
+  constructor() {
+    // Create a channel (required for Android)
+    notifee
+      .createChannel({
+        ...this.CHANNEL_OPTIONS,
+      })
+      .then((channelId) => (this.channelId = channelId));
+  }
 
   handleMessageReceived = async (
     message: FirebaseMessagingTypes.RemoteMessage,
-    type: NotificationState
+    type: NotificationState,
+    navigator: any
   ) => {
+    if (!this.navigationRef) {
+      this.navigationRef = navigator;
+    }
     // Request permissions (required for iOS)
     await notifee.requestPermission();
 
-    // Create a channel (required for Android)
-    const channelId = await notifee.createChannel({
-      ...this.CHANNEL_OPTIONS,
-      importance:
-        type === NotificationState.FOREGROUND
-          ? AndroidImportance.HIGH
-          : this.CHANNEL_OPTIONS.importance,
-    });
-
     // Display a notification
     const notificationId = await notifee.displayNotification({
-      title: message?.notification?.title,
+      title: `<b>${message?.notification?.title}<b>`,
       body: message?.notification?.body,
       android: {
-        channelId,
+        channelId: this.channelId,
+        smallIcon: 'ic_small_icon',
+        color: Colors.red,
+        lightUpScreen: true,
+        timestamp: Date.now(),
+        showTimestamp: true,
       },
     });
 
@@ -87,31 +112,52 @@ const Notification = class Notification {
   };
 
   handleForegroundEvent = () => {
-    return notifee.onForegroundEvent(({ type, detail }) => {
-      switch (type) {
-        case EventType.DISMISSED:
-          console.log('User dismissed notification', detail.notification);
-          break;
-        case EventType.PRESS:
-          console.log('User pressed notification', detail.notification);
-          break;
+    return notifee.onForegroundEvent(
+      ({ type, detail }: { type: EventType; detail: EventDetail }) => {
+        switch (type) {
+          case EventType.DISMISSED:
+            analytics().logEvent('notification_dismissed', {
+              ...detail.notification,
+            });
+            break;
+          case EventType.PRESS:
+            analytics().logEvent('notification_pressed', {
+              ...detail.notification,
+            });
+            const notificationData = parseResponse(
+              detail.notification?.data as unknown as FirebaseResponseData
+            );
+            if (notificationData) {
+              handleNotification({
+                ...notificationData,
+                navigationRef: this.navigationRef,
+              });
+            }
+            break;
+        }
       }
-    });
+    );
   };
 
   handleBackgroundEvent = async (
     message: FirebaseMessagingTypes.RemoteMessage,
     notificationId: string
   ) => {
-    console.log('Background notification message:', message);
-    // Remove the notification
+    const notificationData = parseResponse(
+      message.data as unknown as FirebaseResponseData
+    );
+    if (notificationData) {
+      handleNotification({
+        ...notificationData,
+        navigationRef: this.navigationRef,
+      });
+    }
     await notifee.cancelNotification(notificationId);
   };
 
   handleQuitEvent = async (
     remoteMessage: FirebaseMessagingTypes.RemoteMessage
   ) => {
-    console.log('Message handled in quit state!', remoteMessage);
     global.notificationData = parseResponse(
       remoteMessage.data as unknown as FirebaseResponseData
     );
@@ -119,8 +165,11 @@ const Notification = class Notification {
 
   checkForNotification = (navigationRef: any) => {
     const { notificationData } = global;
+    if (!this.navigationRef) {
+      this.navigationRef = navigationRef;
+    }
     if (notificationData) {
-      notificationData.navigationRef = navigationRef;
+      notificationData.navigationRef = this.navigationRef;
       handleNotification(notificationData);
     }
 

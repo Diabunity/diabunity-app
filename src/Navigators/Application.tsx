@@ -84,14 +84,16 @@ const ApplicationNavigator = () => {
     messaging().onMessage((remoteMessage) =>
       Notification.handleMessageReceived(
         remoteMessage,
-        NotificationState.FOREGROUND
+        NotificationState.FOREGROUND,
+        navigationRef
       )
     );
     // Background Notifications
     messaging().setBackgroundMessageHandler((remoteMessage) =>
       Notification.handleMessageReceived(
         remoteMessage,
-        NotificationState.BACKGROUND
+        NotificationState.BACKGROUND,
+        navigationRef
       )
     );
 
