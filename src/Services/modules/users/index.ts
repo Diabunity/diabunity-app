@@ -5,6 +5,7 @@ import updateUser from './updateUser';
 import fetchMeasurement from './fetchMeasurement';
 import saveMeasurement from './saveMeasurement';
 import fetchRanking from './fetchRanking';
+import fetchReport from './fetchReport';
 import saveDeviceData from './saveDeviceData';
 
 export const userApi = api.injectEndpoints({
@@ -15,6 +16,7 @@ export const userApi = api.injectEndpoints({
     fetchMeasurement: fetchMeasurement(build),
     saveMeasurement: saveMeasurement(build),
     fetchRanking: fetchRanking(build),
+    fetchReport: fetchReport(build),
     saveDeviceData: saveDeviceData(build),
   }),
   overrideExisting: true,
@@ -52,6 +54,10 @@ export enum DiabetesType {
   TYPE_1 = 0,
   TYPE_2 = 1,
 }
+export const DiabetesTypeText = {
+  [DiabetesType.TYPE_1]: 'Tipo 1',
+  [DiabetesType.TYPE_2]: 'Tipo 2',
+};
 
 export enum SubscriptionType {
   FREE = 0,
@@ -70,7 +76,7 @@ export const { useLazyFetchUserQuery } = userApi;
 
 export type User = {
   id?: string;
-  diabetes_type: number;
+  diabetes_type: DiabetesType;
   birth_date: Date;
   on_boarding: boolean;
   weight: number;
@@ -118,4 +124,37 @@ export interface DeviceData {
   deviceId: string;
   osVersion: string; // e.g "iOS 14.4.2" or "Android 10"
   brand: string; // e.g "Apple" or "xiaomi"
+}
+
+export type Range = {
+  min?: number;
+  max?: number;
+};
+
+export type GlucoseInfo = {
+  low: Range;
+  in_range: Range;
+  high: Range;
+  hyper: Range;
+};
+
+export type MeasurementsInfoResults = {
+  timestamp: number;
+  data: Array<{ timestamp: number; value: number }>;
+};
+export type MeasurementsInfo = {
+  metadata: {
+    low: number;
+    in_range: number;
+    high: number;
+    hyper: number;
+  };
+  results: MeasurementsInfoResults[];
+};
+export interface MedicalReport {
+  user_info: Partial<User> & {
+    age: number;
+    glucose_info: GlucoseInfo;
+  };
+  measurements_info: MeasurementsInfo;
 }
