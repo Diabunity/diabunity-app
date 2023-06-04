@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import moment from 'moment';
 import { View, Platform, Image, ActivityIndicator } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
+import analytics from '@react-native-firebase/analytics';
 import { WebView } from 'react-native-webview';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import FileViewer from 'react-native-file-viewer';
@@ -76,6 +77,15 @@ const getInjectableJSMessage = (message: unknown) =>
     })();
   `;
 
+const Spinner = () => {
+  const { Layout } = useTheme();
+  return (
+    <View style={[Layout.fill, Layout.center]}>
+      <ActivityIndicator size="small" color={Colors.red} />
+    </View>
+  );
+};
+
 const MedicalReportContainer = ({
   route,
   navigation: { goBack, canGoBack },
@@ -108,6 +118,7 @@ const MedicalReportContainer = ({
   useEffect(() => {
     if (error) {
       handleError('Hubo un error al obtener los datos del reporte.');
+      analytics().logEvent('error_generating_report', { error });
     }
   }, [error]);
   const webViewSource =
@@ -162,6 +173,7 @@ const MedicalReportContainer = ({
   const sendDataToWebView = () => {
     if (!reportData) {
       handleError('No hay datos para generar el reporte.');
+      analytics().logEvent('error_generating_report', { error: 'no_data' });
       return;
     }
     const processedData = handleReportData(reportData, filter);
@@ -170,11 +182,7 @@ const MedicalReportContainer = ({
   };
 
   if (isFetching) {
-    return (
-      <View style={[Layout.fill, Layout.center]}>
-        <ActivityIndicator size="small" color={Colors.red} />
-      </View>
-    );
+    return <Spinner />;
   }
 
   return (
@@ -190,11 +198,7 @@ const MedicalReportContainer = ({
           onLoadEnd={sendDataToWebView}
           bounces={false}
           startInLoadingState
-          renderLoading={() => (
-            <View style={[Layout.fill, Layout.center]}>
-              <ActivityIndicator size="small" color={Colors.red} />
-            </View>
-          )}
+          renderLoading={() => <Spinner />}
           originWhitelist={['*']}
           onMessage={onMessageReceived}
           domStorageEnabled={true}

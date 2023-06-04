@@ -121,6 +121,7 @@
                 ctx.fillStyle = 'white';
                 ctx.font = '10px Arial';
                 ctx.textAlign = 'center';
+                // Render the series percentage value above the bar if it's not 0
                 if (value > 0) {
                   ctx.fillText(`${value}%`, x, y + 10);
                 }
@@ -414,6 +415,7 @@
         const { measurements_info } = data;
         const { glucose_info } = data.user_info;
         const range = {
+          // Extract numeric value from in_range string (e.g. "< 55 mg/dL" -> 55)
           min: Number(glucose_info.in_range.match(/\d+(\.\d+)?/g)[0]),
           max: Number(glucose_info.in_range.match(/\d+(\.\d+)?/g)[1]),
         };

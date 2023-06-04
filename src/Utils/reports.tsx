@@ -70,7 +70,7 @@ export const handleReportData = (data: any, filter: DatePeriod): any => {
             },
           };
         })
-        .reverse(),
+        .reverse(), // Reverse to show data in ascending order
     },
   };
   // For weekly reports, we need to calculate the average of the last week to show it in a new chart
