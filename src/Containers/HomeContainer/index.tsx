@@ -6,7 +6,7 @@ import { Card } from 'react-native-paper';
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { useTheme } from '@/Hooks';
+import { useTheme, useUser } from '@/Hooks';
 import Table, { TableBuilder, TENDENCY } from './Table';
 import { styles, COLORS } from './styles';
 
@@ -14,6 +14,7 @@ import AuthService from '@/Services/modules/auth';
 import {
   MeasurementStatus,
   PeriodInTargetStatus,
+  SubscriptionType,
   userApi,
 } from '@/Services/modules/users';
 import { SensorLifeStatus } from '@/Services/modules/nfc';
@@ -41,7 +42,7 @@ const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
   const [reportPickerVisible, setReportPickerVisible] =
     useState<boolean>(false);
   const user = AuthService.getCurrentUser();
-
+  const { subscription } = useUser();
   const { refetch, sensorLife, tendency } = route?.params || { refetch: null };
 
   const {
@@ -74,6 +75,14 @@ const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
       refetchFn();
     }
   }, [refetch, refetchFn]);
+
+  const handleMedicalReport = () => {
+    if (subscription.subscription_type === SubscriptionType.FREE) {
+      navigate('WithoutPremium');
+      return;
+    }
+    setReportPickerVisible(true);
+  };
 
   return (
     <>
@@ -133,7 +142,7 @@ const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
                 />
                 <FormButton
                   label="Generar reporte médico"
-                  onPress={() => setReportPickerVisible(true)}
+                  onPress={handleMedicalReport}
                   isProFeature
                   centered
                   noMarginBottom

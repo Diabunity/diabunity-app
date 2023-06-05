@@ -25,12 +25,10 @@ export default {
     },
     measurements_info: {
       metadata: {
-        quantity: {
-          low: 3,
-          in_range: 9,
-          high: 4,
-          hyper: 2,
-        },
+        low: 3,
+        in_range: 9,
+        high: 4,
+        hyper: 2,
       },
       results: [
         {

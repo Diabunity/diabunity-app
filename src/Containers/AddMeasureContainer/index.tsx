@@ -202,7 +202,7 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
                 (m: { value: number }) => m.value
               ),
             })) as { data: { tendency: TENDENCY } };
-            setTendency(data.tendency ?? TENDENCY.UNKNOWN);
+            setTendency(data?.tendency ?? TENDENCY.UNKNOWN);
           }
         }
       }
@@ -253,7 +253,7 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
           measurements,
           trend_history: [],
         })) as { data: { tendency: TENDENCY } };
-        setTendency(data.tendency ?? TENDENCY.UNKNOWN);
+        setTendency(data?.tendency ?? TENDENCY.UNKNOWN);
       }
     } else {
       setManualEnabled(true);
