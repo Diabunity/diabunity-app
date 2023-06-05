@@ -21,6 +21,9 @@
         color: #000;
         margin: 0;
       }
+      .date {
+        margin-top: 10px;
+      }
       .report-header {
         display: flex;
         align-items: center;
@@ -71,7 +74,7 @@
   <body>
     <div class="report-header">
       <img src="{{logo}}" />
-      <p>{{title}}</p>
+      <p class="date">{{title}}</p>
     </div>
     <br />
     <br />
@@ -86,23 +89,19 @@
       </div>
       <div class="info-item">
         <h6>UMBRAL DEL PACIENTE</h6>
-        <p>Rango objetivo: {{user_info.glucose_info.range}}</p>
+        <p>Rango objetivo: {{user_info.glucose_info.in_range}}</p>
         <p>Bajo: {{user_info.glucose_info.low}}</p>
         <p>Alto: {{user_info.glucose_info.high}}</p>
         <p>Hiperglucemia: {{user_info.glucose_info.hyper}}</p>
       </div>
       <div class="info-item">
         <h6>CANTIDAD DE MEDICIONES</h6>
+        <p>Por {{type}}: {{measurements_info.metadata.total}}</p>
         <p>
-          Por {{type}}: {{user_info.measurements_info.metadata.quantity.total}}
+          Dentro del rango objetivo: {{measurements_info.metadata.in_range}}
         </p>
         <p>
-          Dentro del rango objetivo:
-          {{user_info.measurements_info.metadata.quantity.in_range}}
-        </p>
-        <p>
-          Fuera del rango objetivo:
-          {{user_info.measurements_info.metadata.quantity.out_of_range}}
+          Fuera del rango objetivo: {{measurements_info.metadata.out_of_range}}
         </p>
       </div>
     </div>
@@ -120,8 +119,12 @@
     <br />
     <br />
     <div class="line-chart-container">
-      {{#each lineChartData}} {{#if (isLast @index lineChartData)}} {{#if
-      (isSame ../type 'semana')}}
+      {{#each lineChartData}} {{#if (isOdd @index)}}
+      <div class="pagebreak"></div>
+      <br />
+      <br />
+      {{/if}} {{#if (isSame ../type 'semana')}} {{#if (isLast @index
+      ../lineChartData)}}
       <h6 style="color: #c1272d">{{lookup ../measurementTimestamps @index}}</h6>
       {{else}}
       <h6>{{lookup ../measurementTimestamps @index}}</h6>
@@ -129,6 +132,7 @@
       <h6>{{lookup ../measurementTimestamps @index}}</h6>
       {{/if}}
       <img src="{{this}}" width="100%" />
+      <br />
       <br />
       {{/each}}
     </div>
