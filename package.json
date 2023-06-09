@@ -1,6 +1,6 @@
 {
   "name": "diabunity",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": true,
   "scripts": {
     "android": "npm run copyAssets && react-native run-android",
