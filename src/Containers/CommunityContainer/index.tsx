@@ -60,7 +60,11 @@ const CommunityContainer = ({
   const { subscription } = useUser();
   const [page, setPage] = useState<PageSection | undefined>(PageSection.POSTS);
   const [shouldRefetch, setShouldRefetch] = useState<boolean>(false);
-  const { data: userPostsInfo, refetch } = postApi.useFetchPostsQuery({
+  const {
+    data: userPostsInfo,
+    refetch,
+    isFetching,
+  } = postApi.useFetchPostsQuery({
     count: true,
   });
   const { Layout, Images, Colors } = useTheme();
@@ -129,6 +133,7 @@ const CommunityContainer = ({
     <View style={{ ...Layout.fill }}>
       {page === PageSection.POSTS && !favoriteSection && (
         <FAB
+          disabled={isFetching}
           icon="plus"
           style={[styles.fab, { backgroundColor: Colors.red }]}
           onPress={handlePostCreation}
