@@ -23,13 +23,7 @@ const MainNavigator = () => {
 
   return (
     <>
-      <View
-        style={{
-          zIndex: 3,
-          elevation: 3,
-          position: 'relative',
-        }}
-      >
+      <View>
         <Toast
           visible={visible}
           autoDismiss={TOAST_TIMEOUT}

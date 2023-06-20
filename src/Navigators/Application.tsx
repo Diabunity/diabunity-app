@@ -15,6 +15,7 @@ import {
   WithoutPremiumContainer,
   NoNetworkContainer,
   MedicalReportContainer,
+  FeedbackContainer,
 } from '@/Containers';
 import { DeviceData, userApi } from '@/Services/modules/users';
 import { store } from '@/Store';
@@ -22,7 +23,7 @@ import { setUser as storeUser } from '@/Store/User';
 import { useTheme, useUser } from '@/Hooks';
 import { TENDENCY } from '@/Containers/HomeContainer/Table';
 import MainNavigator from './Main';
-import { NfcPromptAndroid } from '@/Components';
+import { Feedback, NfcPromptAndroid } from '@/Components';
 import { Colors } from '@/Theme/Variables';
 import DeviceInfo from 'react-native-device-info';
 import analytics from '@react-native-firebase/analytics';
@@ -36,6 +37,7 @@ export type NavigatorParams = {
   SignIn: undefined;
   SignUp: undefined;
   NoNetwork: undefined;
+  Feedback: undefined;
   Onboarding: undefined;
   WithoutPremium: undefined;
   MedicalReport: { filter: string };
@@ -50,6 +52,7 @@ const ApplicationNavigator = () => {
   const netInfo = useNetInfo();
   const { on_boarding: savedOnobarding } = useUser();
   const [skip, setSkip] = useState<boolean>(true);
+  const [navigationChanged, setNavigationChanged] = useState<string>();
   const [user, setUser] = useState<FirebaseAuthTypes.User | null | undefined>();
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState<
     boolean | undefined
@@ -73,6 +76,11 @@ const ApplicationNavigator = () => {
     }
 
     setUser(sUser);
+  };
+
+  const handleStateChange = () => {
+    const currentRouteName = navigationRef.current?.getCurrentRoute()?.name;
+    setNavigationChanged(currentRouteName);
   };
 
   useEffect(() => {
@@ -164,7 +172,11 @@ const ApplicationNavigator = () => {
 
   return (
     <SafeAreaView style={[Layout.fill, { backgroundColor: colors.card }]}>
-      <NavigationContainer theme={NavigationTheme} ref={navigationRef}>
+      <NavigationContainer
+        theme={NavigationTheme}
+        ref={navigationRef}
+        onStateChange={handleStateChange}
+      >
         <StatusBar
           backgroundColor={Colors.red}
           barStyle={darkMode ? 'light-content' : 'dark-content'}
@@ -187,6 +199,7 @@ const ApplicationNavigator = () => {
                 name="MedicalReport"
                 component={MedicalReportContainer}
               />
+              <Stack.Screen name="Feedback" component={FeedbackContainer} />
             </>
           ) : (
             <>
@@ -201,6 +214,10 @@ const ApplicationNavigator = () => {
           <Stack.Screen name="NoNetwork" component={NoNetworkContainer} />
         </Stack.Navigator>
         <NfcPromptAndroid />
+        <Feedback
+          navigationRef={navigationRef}
+          currentRoute={navigationChanged}
+        />
       </NavigationContainer>
     </SafeAreaView>
   );

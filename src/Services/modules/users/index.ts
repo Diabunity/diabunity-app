@@ -7,6 +7,7 @@ import saveMeasurement from './saveMeasurement';
 import fetchRanking from './fetchRanking';
 import fetchReport from './fetchReport';
 import saveDeviceData from './saveDeviceData';
+import saveFeedback from './saveFeedback';
 
 export const userApi = api.injectEndpoints({
   endpoints: (build) => ({
@@ -18,6 +19,7 @@ export const userApi = api.injectEndpoints({
     fetchRanking: fetchRanking(build),
     fetchReport: fetchReport(build),
     saveDeviceData: saveDeviceData(build),
+    saveFeedback: saveFeedback(build),
   }),
   overrideExisting: true,
 });
@@ -158,3 +160,17 @@ export interface MedicalReport {
   };
   measurements_info: MeasurementsInfo;
 }
+
+export enum FeedbackStars {
+  ONE = 1,
+  TWO = 2,
+  THREE = 3,
+  FOUR = 4,
+  FIVE = 5,
+}
+
+export type Feedback = {
+  comment: string;
+  stars: FeedbackStars;
+  timestamp: Date;
+};
