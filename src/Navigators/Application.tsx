@@ -5,7 +5,7 @@ import crashlytics from '@react-native-firebase/crashlytics';
 import messaging from '@react-native-firebase/messaging';
 import DeviceInfo from 'react-native-device-info';
 import analytics from '@react-native-firebase/analytics';
-import { SafeAreaView, StatusBar, Platform } from 'react-native';
+import { SafeAreaView, StatusBar, Platform, View } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainerRef } from '@react-navigation/core';
 import { NavigationContainer } from '@react-navigation/native';
@@ -17,6 +17,7 @@ import {
   WithoutPremiumContainer,
   NoNetworkContainer,
   MedicalReportContainer,
+  FeedbackContainer,
 } from '@/Containers';
 import { VIEW_NAMES } from '@/Constants/views';
 import { DeviceData, userApi } from '@/Services/modules/users';
@@ -25,11 +26,14 @@ import Notification, {
 } from '@/Services/modules/notification';
 import { store } from '@/Store';
 import { setUser as storeUser } from '@/Store/User';
-import { useTheme, useUser } from '@/Hooks';
+import { useNotification, useTheme, useUser } from '@/Hooks';
 import { TENDENCY } from '@/Containers/HomeContainer/Table';
 import MainNavigator from './Main';
-import { NfcPromptAndroid } from '@/Components';
+import { Feedback, NfcPromptAndroid } from '@/Components';
 import { Colors } from '@/Theme/Variables';
+import { TOAST_TIMEOUT } from '@/Constants';
+import { toggleNotification } from '@/Store/Notification';
+import { Toast } from 'react-native-ui-lib';
 
 export type NavigatorParams = {
   Main: undefined;
@@ -40,6 +44,7 @@ export type NavigatorParams = {
   SignIn: undefined;
   SignUp: undefined;
   NoNetwork: undefined;
+  Feedback: undefined;
   Onboarding: undefined;
   WithoutPremium: undefined;
   MedicalReport: { filter: string };
@@ -52,8 +57,10 @@ const Stack = createStackNavigator<NavigatorParams>();
 const ApplicationNavigator = () => {
   const { Layout, darkMode, NavigationTheme } = useTheme();
   const netInfo = useNetInfo();
+  const { visible, message, color, preset } = useNotification();
   const { on_boarding: savedOnobarding } = useUser();
   const [skip, setSkip] = useState<boolean>(true);
+  const [navigationChanged, setNavigationChanged] = useState<string>();
   const [user, setUser] = useState<FirebaseAuthTypes.User | null | undefined>();
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState<
     boolean | undefined
@@ -77,6 +84,11 @@ const ApplicationNavigator = () => {
     }
 
     setUser(sUser);
+  };
+
+  const handleStateChange = () => {
+    const currentRouteName = navigationRef.current?.getCurrentRoute()?.name;
+    setNavigationChanged(currentRouteName);
   };
 
   useEffect(() => {
@@ -194,11 +206,28 @@ const ApplicationNavigator = () => {
 
   return (
     <SafeAreaView style={[Layout.fill, { backgroundColor: colors.card }]}>
-      <NavigationContainer theme={NavigationTheme} ref={navigationRef}>
+      <NavigationContainer
+        theme={NavigationTheme}
+        ref={navigationRef}
+        onStateChange={handleStateChange}
+      >
         <StatusBar
           backgroundColor={Colors.red}
           barStyle={darkMode ? 'light-content' : 'dark-content'}
         />
+        <View>
+          <Toast
+            visible={visible}
+            autoDismiss={TOAST_TIMEOUT}
+            position="top"
+            backgroundColor={color}
+            message={message}
+            preset={preset}
+            onDismiss={() =>
+              store.dispatch(toggleNotification({ visible: false }))
+            }
+          />
+        </View>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {user ? (
             <>
@@ -217,6 +246,7 @@ const ApplicationNavigator = () => {
                 name={VIEW_NAMES.MEDICAL_REPORT}
                 component={MedicalReportContainer}
               />
+              <Stack.Screen name="Feedback" component={FeedbackContainer} />
             </>
           ) : (
             <>
@@ -240,6 +270,10 @@ const ApplicationNavigator = () => {
           />
         </Stack.Navigator>
         <NfcPromptAndroid />
+        <Feedback
+          navigationRef={navigationRef}
+          currentRoute={navigationChanged}
+        />
       </NavigationContainer>
     </SafeAreaView>
   );

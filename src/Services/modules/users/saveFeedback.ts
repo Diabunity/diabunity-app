@@ -1,11 +1,12 @@
 import { EndpointBuilder } from '@reduxjs/toolkit/dist/query/endpointDefinitions';
-import { User } from '.';
+import AuthService from '@/Services/modules/auth';
+import { Feedback } from '.';
 
 export default (build: EndpointBuilder<any, any, any>) =>
-  build.mutation<User, Partial<User>>({
+  build.mutation<Feedback, Partial<Feedback>>({
     query: (data) => {
       return {
-        url: '/users',
+        url: `/users/${AuthService.getCurrentUser()?.uid}/feedback`,
         method: 'POST',
         body: data,
       };

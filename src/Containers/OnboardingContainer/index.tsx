@@ -117,7 +117,7 @@ const OnboardingContainer = ({ navigation: { navigate } }: Props) => {
   }, [isSuccess, navigate]);
 
   const handleOnDone = async (): Promise<void> => {
-    const user: User = {
+    const user: Partial<User> = {
       id: AuthService.getCurrentUser()?.uid,
       diabetes_type: Number(type),
       birth_date: date,
