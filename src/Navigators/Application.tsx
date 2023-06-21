@@ -29,7 +29,6 @@ import DeviceInfo from 'react-native-device-info';
 import analytics from '@react-native-firebase/analytics';
 import { TOAST_TIMEOUT } from '@/Constants';
 import { toggleNotification } from '@/Store/Notification';
-import { color } from 'react-native-reanimated';
 import { Toast } from 'react-native-ui-lib';
 
 export type NavigatorParams = {
