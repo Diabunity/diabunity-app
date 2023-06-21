@@ -3,7 +3,7 @@ import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { useNetInfo } from '@react-native-community/netinfo';
 import crashlytics from '@react-native-firebase/crashlytics';
 import messaging from '@react-native-firebase/messaging';
-import { SafeAreaView, StatusBar, Platform } from 'react-native';
+import { SafeAreaView, StatusBar, Platform, View } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainerRef } from '@react-navigation/core';
 import { NavigationContainer } from '@react-navigation/native';
@@ -20,13 +20,17 @@ import {
 import { DeviceData, userApi } from '@/Services/modules/users';
 import { store } from '@/Store';
 import { setUser as storeUser } from '@/Store/User';
-import { useTheme, useUser } from '@/Hooks';
+import { useNotification, useTheme, useUser } from '@/Hooks';
 import { TENDENCY } from '@/Containers/HomeContainer/Table';
 import MainNavigator from './Main';
 import { Feedback, NfcPromptAndroid } from '@/Components';
 import { Colors } from '@/Theme/Variables';
 import DeviceInfo from 'react-native-device-info';
 import analytics from '@react-native-firebase/analytics';
+import { TOAST_TIMEOUT } from '@/Constants';
+import { toggleNotification } from '@/Store/Notification';
+import { color } from 'react-native-reanimated';
+import { Toast } from 'react-native-ui-lib';
 
 export type NavigatorParams = {
   Main: undefined;
@@ -50,6 +54,7 @@ const Stack = createStackNavigator<NavigatorParams>();
 const ApplicationNavigator = () => {
   const { Layout, darkMode, NavigationTheme } = useTheme();
   const netInfo = useNetInfo();
+  const { visible, message, color, preset } = useNotification();
   const { on_boarding: savedOnobarding } = useUser();
   const [skip, setSkip] = useState<boolean>(true);
   const [navigationChanged, setNavigationChanged] = useState<string>();
@@ -181,6 +186,19 @@ const ApplicationNavigator = () => {
           backgroundColor={Colors.red}
           barStyle={darkMode ? 'light-content' : 'dark-content'}
         />
+        <View>
+          <Toast
+            visible={visible}
+            autoDismiss={TOAST_TIMEOUT}
+            position="top"
+            backgroundColor={color}
+            message={message}
+            preset={preset}
+            onDismiss={() =>
+              store.dispatch(toggleNotification({ visible: false }))
+            }
+          />
+        </View>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {user ? (
             <>

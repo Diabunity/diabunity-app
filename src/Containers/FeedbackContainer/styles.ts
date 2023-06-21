@@ -20,7 +20,6 @@ export const styles = StyleSheet.create({
   },
   scrollView: {
     display: 'flex',
-    height: 540,
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Text, View, ScrollView, ActivityIndicator } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import crashlytics from '@react-native-firebase/crashlytics';
+import analytics from '@react-native-firebase/analytics';
 import { AirbnbRating } from 'react-native-ratings';
 import { NavigatorParams } from '@/Navigators/Application';
 import { Incubator, TextField } from 'react-native-ui-lib';
@@ -14,11 +14,12 @@ import { store } from '@/Store';
 import { setNotification } from '@/Store/Notification';
 
 type Props = NativeStackScreenProps<NavigatorParams>;
+const DEFAULT_STARS = 5;
 
 const FeedbackContainer = ({ navigation: { goBack, canGoBack } }: Props) => {
   const { Layout, Colors } = useTheme();
   const [content, setContent] = useState<string>('NO_CONTENT');
-  const [rating, setRating] = useState<number>(5);
+  const [rating, setRating] = useState<number>(DEFAULT_STARS);
   const [saveFeedback, { isLoading, isError, isSuccess, error }] =
     userApi.useSaveFeedbackMutation();
 
@@ -32,13 +33,12 @@ const FeedbackContainer = ({ navigation: { goBack, canGoBack } }: Props) => {
       store.dispatch(
         setNotification({
           preset: Incubator.ToastPresets.SUCCESS,
-          message: 'Tu opinión se ha enviado correctamente. Muchas gracias!',
+          message: 'Tu opinión se ha enviado correctamente. ¡Muchas gracias!',
         })
       );
     }
     if (isError) {
-      const parsedError = new Error(error?.error);
-      crashlytics().recordError(parsedError, 'Error saving feedback');
+      analytics().logEvent('error_saving_feedback', { error });
       store.dispatch(
         setNotification({
           preset: Incubator.ToastPresets.FAILURE,
@@ -48,7 +48,7 @@ const FeedbackContainer = ({ navigation: { goBack, canGoBack } }: Props) => {
       );
     }
 
-    if (isSuccess || isError) {
+    if (isSuccess) {
       goBack();
     }
   }, [isSuccess, isError]);
@@ -61,9 +61,9 @@ const FeedbackContainer = ({ navigation: { goBack, canGoBack } }: Props) => {
           <Text style={styles.title}>Ayudanos a mejorar</Text>
           <Text style={styles.subtitle}>Dejanos tu opinion.</Text>
           <AirbnbRating
-            count={5}
-            reviews={['Muy Mala', 'Mala', 'Regular', 'Buena', 'Muy Buena']}
-            defaultRating={5}
+            count={DEFAULT_STARS}
+            reviews={['Muy mala', 'Mala', 'Regular', 'Buena', 'Muy buena']}
+            defaultRating={DEFAULT_STARS}
             size={30}
             onFinishRating={(value: number) => setRating(value)}
           />
