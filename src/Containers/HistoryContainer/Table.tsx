@@ -52,7 +52,7 @@ export default ({
         const currentItemDate = new Date(item.timestamp);
 
         return (
-          <View key={index} style={styles.row}>
+          <View key={`${item.timestamp}-${index}`} style={styles.row}>
             <View style={styles.dateAndSourceContainer}>
               <Text style={styles.dateAndSource}>
                 {formatDate(currentItemDate)}
