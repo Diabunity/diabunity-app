@@ -178,7 +178,7 @@ const ApplicationNavigator = () => {
       setSkip(true);
       setIsLoading(false);
     } else {
-      if (error && !error.code.includes('auth/no-current-user')) {
+      if (error && !error.code?.includes('auth/no-current-user')) {
         setIsLoading(false);
         setHasCompletedOnboarding(false);
       }
