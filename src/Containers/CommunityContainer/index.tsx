@@ -64,9 +64,12 @@ const CommunityContainer = ({
     data: userPostsInfo,
     refetch,
     isFetching,
-  } = postApi.useFetchPostsQuery({
-    count: true,
-  });
+  } = postApi.useFetchPostsQuery(
+    {
+      count: true,
+    },
+    { skip: !user }
+  );
   const { Layout, Images, Colors } = useTheme();
 
   useEffect(() => {

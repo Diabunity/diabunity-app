@@ -3,9 +3,10 @@ import { Metadata, User } from '@/Services/modules/users';
 import { convertToCamelCase } from '@/Utils';
 import { DEFAULT_SUBSCRIPTION } from '@/Constants';
 
+const initialState = {} as User;
 const slice = createSlice({
   name: 'user',
-  initialState: {} as User,
+  initialState,
   reducers: {
     setUser: (state, { payload }: UserPayload) => {
       state.diabetes_type = payload.diabetes_type;
@@ -25,10 +26,11 @@ const slice = createSlice({
           }
         : DEFAULT_SUBSCRIPTION;
     },
+    clearUser: () => initialState,
   },
 });
 
-export const { setUser } = slice.actions;
+export const { setUser, clearUser } = slice.actions;
 
 export default slice.reducer;
 

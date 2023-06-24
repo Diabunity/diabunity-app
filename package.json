@@ -1,6 +1,6 @@
 {
   "name": "diabunity",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "private": true,
   "scripts": {
     "android": "npm run copyAssets && react-native run-android",
@@ -103,6 +103,7 @@
     "jest": "^26.6.3",
     "metro-react-native-babel-preset": "^0.66.2",
     "prettier": "^2.8.8",
+    "prettier-plugin-organize-imports": "^3.2.2",
     "react-test-renderer": "17.0.2",
     "typescript": "^4.6.4"
   },

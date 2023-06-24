@@ -22,6 +22,7 @@ const baseQuery = fetchBaseQuery({
       }
       headers.set('auth-token', token);
     }
+
     return headers;
   },
 });

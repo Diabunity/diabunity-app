@@ -54,7 +54,7 @@ const HomeContainer = ({ route, navigation: { navigate } }: Props) => {
       id: user?.uid,
       dateFilter: DatePeriod.LAST_8_HOURS,
     },
-    { refetchOnMountOrArgChange: !!refetch }
+    { refetchOnMountOrArgChange: !!refetch, skip: !user }
   );
 
   const measurements = data?.measurements;

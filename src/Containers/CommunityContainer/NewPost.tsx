@@ -27,6 +27,7 @@ const NewPost = ({ setPage, setShouldRefetch }: PostProps) => {
   const user = AuthService.getCurrentUser();
   const { data: userInfo } = userApi.useFetchUserQuery(user?.uid, {
     refetchOnMountOrArgChange: true,
+    skip: !user,
   });
   const { Layout, Colors, Fonts, Images } = useTheme();
   const [image, setImage] = useState<{

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { FAB } from 'react-native-paper';
 import { useTheme } from '@/Hooks';
+import AuthService from '@/Services/modules/auth';
 import { NavigationContainerRef } from '@react-navigation/native';
 import { NavigatorParams } from '@/Navigators/Application';
 
@@ -14,11 +15,12 @@ const Feedback = ({
   navigationRef: React.RefObject<NavigationContainerRef<NavigatorParams>>;
   currentRoute?: string;
 }) => {
+  const user = AuthService.getCurrentUser();
   const { Colors } = useTheme();
   const [visible, setVisible] = useState<boolean>(false);
 
   useEffect(() => {
-    const isVisible = !currentRoute || VISIBLE_ROUTES.includes(currentRoute);
+    const isVisible = !!user && VISIBLE_ROUTES.includes(currentRoute || '');
     setVisible(isVisible);
   }, [currentRoute]);
 

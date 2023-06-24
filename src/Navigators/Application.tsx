@@ -1,39 +1,39 @@
-import React, { useState, useEffect, useRef } from 'react';
-import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
-import { useNetInfo } from '@react-native-community/netinfo';
-import crashlytics from '@react-native-firebase/crashlytics';
-import messaging from '@react-native-firebase/messaging';
-import DeviceInfo from 'react-native-device-info';
-import analytics from '@react-native-firebase/analytics';
-import { SafeAreaView, StatusBar, Platform, View } from 'react-native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { NavigationContainerRef } from '@react-navigation/core';
-import { NavigationContainer } from '@react-navigation/native';
-import {
-  StartupContainer,
-  AuthContainer,
-  ForgotPasswordContainer,
-  OnboardingContainer,
-  WithoutPremiumContainer,
-  NoNetworkContainer,
-  MedicalReportContainer,
-  FeedbackContainer,
-} from '@/Containers';
+import { Feedback, NfcPromptAndroid } from '@/Components';
+import { TOAST_TIMEOUT } from '@/Constants';
 import { VIEW_NAMES } from '@/Constants/views';
-import { DeviceData, userApi } from '@/Services/modules/users';
+import {
+  AuthContainer,
+  FeedbackContainer,
+  ForgotPasswordContainer,
+  MedicalReportContainer,
+  NoNetworkContainer,
+  OnboardingContainer,
+  StartupContainer,
+  WithoutPremiumContainer,
+} from '@/Containers';
+import { TENDENCY } from '@/Containers/HomeContainer/Table';
+import { useNotification, useTheme, useUser } from '@/Hooks';
 import Notification, {
   NotificationState,
 } from '@/Services/modules/notification';
+import { DeviceData, userApi } from '@/Services/modules/users';
 import { store } from '@/Store';
-import { setUser as storeUser } from '@/Store/User';
-import { useNotification, useTheme, useUser } from '@/Hooks';
-import { TENDENCY } from '@/Containers/HomeContainer/Table';
-import MainNavigator from './Main';
-import { Feedback, NfcPromptAndroid } from '@/Components';
-import { Colors } from '@/Theme/Variables';
-import { TOAST_TIMEOUT } from '@/Constants';
 import { toggleNotification } from '@/Store/Notification';
+import { setUser as storeUser } from '@/Store/User';
+import { Colors } from '@/Theme/Variables';
+import { useNetInfo } from '@react-native-community/netinfo';
+import analytics from '@react-native-firebase/analytics';
+import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import crashlytics from '@react-native-firebase/crashlytics';
+import messaging from '@react-native-firebase/messaging';
+import { NavigationContainerRef } from '@react-navigation/core';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import React, { useEffect, useRef, useState } from 'react';
+import { Platform, SafeAreaView, StatusBar, View } from 'react-native';
+import DeviceInfo from 'react-native-device-info';
 import { Toast } from 'react-native-ui-lib';
+import MainNavigator from './Main';
 
 export type NavigatorParams = {
   Main: undefined;
@@ -70,8 +70,8 @@ const ApplicationNavigator = () => {
     error,
     isFetching,
   } = userApi.useFetchUserQuery(user?.uid, {
-    skip,
-    refetchOnMountOrArgChange: true,
+    skip: skip || !user,
+    refetchOnMountOrArgChange: !!user,
   });
   const [saveDeviceData] = userApi.useSaveDeviceDataMutation();
   const [isLoading, setIsLoading] = useState(true);
@@ -178,7 +178,7 @@ const ApplicationNavigator = () => {
       setSkip(true);
       setIsLoading(false);
     } else {
-      if (error) {
+      if (error && !error.code.includes('auth/no-current-user')) {
         setIsLoading(false);
         setHasCompletedOnboarding(false);
       }
