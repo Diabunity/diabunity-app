@@ -49,16 +49,17 @@ type Props = NativeStackScreenProps<NavigatorParams> & {
 const UserContainer = ({ route, navigation }: Props) => {
   const { setParams, navigate } = navigation;
   const user = AuthService.getCurrentUser();
-  const { data: userInfo } = userApi.useFetchUserQuery(user?.uid, {
-    refetchOnMountOrArgChange: true,
-  });
+  const { data: userInfo = null, refetch } = userApi.useFetchUserQuery(
+    user?.uid,
+    {
+      refetchOnMountOrArgChange: true,
+      skip: !user,
+    }
+  );
   const { section } = route?.params || { section: undefined };
   const isFocused = useIsFocused();
   const [page, setPage] = useState<PageSection | undefined>(section);
   const { Layout, Fonts, Colors, Images } = useTheme();
-  const { data = null, refetch } = userApi.useFetchUserQuery(user?.uid, {
-    refetchOnMountOrArgChange: true,
-  });
 
   useEffect(() => {
     if (!isFocused) {
@@ -78,7 +79,7 @@ const UserContainer = ({ route, navigation }: Props) => {
       store.dispatch(
         setNotification({
           preset: Incubator.ToastPresets.FAILURE,
-          message: 'Hubo un error al abrir la aplicación de correo.',
+          message: 'Hubo un error al cerrar sesión.',
         })
       );
     }
@@ -127,7 +128,8 @@ const UserContainer = ({ route, navigation }: Props) => {
       store.dispatch(
         setNotification({
           preset: Incubator.ToastPresets.FAILURE,
-          message: 'Hubo un error al crear el comentario. Intente nuevamente',
+          message:
+            'Hubo un error al abrir la aplicación de correo. Intente nuevamente',
         })
       );
     }
@@ -139,7 +141,7 @@ const UserContainer = ({ route, navigation }: Props) => {
         <ProfileSection
           user={user}
           page={page}
-          data={data}
+          data={userInfo}
           handleBack={setPage}
           refetchFn={refetch}
         />

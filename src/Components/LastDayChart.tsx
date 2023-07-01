@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { LineChart } from 'react-native-chart-kit';
-import { Dimensions, View } from 'react-native';
-import { Rect, Text as TextSVG, Svg } from 'react-native-svg';
-import { getChartDataset, handleHiddenPoints } from '@/Utils';
 import { useTheme } from '@/Hooks';
 import { Measurement } from '@/Services/modules/users';
+import { getChartDataset, handleHiddenPoints } from '@/Utils';
+import React, { useState } from 'react';
+import { Dimensions, View } from 'react-native';
+import { LineChart } from 'react-native-chart-kit';
+import { Rect, Svg, Text as TextSVG } from 'react-native-svg';
 
 const COLORS = {
   gray: 'rgba(0, 0, 0, 0.12)',
@@ -25,6 +25,9 @@ const LastDayChart = ({
     visible: false,
     value: 0,
   });
+  if (!measurements || measurements.length === 0) {
+    return <View />;
+  }
   return (
     <LineChart
       data={getChartDataset(measurements)}

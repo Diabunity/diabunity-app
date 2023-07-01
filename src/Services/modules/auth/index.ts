@@ -1,7 +1,11 @@
+import { store } from '@/Store';
+import { clearUser } from '@/Store/User';
+import analytics from '@react-native-firebase/analytics';
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import Config from 'react-native-config';
-import analytics from '@react-native-firebase/analytics';
+import { postApi } from '../posts';
+import { userApi } from '../users';
 
 GoogleSignin.configure({
   webClientId: Config.FIREBASE_WEBCLIENT_ID,
@@ -47,6 +51,9 @@ const AuthService = class AuthService {
   }
 
   signOut(): Promise<void> {
+    store.dispatch(userApi.util.resetApiState());
+    store.dispatch(postApi.util.resetApiState());
+    store.dispatch(clearUser());
     return auth().signOut();
   }
 

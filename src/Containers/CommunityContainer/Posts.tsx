@@ -71,7 +71,7 @@ const Posts = ({
       page: postPage,
       favoriteSection,
     },
-    { refetchOnMountOrArgChange: true }
+    { refetchOnMountOrArgChange: true, skip: !user }
   );
   const postResponse = data as PostResponse;
   const [saveFavorite] = postApi.useSaveFavoriteMutation();

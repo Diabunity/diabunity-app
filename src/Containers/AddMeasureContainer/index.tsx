@@ -42,7 +42,7 @@ const AddMeasureContainer = ({ navigation: { goBack, navigate } }: Props) => {
       id: user?.uid,
       dateFilter: DatePeriod.LAST_DAY,
     },
-    { refetchOnMountOrArgChange: true }
+    { refetchOnMountOrArgChange: true, skip: !user }
   );
   const [supported, setSupported] = useState<boolean>(false);
   const [nfcInstance, setNFCInstance] = useState<NFCReader>();
