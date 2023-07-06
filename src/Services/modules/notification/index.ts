@@ -1,17 +1,17 @@
+import { VIEW_NAMES } from '@/Constants/views';
+import {
+  FirebaseResponseData,
+  NotificationType,
+  ParsedObject,
+} from '@/index.d';
+import { Colors } from '@/Theme/Variables';
 import notifee, {
   AndroidImportance,
   EventDetail,
   EventType,
 } from '@notifee/react-native';
-import { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 import analytics from '@react-native-firebase/analytics';
-import { VIEW_NAMES } from '@/Constants/views';
-import { Colors } from '@/Theme/Variables';
-import {
-  NotificationType,
-  FirebaseResponseData,
-  ParsedObject,
-} from '@/index.d';
+import { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 
 export enum NotificationState {
   FOREGROUND = 'foreground',
@@ -89,8 +89,6 @@ const Notification = class Notification {
     if (!this.navigationRef) {
       this.navigationRef = navigator;
     }
-    // Request permissions (required for iOS)
-    await notifee.requestPermission();
 
     // Display a notification
     const notificationId = await notifee.displayNotification({
@@ -174,6 +172,11 @@ const Notification = class Notification {
     }
 
     global.notificationData = null;
+  };
+
+  requestPermission = async () => {
+    // Request permissions (required for iOS)
+    return await notifee.requestPermission();
   };
 };
 

@@ -92,6 +92,11 @@ const ApplicationNavigator = () => {
   };
 
   useEffect(() => {
+    const requestPermission = async () => {
+      // Request Permission
+      await Notification.requestPermission();
+    };
+
     // Foreground Notifications
     messaging().onMessage((remoteMessage) =>
       Notification.handleMessageReceived(
@@ -109,6 +114,7 @@ const ApplicationNavigator = () => {
       )
     );
 
+    requestPermission();
     return Notification.handleForegroundEvent();
   }, []);
 
